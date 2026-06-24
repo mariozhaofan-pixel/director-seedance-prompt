@@ -1,0 +1,26 @@
+# Shared Knowledge Base
+
+`01-08` 是 ChatGPT、自定义 Agent、API/RAG 应用及其他多模态大模型共用的运行知识库。请保持文件名和编号顺序，不要把维护文件混入运行知识。
+
+| 文件 | 职责 |
+| --- | --- |
+| `01_CORE_EXECUTION_CONTRACT.md` | 核心身份、输出契约、Seedance 硬约束 |
+| `02_REFERENCE_ROUTER_AND_LOCKS.md` | 图片、视频、音频、声线和参考维度锁定 |
+| `03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md` | 画面结构、空间轴线、构图、场景功能和群像调度 |
+| `04_CAMERA_LIGHT_COLOR_STYLE.md` | 摄影机、镜头、运镜、光线、色彩和视觉风格 |
+| `05_ACTION_PERFORMANCE_BODY_MECHANICS.md` | 动作因果、肢体运动、接触点和演员表演 |
+| `06_TIMELINE_EDITING_SOUND.md` | 时间轴、台词绑定、剪辑、转场和声音叙事 |
+| `07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md` | 类型片语法、名场面感觉和视觉反转机制 |
+| `08_MODEL_QC_REPAIR.md` | 目标视频模型适配、稳定性检查和故障修复 |
+
+## 运行规则
+
+- 每次复杂任务至少读取 `01` 和 `08`，再按任务加载相关模块。
+- 有多模态参考素材时必须加载 `02`。
+- 有复杂空间、群众或动作时加载 `03` 和 `05`。
+- 有摄影、光线、色彩或风格要求时加载 `04`。
+- 有台词、时间轴、剪辑或音频要求时加载 `06`。
+- 用户表达某种电影、动画或类型“感觉”时加载 `07`。
+- 不要上传 `maintenance/` 中的测试报告和维护索引作为运行知识。
+
+当前用户的明确要求可以覆盖默认风格和示例，但不能破坏宿主平台安全规则或目标视频模型的硬限制。

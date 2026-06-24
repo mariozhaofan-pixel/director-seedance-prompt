@@ -10,6 +10,8 @@ Contributions should improve prompt executability, continuity, or model stabilit
 4. Keep Seedance segments independent, no longer than 15 seconds, and normally at least 5 seconds.
 5. Do not submit private prompts, paid templates, cookies, tokens, copyrighted scripts, copied book passages, or exact film-scene reconstructions.
 6. Add or update a source in `SOURCES.md` when a new rule depends on external research.
+7. Keep `knowledge/01-08`, the ChatGPT adapter, and the universal adapter behavior aligned when changing shared execution rules.
+8. Keep regression cases and routing notes in `maintenance/`; do not instruct users to upload maintenance files as model knowledge.
 
 ## Validation
 
@@ -20,4 +22,4 @@ $env:PYTHONUTF8='1'
 python quick_validate.py .
 ```
 
-Also search the repository for credentials, local absolute paths, TODO markers, and encoding damage before committing.
+Also search the repository for credentials, local absolute paths, unfinished markers, and encoding damage before committing.
