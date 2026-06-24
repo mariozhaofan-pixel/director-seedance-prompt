@@ -1,6 +1,6 @@
 # Director Seedance Prompt
 
-一个面向 AI 视频生成的电影语言编译 Skill。它把剧本、小说、参考图片、序列帧、分镜、已有提示词或粗略创意，转换为可直接使用的导演级视频提示词。
+一个平台无关的 AI 视频电影语言编译系统。它把剧本、小说、参考图片、视频、音频、序列帧、分镜、已有提示词或粗略创意，转换为可直接使用的导演级视频提示词。
 
 核心流程：
 
@@ -9,6 +9,8 @@ Story -> Director -> Storyboard -> Prompt -> Video
 ```
 
 系统默认静默完成导演意图、空间轴线、画面结构、摄影与灯光、演员动作、剪辑节奏和声音叙事判断，最终仍然输出清晰、中文优先、可复制的视频提示词。
+
+它可以作为 Codex Skill、ChatGPT GPT，或任何支持系统提示词、知识文件和多模态输入的 Agent 使用。宿主模型负责理解和编译素材；Seedance、可灵、Veo、Runway、Pika、Sora 等目标视频模型负责生成视频。
 
 ## 主要能力
 
@@ -20,7 +22,9 @@ Story -> Director -> Storyboard -> Prompt -> Video
 - 将电影或动画的“感觉”翻译为原创、可执行的叙事机制，而不是照搬受保护内容。
 - 在输出前检查空间漂移、角色消失、群众断裂、动作过载和相邻段落重复等问题。
 
-## 安装
+## 使用方式
+
+### Codex Skill
 
 将整个仓库目录放入 Codex Skills 目录：
 
@@ -31,10 +35,23 @@ Story -> Director -> Storyboard -> Prompt -> Video
 Windows 默认位置通常为：
 
 ```text
-C:\Users\<用户名>\.codex\skills\director-seedance-prompt\
+%USERPROFILE%\.codex\skills\director-seedance-prompt\
 ```
 
 重新打开 Codex 后即可使用 `$director-seedance-prompt`。
+
+### ChatGPT GPT
+
+按照 [`adapters/chatgpt/README.md`](adapters/chatgpt/README.md) 配置 GPT Builder：复制完整 Instructions，并上传 [`knowledge/01-08`](knowledge/) 共 8 个知识文件。
+
+### 其他多模态大模型
+
+按照 [`adapters/universal/README.md`](adapters/universal/README.md) 使用：
+
+- 将 [`SYSTEM_PROMPT.md`](adapters/universal/SYSTEM_PROMPT.md) 设为系统提示词。
+- 将 [`knowledge/01-08`](knowledge/) 作为知识库、Project 文件或 RAG 语料。
+- 将剧本和参考素材作为当前任务输入。
+- 宿主模型不能直接读取视频或音频时，提供关键帧、转录、时间码和声音事件表。
 
 ## 使用示例
 
@@ -59,6 +76,11 @@ C:\Users\<用户名>\.codex\skills\director-seedance-prompt\
 ```text
 director-seedance-prompt/
 ├── SKILL.md
+├── knowledge/                    # 跨平台运行知识库 01-08
+├── adapters/
+│   ├── chatgpt/                  # GPT Builder 配置
+│   └── universal/                # 通用多模态 LLM 系统提示词
+├── maintenance/                  # 回归测试与维护索引，不上传
 ├── agents/
 │   └── openai.yaml
 └── references/
@@ -68,6 +90,10 @@ director-seedance-prompt/
 ```
 
 - `SKILL.md`：入口、执行契约和输出纪律。
+- `knowledge/`：ChatGPT 与其他宿主模型共用的模块化运行知识。
+- `adapters/chatgpt/`：GPT Builder 创建和覆盖说明。
+- `adapters/universal/`：平台无关的系统提示词、RAG 与长上下文接入方法。
+- `maintenance/`：公开的回归测试和维护索引，不作为模型运行知识。
 - `FILM_LANGUAGE_OPERATING_SYSTEM.md`：主要导演语言知识库与静默决策引擎。
 - `cinematic-rule-library-v3.md`：兼容旧版行为的规则库。
 - `neodomain-research-notes.md`：公开页面研究边界说明。
@@ -80,6 +106,13 @@ director-seedance-prompt/
 4. 每个切镜都必须改变信息、情绪、视角、冲突或尺度。
 5. 对参考素材明确说明“控制什么”和“不控制什么”。
 6. 对受版权保护的作品只提炼通用机制，默认生成原创角色、场景、对白和调度。
+
+## 兼容性边界
+
+- 支持系统提示词和文件检索的宿主模型可以直接使用完整模块。
+- 只支持长上下文的模型可以按 `SYSTEM_PROMPT -> 01 -> 08 -> 任务相关模块` 拼接。
+- 多模态能力取决于宿主平台；系统不会假装已经读取无法访问的图片、视频或音频。
+- 输出可用率仍受宿主模型推理能力、目标视频模型版本、素材质量和上下文长度影响。
 
 ## 来源与声明
 
