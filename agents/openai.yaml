@@ -1,0 +1,4 @@
+interface:
+  display_name: "Film Language Operating System"
+  short_description: "Turn stories into Seedance-ready director storyboard prompts"
+  default_prompt: "Use $director-seedance-prompt to process this through Story -> Director -> Storyboard -> Prompt, then output copy-ready Seedance-style cinematic video prompts."
