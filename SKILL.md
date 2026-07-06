@@ -23,14 +23,14 @@ Convert user material into a reusable director system:
 
 1. Analyze story, character, scene, conflict, and narrative beats.
 2. Choose a director framework.
-3. Run the silent decision engines for director intent, scene geometry/axis, frame composition/visual parsing, body-part action mechanics, cinematography choice, lighting motivation, editorial rhythm, and sound dramaturgy.
+3. Run the silent decision engines for director intent, scene geometry/axis, frame composition/visual parsing, body-part action mechanics, cinematography choice, lighting motivation, editorial rhythm, sound dramaturgy, continuity state, prompt-budget allocation, and retake strategy.
 4. Break the material into storyboard beats, then pack compatible beats into executable model segments.
 5. Compile each segment with camera, lens, blocking, action, light, color, sound, editing, and ending state.
 6. Adapt the segment prompts to the target video model, especially Seedance's stateless single-segment behavior.
 
 For substantive jobs, read `references/FILM_LANGUAGE_OPERATING_SYSTEM.md`. It is the single knowledge base for director frameworks, camera/lens style, shot grammar, movement, light, color, sound, editing, action, crowd blocking, production design, character performance, creature/disaster/transformation, output format, and model adaptation.
 
-For complex scripts, accidents, action scenes, emotional scenes, multi-shot sequences, reference-frame reconstruction, famous-scene-feeling requests, visual-impact/reversal requests, or prompt-repair tasks, silently apply the `Silent Decision Engines` in `references/FILM_LANGUAGE_OPERATING_SYSTEM.md` before writing the final prompt. The skill's hidden job is to understand the user's "feeling" and translate it into original, executable film grammar. Start by routing the scene function, then choose geometry, frame structure, body mechanics, camera, light, edit, sound, and model compression. Before delivering Seedance prompts, run the Seedance stability gate to catch spatial drift, overstacked camera motion, off-screen state changes, reference conflicts, and tracked-subject overload. Do not expose the engines unless the user asks for analysis; let them appear through clearer intent, axis, frame structure, focus path, body mechanics, camera movement semantics, actor performance, visual reversal, lighting, edit, sound, and Seedance compression decisions.
+For complex scripts, accidents, action scenes, emotional scenes, multi-shot sequences, reference-frame reconstruction, famous-scene-feeling requests, visual-impact/reversal requests, continuation/next-part requests, accepted-take review, or prompt-repair tasks, silently apply the `Silent Decision Engines` in `references/FILM_LANGUAGE_OPERATING_SYSTEM.md` before writing the final prompt. The skill's hidden job is to understand the user's "feeling" and translate it into original, executable film grammar. Start by routing the scene function, then choose geometry, frame structure, body mechanics, camera, light, edit, sound, continuity state, model compression, and retake strategy. Before delivering Seedance prompts, run the Seedance stability gate to catch spatial drift, overstacked camera motion, off-screen state changes, reference conflicts, completed-beat replay, reserved-future leakage, and tracked-subject overload. Do not expose the engines unless the user asks for analysis; let them appear through clearer intent, axis, frame structure, focus path, body mechanics, camera movement semantics, actor performance, visual reversal, lighting, edit, sound, and Seedance compression decisions.
 
 When the user provides or asks for templates, storyboard-routine tutorial videos/audio, prompt repair, battle-damaged transformation, mecha/power armor, tokusatsu, monster disaster, crowd action, reference-image identity consistency, reference photos plus storyboard boards, short-drama A/B Seedance prompt packs, multimodal Seedance references, voice/audio references, music beat-matching, product/science/comic routes, painter/art-movement style references, face-to-face reveal, duel, chase, farewell, rescue, weak-hero, task montage, transformation resolve, street-corner search, shock arrival, planned long take, mirror monologue, parallel desire montage, atompunk/retro-future worlds, zombie-cleaner action, LED-face robot performance, mounted chase, absurd apocalypse romance, AI-actor meta-comedy, prompt-world scene loading, black-void boot-up, reference-reading dialogue, or real-world creator cutaways, use the Template Pattern Library and Practical Problem-Solution Engine inside `references/FILM_LANGUAGE_OPERATING_SYSTEM.md`.
 
@@ -44,6 +44,10 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - For Seedance, distinguish storyboard cuts from model segments. Default to segment packing: combine adjacent storyboard beats into one `5-15s` prompt block when they share the same location, same primary character or speaker, and one continuous action/dialogue chain. Aim for `12-15s` when readable; avoid segments shorter than `5s` unless a strong boundary appears.
 - Split a Seedance segment early only when the scene/location changes, shot scale or camera setup changes enough to break model readability, primary character/speaker changes, time state changes, or one causal action unit has ended. Do not output one prompt per storyboard shot by default.
 - Segment boundaries are not transition effects. The last beat of one Seedance segment and the first beat of the next should not repeat the same character + same shot scale + same composition. Open the next segment with a changed shot scale, camera angle, subject, action state, spatial scale, or information focus, then re-anchor the space. Do not force mask, foreground occlusion, fabric wipe, black flash, or white flash between independent segments unless a real story object naturally crosses the lens.
+- For continuation, next-part, extend, or repair-tail work, accepted footage or an accepted final frame is the source of truth. Do not continue from the planned ending if the actual generated ending is unknown or different. Ask for the clip, final frame, or an exact visible-end description when needed.
+- Track beat scope silently: `already happened` must not replay, `this segment only` is the current generation task, and `reserved for later` must not appear early. If accepted footage completes a future beat early or fails to complete a planned beat, update the next segment from the observed state.
+- If a previous clip or final frame is attached, the source carries visible state; prompt text carries only the delta, open motion, camera/audio phase when needed, current action, endpoint, and high-risk continuity locks. Do not waste prompt budget re-describing what the attached source already shows unless drift risk requires it.
+- Before drafting each Seedance segment, allocate the prompt budget: choose one primary spend among identity fidelity, motion boldness, or scene density; choose at most one secondary spend; simplify the rest or split the beat.
 - Shot duration is chosen by shot function, information density, shot scale, motion intensity, continuity need, emotional hold, sound bridge, and Seedance limits. Do not apply fixed second buckets mechanically.
 - Every action has spatial relationship, force source, contact point or failure point, result, and sound confirmation.
 - Every action conflict is an exchange, not a one-sided display: route -> threat -> evade/block/contact -> counterforce -> escalation/charge -> decisive contact -> aftermath.
@@ -54,7 +58,7 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - Actor emotion is compiled internally as goal, obstacle, tactic, beat reversal, face, breath, body, rhythm, and mask-vs-leak behavior, but visible output should phrase these in Chinese: 目标、阻碍、策略、节拍反转、面部层、呼吸层、身体层、节奏层、表面控制与真实泄露。
 - Visual impact and reversal must change audience knowledge, character knowledge, conflict state, spatial scale, or consequence. Do not add spectacle without story change.
 - Every Seedance-oriented prompt uses a two-level visual lock: `【基础风格】` first locks camera/lens style, focal/depth feel, lighting motivation, contrast, palette/LUT, atmosphere, and material reaction; `【运镜与时间轴】` then integrates frame structure, composition, focus path, camera movement, action timing, and ending state per time beat.
-- Every Seedance multimodal reference must have an explicit purpose: image identity/costume/scene/prop/color/first-frame/final-frame, video camera/action/rhythm/VFX/sound, or audio BGM/beat/ambience/SFX/voice. State what a reference does not control when ambiguity would hurt generation.
+- Every Seedance multimodal reference must have an explicit purpose: image identity/costume/scene/prop/color/first-frame/final-frame, video camera/action/rhythm/VFX/sound, or audio BGM/beat/ambience/SFX/voice. By default, user-facing prompts state only what the reference controls. State what a reference does not control only when ambiguity, multi-reference conflict, protected identity/brand/voice, audio leakage, or generation drift risk would hurt the result.
 - For Seedance reference audio, distinguish final soundtrack from silent control track. If audio is only used to drive motion rhythm, impact timing, camera accents, or cuts, say it controls those timing dimensions only and must not be output as final BGM/dialogue/SFX.
 - If reference-audio purpose is ambiguous, full music defaults to `final BGM + beat grid`; drum hits, wind whooshes, short SFX, or beat tracks default to `silent beat guide / SFX guide`. If the user says no BGM, treat the audio as silent beat guide and never output it as final music.
 - `【声音设计】` must not contradict `【音频/声线锁定】`: if reference audio is not output, do not later describe that same reference audio as background music.
@@ -79,10 +83,12 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - Write primarily in Chinese. Add English only where it prevents model ambiguity for camera, movement, action, body blocking, model locks, or subject counts, such as `continuous long take`, `one continuous shot`, `ENG news camera`, `lateral tracking shot`, `slow dolly in`, `lateral truck`, `rack focus`, `a single three-headed hellhound`, and `three heads on one shared body`.
 - Prefer positive executable wording. Put negative constraints together at the end under `【画面清洁与限制】` or `Negative / avoid rules`.
 - Preserve user-specified duration, aspect ratio, language, no-subtitle/no-BGM requests, dialogue, scene facts, and reference-image roles. Do not rewrite dialogue unless asked.
+- When reviewing a generated take, use a five-verdict retake protocol: keep, fix in post, edit one layer, re-roll, or rewrite. Change only one variable per retake whenever possible: prompt clause, seed, mode, or reference. If the same flaw repeats across two takes, diagnose and rewrite rather than adding adjectives.
 
 Highest-priority model rule:
 
 - Seedance: each segment must be `<=15s`, `<=10000 characters`, and independently complete. Target `5-15s` per segment, preferably near `15s` when the story, space, speaker, and action remain continuous. Repeat character, costume, scene, camera, and ending-state anchors in every segment.
+- For sequence projects, plan globally but compile locally: output the current unresolved segment prompt only; future segments remain intent cards until the previous accepted take or final frame has been reviewed.
 
 ## Input Handling
 
@@ -134,6 +140,8 @@ Before writing prompts, extract:
 - Visual anchors: face, costume, silhouette, location, props, palette, creature form.
 - Required model/platform constraints.
 - Reference hierarchy: which source controls identity, which controls scene material, which controls shot order/spatial relation, which controls motion timing, and which controls sound.
+- Sequence state when relevant: actual accepted opening state, completed beats, current segment job, reserved future beats, continuity locks, allowed changes, unresolved uncertainty, and endpoint.
+- Prompt budget allocation: whether the segment is primarily spending on identity fidelity, motion boldness, or scene density, and which complexity must be reduced.
 
 For existing prompts, diagnose missing layers:
 
@@ -141,6 +149,11 @@ For existing prompts, diagnose missing layers:
 - no camera/lens/light/color lock inside `【基础风格】`
 - no visual anchors
 - reference image conflicts with story but no user choice is requested
+- continuation starts from a planned ending instead of accepted footage, final frame, or exact visible-end description
+- completed actions are replayed, or future beats leak into the current segment
+- attached previous clip/final frame is re-described too heavily instead of carrying state as the reference source
+- a single segment tries to spend equally on perfect identity, bold action, dense crowd/world, and dialogue
+- retake advice changes several variables at once, making failures impossible to diagnose
 - no action chain
 - action is only spectacle or VFX without route, contact point, counteraction, escalation, or aftermath
 - no spatial relationship
@@ -337,6 +350,10 @@ Before finalizing, verify:
 - Seedance segment packing is correct: continuous action, same speaker, and same-space story beats are grouped into `5-15s` prompt blocks; only scene/location changes, disruptive shot-scale/camera changes, primary character/speaker changes, time-state changes, or completed action units start a new independent block.
 - Segment boundary contrast is correct: adjacent independent segments do not end/start on the same character with the same shot scale and composition, and segment transitions are not forced with mask/wipe effects unless story-motivated.
 - If reference audio exists, the final prompt contains `AUDIO RHYTHM LOCK` or an equivalent explicit sentence, and `【声音设计】` does not conflict with that lock.
+- For continuation/next-part work, accepted footage or an accepted final frame is used as the source of truth; planned state is not treated as actual state.
+- Completed beats are excluded, current segment beats are executable, and reserved future beats are not performed early.
+- Prompt-budget allocation is sane: one primary spend, at most one secondary spend, and fragile identity/action/crowd/dialogue tradeoffs are simplified or split.
+- Retake guidance, when requested, uses keep / post / edit / re-roll / rewrite and changes only one variable unless a full strategy change is justified.
 - Action has causality, contact/result, and sound confirmation.
 - Action conflict has route, contact point, counterforce, escalation/charge, decisive result, aftermath, and consequence.
 - Body motion is decomposed into visible body parts, weight shift, contact point, recoil, and recovery when motion matters.
