@@ -1141,7 +1141,7 @@ Universal prompt skeleton:
 
 ```text
 【基础风格】: camera/lens look, focal/depth behavior, lighting source/direction/contrast, color/LUT, atmosphere, material response.
-【参考素材使用】: each @image/@video/@audio states what it controls and what it does not control.
+【参考素材使用】: each @image/@video/@audio states what it controls; state exclusions only when ambiguity, conflict, protected identity/brand/voice, audio leakage, or drift risk makes them necessary.
 【角色与场景锁定】: character image, scene image, color card, voice anchor if provided.
 【运镜与时间轴】: each time beat includes duration rationale, shot type, camera position, shot size, movement, frame structure, composition, focus path, marker, sound cue, cut reason, and ending state.
 【声音设计】: environment/action/dialogue only; no background music unless requested.
