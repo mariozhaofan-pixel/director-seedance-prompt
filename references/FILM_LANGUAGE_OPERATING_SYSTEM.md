@@ -30,7 +30,7 @@ Non-negotiable rules:
 - Actor emotion is decided internally through objective, obstacle, tactic, beat reversal, face, breath, body, rhythm, and mask-vs-leak behavior; visible Chinese output should write these as 目标、阻碍、策略、节拍反转、面部、呼吸、身体、节奏、表面控制与真实泄露。
 - Visual impact and reversal must change audience knowledge, character knowledge, conflict state, spatial scale, or consequence.
 - Every Seedance-oriented prompt uses a two-level visual lock: `【基础风格】` first locks camera/lens style, focal/depth feel, lighting motivation, contrast, palette/LUT, atmosphere, and material reaction; `【运镜与时间轴】` then integrates frame structure, composition, focus path, camera movement, action timing, and ending state per time beat.
-- `【基础风格】` is not a mood label. It is the segment-level photography and lighting decision translated into visible image qualities.
+- `【基础风格】` is not a mood label. It is the segment-level photography and lighting decision translated into visible image qualities. It appears in every independent segment, repeats the project-level visual baseline, and adds only the scene-specific shift.
 - When motion matters, body action must be decomposed into visible body-part mechanics, preferably in Chinese visible wording: 头/眼、肩、肘、手腕/手、躯干、腰/髋、膝、脚、重心变化、接触点、反作用、恢复姿态。
 - Every crowd must have main direction, counter direction if any, congestion point, and escape or flow route.
 - Expression and body action are separate layers: `deadpan face + fast purposeful walk`.
@@ -72,12 +72,8 @@ Default complete Seedance structure:
 
 ```text
 ### 【Seedance 完整提示词】
-【参考图使用规则】(if images exist)
 【基础风格】
-【场景锁定】
-【角色锁定】
-【音频/声线锁定】(if audio or voice references exist)
-【关键主体锁定】(if needed)
+【角色/场景/素材锁定】
 【运镜与时间轴】
 【动作调度】
 【声音设计】
@@ -110,7 +106,7 @@ Recommended output priority for Seedance complete prompts:
 
 ```text
 【基础风格】camera/lens + lighting/color lock
--> 【场景锁定】 / 【角色锁定】
+-> 【角色/场景/素材锁定】character + scene + props + reference roles + audio/voice anchors with short locked names
 -> 【运镜与时间轴】time beats integrating duration rationale, frame structure/composition, focus path, camera movement, action timing, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, and ending state
 -> 【动作调度】
 -> 【声音设计】
@@ -153,11 +149,11 @@ Reference image handling:
   2. Preserve the story/prompt and generate a new image-generation prompt to replace the image.
 - If the conflict is minor, state the assumption briefly and borrow only the useful anchors.
 - If the user asks to fully follow an uploaded image, state that the character keeps the reference image's core facial features, face shape, hairstyle, and identity markers through the whole segment.
-- Separate what is borrowed from what is not borrowed. A tattoo, armor design, weapon, pose, or color reference must not accidentally overwrite facial identity.
+- Separate what is borrowed from what is not borrowed only when the risk is concrete. A tattoo, armor design, weapon, pose, or color reference must not accidentally overwrite facial identity.
 
 Reference dimension lock:
 
-Default user-facing behavior: state what each reference controls. Do not list every "does not control" clause unless ambiguity, multi-reference conflict, protected identity/brand/voice, audio leakage, or visible drift risk would hurt generation. Keep the full exclusion logic silently even when the user-facing prompt stays concise.
+Default user-facing behavior: place reference usage, character identity, scene identity, props, and voice/audio anchors together inside `【角色/场景/素材锁定】`. State what each reference controls, assign a short locked name, and do not list every "does not control" clause unless ambiguity, multi-reference conflict, protected identity/brand/voice, audio leakage, or visible drift risk would hurt generation. Keep the full exclusion logic silently even when the user-facing prompt stays concise. Once a reference has a locked name, timeline beats use that name instead of repeatedly writing `@ImageN/@VideoN/@AudioN`.
 
 ```text
 REFERENCE DIMENSION LOCK:
@@ -166,6 +162,7 @@ REFERENCE DIMENSION LOCK:
 @AudioN controls [BGM/silent beat guide/motion rhythm/impact timing/cut markers/camera-speed feel/ambience/SFX/voice tone/narrator voice/character voice] only.
 Silent rule: all unassigned dimensions remain controlled by the user's script and current segment locks.
 Visible exclusions: write "does not control..." only when the risk is concrete.
+Naming rule: after the lock section, use names like Character A, Scene A, Voice A, Action Reference A, or the Chinese equivalents 主角A / 场景A / 声线A / 动作参考A inside the timeline.
 ```
 
 Audio / voice lock:
@@ -933,9 +930,9 @@ Run these engines in this exact order before the prompt:
 ```text
 1. Director Intent: why this beat exists.
 2. Scene Function Router v2: identify the primary scene function and the story state change.
-3. Seedance Multimodal Asset Router: assign every @image/@video/@audio a role and dimension lock.
+3. Seedance Multimodal Asset Router: assign every @image/@video/@audio a role, dimension lock, and short reusable locked name inside `【角色/场景/素材锁定】`.
 4. Scene Geometry & Axis: where bodies, objects, exits, hazards, and camera sides are.
-5. Base Style Lock + Visual Style Descriptor: choose segment-level camera/lens, lighting, color/LUT, atmosphere, material response, and any painter/movement/style traits for `【基础风格】`.
+5. Base Style Lock + Visual Style Descriptor: choose project-level camera/lens, color, texture, realism/genre baseline, plus scene-specific lighting/atmosphere changes for `【基础风格】`; repeat this in every independent segment and never write only "same as above".
 6. Frame Composition & Visual Parsing: turn geography into screen-left/right, foreground/midground/background, focus path, and composition.
 7. Body-Part Action Decomposition: turn generic verbs into visible body-part mechanics and contact paths.
 8. Action Exchange & Escalation: for conflict/action, define route, counterforce, contact, charge-up, aftermath, and consequence.
@@ -1140,10 +1137,9 @@ Use this as the compressed version of the external template library. Select a pa
 Universal prompt skeleton:
 
 ```text
-【基础风格】: camera/lens look, focal/depth behavior, lighting source/direction/contrast, color/LUT, atmosphere, material response.
-【参考素材使用】: each @image/@video/@audio states what it controls; state exclusions only when ambiguity, conflict, protected identity/brand/voice, audio leakage, or drift risk makes them necessary.
-【角色与场景锁定】: character image, scene image, color card, voice anchor if provided.
-【运镜与时间轴】: each time beat includes duration rationale, shot type, camera position, shot size, movement, frame structure, composition, focus path, marker, sound cue, cut reason, and ending state.
+【基础风格】: project-level camera/lens look, focal/depth behavior, color/texture/genre baseline, plus scene-specific lighting source/direction/contrast, atmosphere, and material response. Required in every independent segment; never write only "同上".
+【角色/场景/素材锁定】: character identity, scene identity, props, color card, voice/audio anchors, and every @image/@video/@audio role. Assign short locked names; state exclusions only when ambiguity, conflict, protected identity/brand/voice, audio leakage, or drift risk makes them necessary.
+【运镜与时间轴】: each time beat includes duration rationale, shot type, camera position, shot size, movement, frame structure, composition, focus path, marker, sound cue, cut reason, and ending state. Use locked names instead of repeatedly calling @references.
 【声音设计】: environment/action/dialogue only; no background music unless requested.
 【画面限制】: concise model failure prevention rules.
 NEGATIVE RULES: identity drift, beauty filter, extra text, random motion, unsupported style.
@@ -1929,7 +1925,7 @@ Model specs change. Verify live docs when precision matters.
 Seedance compiler:
 
 ```text
-基础风格锁定 -> 角色锁定 -> 场景锁定 -> 单段时长 <=15s -> 一条连续动作链 -> 运镜 -> 空间关系 -> 光线/色彩 -> 声音确认 -> 结尾状态。
+基础风格锁定 -> 角色/场景/素材锁定 -> 单段时长 <=15s -> 一条连续动作链 -> 运镜 -> 空间关系 -> 光线/色彩 -> 声音确认 -> 结尾状态。
 ```
 
 Seedance cut/segment compiler:
@@ -2123,7 +2119,7 @@ For each time beat, choose duration by function and readability: impact flashes 
 
 ### 第01段｜8-15秒｜[场景功能]
 【基础风格】
-【角色与场景锁定】
+【角色/场景/素材锁定】
 【运镜与时间轴】
 【声音设计】
 【画面限制】
@@ -2142,7 +2138,7 @@ Compact prompt block:
 ```text
 第01段｜8-15秒｜[场景功能]
 【基础风格】
-【角色与场景锁定】
+【角色/场景/素材锁定】
 【运镜与时间轴】
 【声音设计】
 【画面限制】
@@ -2150,8 +2146,10 @@ Compact prompt block:
 
 Final checklist:
 
-- `【基础风格】` appears first and translates camera/lens, focal/depth behavior, lighting motivation, color/LUT, atmosphere, and material response into visible qualities.
-- Every @image/@video/@audio reference has a role and dimension lock; visible output states what each reference controls, and states what it does not control only when ambiguity or drift risk makes that useful.
+- `【基础风格】` appears first in every independent segment, repeats the project-level camera/lens/color/texture baseline, and adds the scene-specific lighting/atmosphere/material response.
+- `【角色/场景/素材锁定】` merges reference usage, character identity, scene identity, props, color cards, and voice/audio anchors; default output does not split them into separate reference/scene/character sections.
+- Every @image/@video/@audio reference has a role, dimension lock, and short locked name; visible output states what each reference controls, and states what it does not control only when ambiguity or drift risk makes that useful.
+- `【运镜与时间轴】` uses locked names instead of repeatedly calling @references unless a new reference first appears in that beat.
 - If reference audio exists, the prompt states whether it is final BGM, silent beat guide, SFX guide, ambience bed, or voice anchor; silent guide audio is explicitly not output as BGM, and later sound wording does not contradict it.
 - If a painter, movement, or art style is referenced, it is translated into visible line, color, composition, texture, light, mood, and use case inside `【基础风格】`.
 - Segment duration fits target model; for Seedance, compatible beats are packed into 5-15s blocks instead of one prompt per storyboard shot.

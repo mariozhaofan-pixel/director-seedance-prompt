@@ -58,10 +58,12 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - Actor emotion is compiled internally as goal, obstacle, tactic, beat reversal, face, breath, body, rhythm, and mask-vs-leak behavior, but visible output should phrase these in Chinese: 目标、阻碍、策略、节拍反转、面部层、呼吸层、身体层、节奏层、表面控制与真实泄露。
 - Visual impact and reversal must change audience knowledge, character knowledge, conflict state, spatial scale, or consequence. Do not add spectacle without story change.
 - Every Seedance-oriented prompt uses a two-level visual lock: `【基础风格】` first locks camera/lens style, focal/depth feel, lighting motivation, contrast, palette/LUT, atmosphere, and material reaction; `【运镜与时间轴】` then integrates frame structure, composition, focus path, camera movement, action timing, and ending state per time beat.
-- Every Seedance multimodal reference must have an explicit purpose: image identity/costume/scene/prop/color/first-frame/final-frame, video camera/action/rhythm/VFX/sound, or audio BGM/beat/ambience/SFX/voice. By default, user-facing prompts state only what the reference controls. State what a reference does not control only when ambiguity, multi-reference conflict, protected identity/brand/voice, audio leakage, or generation drift risk would hurt the result.
+- `【基础风格】` is required in every independent segment. Keep the same project-level camera/lens, color, texture, and realism/genre baseline across segments, then add only the scene-specific change in light, weather, location, or emotional contrast. Never write only "同上".
+- Merge reference usage, character identity, scene identity, props, and voice/audio anchors into one visible section: `【角色/场景/素材锁定】`. Do not output separate `【参考素材使用】`, `【场景锁定】`, and `【角色锁定】` by default unless the user explicitly requests a separated asset sheet.
+- Every Seedance multimodal reference must have an explicit purpose inside `【角色/场景/素材锁定】`: image identity/costume/scene/prop/color/first-frame/final-frame, video camera/action/rhythm/VFX/sound, or audio BGM/beat/ambience/SFX/voice. Give each locked asset a short reusable name such as `主角A`, `稻田场景`, `收割机道具`, `旁白声线A`, or `动作参考A`. In `【运镜与时间轴】`, refer to these locked names instead of repeatedly writing `@图片1/@视频1/@音频1`, unless a new reference first appears in that time beat. By default, user-facing prompts state only what the reference controls. State what a reference does not control only when ambiguity, multi-reference conflict, protected identity/brand/voice, audio leakage, or generation drift risk would hurt the result.
 - For Seedance reference audio, distinguish final soundtrack from silent control track. If audio is only used to drive motion rhythm, impact timing, camera accents, or cuts, say it controls those timing dimensions only and must not be output as final BGM/dialogue/SFX.
 - If reference-audio purpose is ambiguous, full music defaults to `final BGM + beat grid`; drum hits, wind whooshes, short SFX, or beat tracks default to `silent beat guide / SFX guide`. If the user says no BGM, treat the audio as silent beat guide and never output it as final music.
-- `【声音设计】` must not contradict `【音频/声线锁定】`: if reference audio is not output, do not later describe that same reference audio as background music.
+- `【声音设计】` must not contradict the audio/voice lock inside `【角色/场景/素材锁定】`: if reference audio is not output, do not later describe that same reference audio as background music.
 - If a reference audio or video voice is used for dubbing, lock voice tone separately from face/body/dialogue and repeat the voice lock in each independent segment where that character or narrator speaks.
 - Dialogue, narration, internal OS, and off-screen voice are timeline events, not standalone lists. By default, do not output separate `【台词】` or `【台词/旁白】` sections. Put every spoken line inside `【运镜与时间轴】` with time range, speaker, exact line, diegetic/off-screen/narration/internal OS source, lip-sync or no-lip-sync, and what the image shows during the line.
 - Painter, illustrator, art movement, or style references must be translated into visible line, color, composition, texture, light, mood, and use case inside `【基础风格】`; do not rely on artist names alone.
@@ -74,7 +76,7 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - When motion matters, body action is decomposed into visible body-part mechanics: head/eyes, shoulders, elbows, wrists/hands, torso, waist/hips, knees, feet, weight shift, contact point, recoil, and recovery pose.
 - Sound is functional: it confirms action, leads a transition, marks scale, or creates silence.
 - Do not rely on director names or camera names alone; translate them into visible mechanics.
-- For reference images, state exactly what is borrowed and what is not borrowed. Keep identity anchors separate from armor, markings, costume, or pose references.
+- For reference images, state exactly what is borrowed inside `【角色/场景/素材锁定】`; state exclusions only when risk requires it. Keep identity anchors separate from armor, markings, costume, or pose references.
 - For reference images, first deeply inspect image content and compare it with the story. If the image conflicts with the plot, character, location, period, props, or action, ask the user to choose: preserve the image and modify the story to match it, or preserve the story and regenerate/replace the image by providing an image-generation prompt. Do not silently merge major conflicts.
 - For storyboard boards, rough panels, sequence frames, or video keyframes, separate their function from scene-detail references. A board may control shot order, left/right axis, screen direction, entry/exit, body placement, foreground/midground/background, camera rhythm, and movement arrows; it must not override location materials, props, lighting, wardrobe, or set dressing when scene photos or text locks provide those details.
 - When one action crosses cuts, preserve continuous motion. If walking, hand-holding, pulling, fighting, or falling continues across cuts, state that the step, grip, body momentum, and action vector do not freeze, reset, or restart at the cut.
@@ -225,7 +227,7 @@ Every segment prompt must include these layers internally, then output them as C
 ```text
 第01段 / duration / scene function
 【基础风格】
-【角色与场景锁定】
+【角色/场景/素材锁定】
 【运镜与时间轴】
 【声音设计】
 【画面限制】
@@ -235,18 +237,15 @@ Seedance prompt blocks should normally use these Chinese sections when the user 
 
 ```text
 【Seedance 完整提示词】
-【参考图使用规则】(if images exist)
 【基础风格】
-【场景锁定】
-【角色锁定】
-【关键主体锁定】(if needed)
+【角色/场景/素材锁定】
 【运镜与时间轴】(integrate duration rationale, frame structure/composition, focus path, camera movement, action timing, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, ending state)
 【动作调度】
 【声音设计】
 【画面清洁与限制】
 ```
 
-In Seedance complete prompts, `【基础风格】` must appear before `【运镜与时间轴】` and must include the global camera/lens and lighting look. `【画面结构与构图】`, `【焦点路径】`, and `【结尾状态】` are not separate default sections; integrate them into `【运镜与时间轴】` because they depend on timing. Only output them as standalone sections if the user explicitly asks for no timeline or no time-axis format.
+In Seedance complete prompts, `【基础风格】` must appear before `【角色/场景/素材锁定】` and `【运镜与时间轴】` in every independent segment, and must include the project-level camera/lens/color/texture baseline plus the scene-specific lighting and atmosphere adjustment. Do not write "同上" for later segments. `【画面结构与构图】`, `【焦点路径】`, and `【结尾状态】` are not separate default sections; integrate them into `【运镜与时间轴】` because they depend on timing. Only output them as standalone sections if the user explicitly asks for no timeline or no time-axis format.
 
 Use Chinese for narrative meaning and English for industry terms:
 
@@ -260,6 +259,9 @@ Avoid:
 
 - "cinematic camera" without shot size, lens feel, position, and movement
 - `【基础风格】` that only says "cinematic / realistic / high-end" without camera/lens visible qualities, lighting motivation, contrast, palette/LUT, and material reaction
+- later segments writing only "基础风格同上" instead of repeating the unified baseline plus scene-specific adjustment
+- separate `【参考素材使用】`, `【场景锁定】`, and `【角色锁定】` sections when a single `【角色/场景/素材锁定】` section would be clearer
+- repeatedly writing `@图片1` inside every timeline beat after that image has already been named as `主角A` or `场景A`
 - "warm light" without light source and material reaction
 - "crowd runs around" without flow direction and congestion
 - "character is scared" without face/body/rhythm/reaction layers
@@ -295,7 +297,7 @@ For each time beat, choose duration by function and readability: impact flashes 
 
 ### 第01段｜8-15秒｜[场景功能]
 【基础风格】
-【角色与场景锁定】
+【角色/场景/素材锁定】
 【运镜与时间轴】
 【声音设计】
 【画面限制】
@@ -334,6 +336,9 @@ Before finalizing, verify:
 
 - The director framework is chosen for story function, not name-dropping.
 - The photography style is selected from subject/atmosphere and translated into visible image qualities.
+- Every independent segment has `【基础风格】`; it repeats the project-level visual baseline and adds only scene-specific style changes, never just "同上".
+- `【角色/场景/素材锁定】` merges reference usage, character identity, scene identity, props, and voice/audio anchors; default output does not split them into separate reference/scene/character sections.
+- `【运镜与时间轴】` uses locked names such as `主角A`, `场景A`, `旁白声线A`, or `动作参考A` instead of repeatedly calling `@图片/@视频/@音频`, unless a new reference first appears in that beat.
 - `【基础风格】` contains the segment-level camera/lens style and lighting/color decision before timeline details.
 - Every storyboard beat has one core information unit, and Seedance segments pack compatible beats into the fewest readable `5-15s` prompt blocks.
 - Camera grammar and movement are explicit.
