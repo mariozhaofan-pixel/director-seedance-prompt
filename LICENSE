@@ -1,21 +1,38 @@
-MIT License
+Source-Available Restricted License
 
-Copyright (c) 2026 director-seedance-prompt contributors
+Copyright (c) 2026 MARIOZHAOFAN. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This repository is source-available, not open source under an OSI-approved
+license. Public access to the repository does not waive copyright and does not
+grant permission for unrestricted redistribution or commercial use.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+You may use the materials in this repository for personal learning, local
+research, and non-commercial evaluation. You may also submit issues and pull
+requests to this repository.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Without prior written permission from the copyright holder, you may not:
+
+1. Copy, rename, repackage, mirror, or redistribute this project, in whole or in
+   part, through another repository, website, cloud drive, community, course,
+   prompt library, template library, or similar distribution channel.
+2. Sell, rent, sublicense, or commercially exploit this project, its knowledge
+   base, prompt structures, adapters, documentation, or derived packages.
+3. Package this project as a paid product, SaaS service, API, plugin, GPT/Agent
+   product, training material, consulting deliverable, operations service, or
+   commercial workflow.
+4. Remove copyright notices, contact information, provenance, or source
+   attribution and then distribute the materials.
+5. Use the core rules, knowledge files, prompt structures, or adapters for
+   unauthorized resale, sublicensing, bulk commercial delivery, or unauthorized
+   model/dataset training.
+
+For commercial use, redistribution, sublicensing, or special permission,
+contact:
+
+MARIOZHAOFAN (WeChat)
+
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM OR IN
+CONNECTION WITH THE MATERIALS OR THEIR USE.
