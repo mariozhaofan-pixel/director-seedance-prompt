@@ -75,12 +75,11 @@ Default complete Seedance structure:
 【基础风格】
 【角色/场景/素材锁定】
 【运镜与时间轴】
-【动作调度】
 【声音设计】
 【画面清洁与限制】
 ```
 
-Do not output standalone `【台词】` or `【台词/旁白】` sections by default. Dialogue, narration, internal OS, and off-screen voice must be placed inside the matching `【运镜与时间轴】` time beat with speaker, exact line, voice source, lip-sync/no-lip-sync, and what the image shows during the line.
+Do not output standalone `【台词】`, `【台词/旁白】`, `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` sections. Dialogue, narration, martial choreography, body mechanics, weapon contact, energy collision, internal OS, and off-screen voice must be placed inside the matching `【运镜与时间轴】` time beat with exact timing and visible state.
 
 Always auto-fill `【基础风格】` for cinematic video prompts. Choose camera/lens style by subject and atmosphere, then translate equipment into visible image qualities: dynamic range, highlight behavior, shadow depth, skin tone, depth of field, lighting, color, and genre mood. Do not write equipment names as decoration.
 
@@ -107,8 +106,7 @@ Recommended output priority for Seedance complete prompts:
 ```text
 【基础风格】camera/lens + lighting/color lock
 -> 【角色/场景/素材锁定】character + scene + props + reference roles + audio/voice anchors with short locked names
--> 【运镜与时间轴】time beats integrating duration rationale, frame structure/composition, focus path, camera movement, action timing, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, and ending state
--> 【动作调度】
+-> 【运镜与时间轴】time beats integrating duration rationale, frame structure/composition, focus path, camera movement, martial choreography/body mechanics, action timing, contact/recoil/recovery, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, and ending state
 -> 【声音设计】
 -> 【画面清洁与限制】
 ```
@@ -1669,6 +1667,171 @@ Action formula:
 space relationship -> route -> force source -> contact point -> counterforce/failure point -> escalation/charge -> result shot -> aftermath consequence -> sound confirmation
 ```
 
+### Martial Action Three-Way Router
+
+When the request involves 武戏、打斗、格斗、决斗、兵器、技能、法术或招式, silently choose one primary route:
+
+1. `空手格斗 / UNARMED COMBAT`: punches, palms, elbows, knees, kicks, throws, locks, grappling, ground control, or unarmed multi-opponent action.
+2. `武器格斗 / WEAPON COMBAT`: blades, knives, staffs, spears, heavy weapons, shields, firearms in close combat, or weapon-versus-unarmed action.
+3. `能量招式 / ENERGY TECHNIQUE`: qi, magic, elements, shockwaves, barriers, weapon infusion, superpowers, transformation skills, or original finishing moves.
+
+These are silent retrieval and compilation modules. They must not create new visible top-level sections. All attack, defense, contact, recoil, recovery, charge-up, collision, and aftermath instructions are bound to exact time windows inside `【运镜与时间轴】`. Do not output a separate `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` section unless the user explicitly asks for an action-design sheet or choreography analysis.
+
+For hybrid combat, select one primary route and at most one secondary route, such as `剑术为主、能量附魔为辅`. Do not spend equal prompt budget on unarmed precision, complex weapon continuity, and dense energy VFX in one generation.
+
+Shared martial-action phase:
+
+```text
+意图与预兆 intent / telegraph
+-> 发动 initiation / wind-up
+-> 接触、格挡或落空 contact / block / miss
+-> 反作用 recoil / counterforce
+-> 恢复姿态 recovery pose
+-> 场面后果 aftermath
+```
+
+Readable density guidance:
+
+- `3-5s`: one primary technique or one attack-defense contact.
+- `5-8s`: one short exchange chain, usually attack -> defense -> one counter.
+- `8-12s`: two or three clear exchange beats with repositioning or recovery between them.
+- `12-15s`: three to five simple beats; reduce to two or three when identity, crowd, weapon complexity, or VFX is fragile.
+- Each beat has one primary contact target. Do not let both fighters perform unrelated complex combinations at the same time.
+
+Precise martial arts, weapon routines, or complex techniques should prefer an action-reference video. The video controls only assigned motion path, timing, contact rhythm, or camera dimensions; it does not overwrite character identity, costume, location, color, story, or sound. A usable action reference has a clear subject, visible key joints, continuous motion, no internal edit jump, readable contact, and motion slow enough to inspect.
+
+#### Route 1: 空手格斗 / Unarmed Combat
+
+Core principle: use explicit `attack-response`, not simultaneous flailing. For every exchange, decide who initiates, entry side, target point, defensive answer, force direction, and both recovery poses.
+
+Silent ledger:
+
+```text
+STANCE / GUARD: lead foot, rear foot, guard, distance.
+ENTRY: entry side, depth plane, travel direction.
+FORCE CHAIN: ground push -> hip rotation -> torso -> shoulder/elbow/wrist or knee/shin.
+ATTACK PATH: linear, arc, rising, descending, sweep, throw, or lock.
+DEFENSE: block, parry, slip, duck, backstep, frame, or off-balance.
+CONTACT POINT: fist, palm heel, forearm, elbow, knee, shin, shoulder, hip, or grip.
+REACTION: head, shoulder, torso, knees, and footwork respond along the force line.
+RECOVERY: limb retracts, support foot replants, guard returns, distance resets.
+```
+
+Style kernels:
+
+| Style | Executable mechanics | Stability guardrail |
+|---|---|---|
+| Boxing | probing jab, straight cross, hook arc, slip/duck, guard recovery | use short combinations; retract every hand to guard |
+| Muay Thai / kickboxing | forearm frame, clinch control, hip-driven knee, support-foot pivot, shin low kick | show support foot and post-contact recovery; no unsupported spinning |
+| Kung fu / Wing Chun-like close range | centerline deflection, short bridge contact, palm strike, low kick, angle change | state which hand redirects which attack line; avoid vague “flowing” language |
+| Karate | linear entry, rooted stance, straight strike, knife hand, front kick, clear kime pause | preserve pause and recovery; no endless speed chain |
+| Taekwondo | bouncing range, support-foot pivot, high or spinning kick, landing orientation | one aerial action at a time; name landing foot and facing direction |
+| Judo / wrestling / MMA | grip, off-balance, hip entry, leg block, throw arc, ground control | grip remains visible; state landing order and final positions |
+
+Rules:
+
+- Write attacker route first, defender solution second, counter third.
+- A landed hit requires target reaction along the force line and attacker recoil/recovery.
+- Use opponent waves or numbering for multi-person fights; only the current attacker performs a precise action.
+- Preserve full-body geography for footwork and throws. Reserve CU/ECU for one decisive contact.
+- Handheld shake cannot conceal bad choreography; use one primary camera move and a brief impact shake only.
+
+Original internal example, compiled into the existing timeline structure:
+
+```text
+0-3秒，中景 lateral tracking。拳手B从 screen-right 向左前方压进，以左刺拳试探；拳手A右脚后撤半步，右前臂向外拨开拳路，双方距离缩短到肘膝范围。
+3-7秒，A左手扣住B后颈形成单侧箍颈，髋部前送，右膝由下向上撞向B腹部护架；B双肘内收承受接触，上身后弓，鞋底在湿地面滑退半步，水花沿受力方向喷开。
+7-10秒，B用左前臂顶开锁臂退出；A只完成一次外侧低扫踢，支撑脚转动、髋部带动胫骨接触B外侧大腿，随后立即收腿恢复护架。两人停在安全距离喘息。
+```
+
+#### Route 2: 武器格斗 / Weapon Combat
+
+Lock the weapon before designing movement. A weapon has length, material, grip, edge/point direction, center of mass, inertia, recovery time, and collision behavior.
+
+Silent ledger:
+
+```text
+WEAPON ID: type, length, material, color, wear, uniqueness.
+HAND LOCK: one/two hands, dominant/off hand, grip position, visible hand change.
+EDGE / POINT: blade edge, point, staff end, spear tip, shield face, or muzzle direction.
+RANGE: close, middle, long, and safety gap.
+WEIGHT / INERTIA: acceleration arc, braking, and recovery window.
+CONTACT: weapon-to-weapon, weapon-to-armor, weapon-to-environment.
+COUNTERFORCE: rebound, sliding bind, deflection, catch, disarm risk, or shield angle.
+RECOVERY: weapon returns to guard, wrists/shoulders absorb shock, feet replant.
+INVARIANTS: no disappearance, duplication, deformation, or unexplained hand switch.
+```
+
+Weapon kernels:
+
+- Sword/blade: two-hand or one-hand grip, clear edge path, slash arc or thrust line, parry rebound, short riposte. A light trail never replaces the physical blade.
+- Knife: close-body control, weapon wrist lock, short path, empty hand assigned to control. Avoid unreadable rapid stabbing.
+- Spear/polearm: rear hand drives, front hand guides, point maintains range; do not compress it into short-stick motion.
+- Staff: separated two-hand grip, torso-driven sweep, lift, end change, and continuous hand-to-shaft connection.
+- Axe/hammer/heavy weapon: long wind-up, large inertia, heavy material result, long braking and whiff-punish window; never dagger speed.
+- Shield: angled face redirects force into shoulder and feet; shield push has a visible step and recoil.
+- Gun-fu: muzzle tracks only the current target, empty hand has one control job, shots have count and recoil, enemies are numbered.
+
+Rules:
+
+- Lock left/right hands and screen direction before parry, hand switch, or disarm. Any switch happens visibly.
+- Weight controls cadence. Light weapons can redirect quickly; heavy weapons need longer wind-up and recovery.
+- Bind collision to material feedback: metal ring/sparks, wood thud/fibers, shield bass vibration, stone scrape, water displacement.
+- Blades do not require gore. Use cut fabric, severed leaves, armor sparks, dust, breath, and held reaction.
+- Action video controls movement only; a storyboard controls shot order/axis and cannot override weapon design.
+
+Original internal example:
+
+```text
+0-3秒，中近景，机位位于双方连线外侧。剑客A由 screen-left 向 screen-right 完成一次斜向下劈；肩、肘、腕依次传力，实体刀锋路径清晰。剑客B后撤右脚并抬剑形成交叉格挡，不同时进攻。
+3-5秒，金属接触点保持在画面中央，短暂 slow motion；两把剑因碰撞向相反方向弹开，双方手腕和肩部出现反震。
+5-8秒，剑客B依照动作参考A的转腕路径完成一次短促反击；剑客A侧身避开，刀锋从胸前安全距离掠过并割断一片前景竹叶。两人重新建立距离，武器回到警戒位。
+```
+
+#### Route 3: 能量招式 / Energy Technique
+
+Energy must be grounded in visible body mechanics and world rules. It amplifies a force path; it does not replace body, contact, counterforce, or consequence.
+
+Silent ledger:
+
+```text
+TECHNIQUE INTENT: which conflict state must change.
+BODY SOURCE: feet, hips, torso, arms, breath, weapon, armor, or transformation core.
+ENERGY SOURCE: body, environment, prop, element, machine core, or external formation.
+CHARGE-UP: stance, gesture, breath, light, sound, and environmental response.
+SHAPE / PATH: sphere, blade, beam, ring, flow, field, or coating; direction and speed.
+RELEASE: when energy leaves the body or travels along body/weapon.
+COLLISION / COUNTER: hit, block, deflect, absorb, cancel, interrupt, or miss.
+MATERIAL RESPONSE: dust, water, cloth, metal, glass, plants, light, and air response.
+RESIDUAL STATE: arcs, smoke, scorch, frost, cracked barrier, dim core, fatigue, recovery pose.
+```
+
+Technique kernels:
+
+- Body reinforcement: local energy enhancement follows foot/hip/torso mechanics; it does not create weightless movement.
+- Weapon infusion: lock the physical weapon first, then place energy along edge/point; physical contact and energy consequence occur in sequence.
+- Projectile: use one primary projectile with source, path, target, collision, and residual state.
+- Barrier/field: define center, boundary, facing, stress point, deformation, crack, slide, or failure cost.
+- Element control: fire/water/wind/earth/ice/lightning affects nearby material, light, air, and sound along a stated direction.
+- Teleport/high-speed move: state start, visible disappearance mechanism or motion trace, landing point, and new facing direction; prefer short dash or occlusion when possible.
+
+Rules:
+
+- One primary VFX event per beat. Charge, release, collision, and aftermath occur sequentially.
+- Every technique has a cost or opening: charge time, exposed stance, decay, barrier crack, breathing disruption, overheating, or recovery pause.
+- For energy-infused melee, state both physical contact and the energy response after contact.
+- The opponent responds by dodge, block, deflect, absorb, interrupt, close distance, or exploit charge-up.
+- Translate named inspiration into original function, shape, color, material response, and rhythm; do not depend on protected move names or franchise identifiers.
+- Live-action priority: localized interactive light, air refraction, dust, water mist, cloth and material response; reduce UI, source-less particles, and continuous overexposure.
+
+Original internal example:
+
+```text
+0-4秒，低机位中景。主角右脚向后踏实，重心降到髋部，右手收至肋侧；白蓝电弧只沿前臂缓慢聚集，衣摆和地面灰尘向身体内侧吸拢，表现蓄力而非立即爆炸。
+4-8秒，对手从 screen-right 直线突进并挥出重拳；主角左前臂斜向格挡，使拳路偏离面部，接触处只出现一次短促白蓝闪光，双方肩部同时产生反作用。
+8-12秒，主角借格挡形成的躯干旋转完成一次右掌反击，掌根接触对手胸前护甲；电能在实体接触后才向外扩散成三层递减冲击环。对手沿原突进路线反向滑退，主角前脚制动并恢复站姿；结尾只保留护甲表面游走的残余电弧。
+```
+
 Modules:
 
 - Chase: pursuer distance changes, escape route visible.
@@ -2163,6 +2326,9 @@ Final checklist:
 - One storyboard beat has one primary information unit; one Seedance segment may pack several compatible beats.
 - Camera grammar and movement are explicit.
 - Action chain is causal and spatial.
+- Martial action selects one primary route among 空手格斗、武器格斗、能量招式, with at most one secondary route for a hybrid fight.
+- Martial attack, defense, contact, recoil, recovery, weapon continuity, charge-up, energy collision, and aftermath are bound to exact `【运镜与时间轴】` beats; no default standalone fight/action/technique section appears.
+- Unarmed combat uses attack-response and recovery; weapon combat locks hands, direction, weight, collision material, and invariants; energy techniques preserve body source, charge-up, collision/counterforce, material response, cost, and residual state.
 - CAMERA / TIME AXIS integrates duration rationale, screen-left/right, foreground/midground/background, subject/object positions, focus path, movement, marker, sound cue, cut reason, and ending state.
 - Crowd/background continuity is explicit when present: background extras and blurred crowds do not disappear between beats, wide shots, or segments unless the prompt states how they leave, disperse, are occluded, or are cropped out.
 - Timeline beat durations match shot function, information density, motion intensity, dialogue/action readability, emotional hold, sound bridge, and target-model limits.
