@@ -1,6 +1,6 @@
 ---
 name: director-seedance-prompt
-description: Film Language Operating System for compiling scripts, novels, reference images, sequence frames, storyboards, rough video ideas, existing prompts, or prompt templates into director-level cinematic storyboard prompts. Use when the user asks for 分镜, 镜头提示词, 视频提示词, Seedance提示词, 参考图/序列帧反推, 提示词优化, Seedance/可灵/Kling/Veo/Runway/Pika/Sora/Midjourney Video prompts, or wants AI to analyze story, characters, scenes, narrative beats, camera/lens style, action, sound, editing, and model adaptation like a director rather than a prompt engineer.
+description: Film Language Operating System for compiling scripts, novels, reference images, sequence frames, storyboards, rough video ideas, existing prompts, or prompt templates into director-level cinematic storyboard prompts. Use when the user asks for 分镜, 镜头提示词, 视频提示词, Seedance提示词, 武戏、打斗、空手格斗、武器格斗、能量技能/招式, 参考图/序列帧反推, 提示词优化, Seedance/可灵/Kling/Veo/Runway/Pika/Sora/Midjourney Video prompts, or wants AI to analyze story, characters, scenes, narrative beats, camera/lens style, action, sound, editing, and model adaptation like a director rather than a prompt engineer.
 ---
 
 # Cinematic Video Prompt Compiler
@@ -51,6 +51,9 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - Shot duration is chosen by shot function, information density, shot scale, motion intensity, continuity need, emotional hold, sound bridge, and Seedance limits. Do not apply fixed second buckets mechanically.
 - Every action has spatial relationship, force source, contact point or failure point, result, and sound confirmation.
 - Every action conflict is an exchange, not a one-sided display: route -> threat -> evade/block/contact -> counterforce -> escalation/charge -> decisive contact -> aftermath.
+- For martial action, silently route the request to `空手格斗`, `武器格斗`, or `能量招式`; hybrid fights choose one primary route and at most one secondary route. Use the matching three-way martial-action module in `references/FILM_LANGUAGE_OPERATING_SYSTEM.md`.
+- Martial choreography is time-bound content. Put attack, defense, contact, recoil, recovery, weapon continuity, charge-up, energy collision, and aftermath inside the matching `【运镜与时间轴】` beats. Do not output separate `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` sections unless the user explicitly requests an action-design sheet or choreography analysis.
+- Precise martial arts, weapon routines, or complex techniques should prefer an action-reference video when available. Lock it to assigned motion path, timing, contact rhythm, or camera dimensions only; do not let it overwrite identity, costume, scene, color, story, or sound.
 - Every camera instruction names shot size, lens feel, camera position, movement, and what the frame reveals.
 - Every camera movement is chosen for story function: reveal scale, transfer power, express realization, preserve action continuity, distort time, or change emotional pressure.
 - When users ask for the feeling of a famous scene, translate it into original scene grammar. Do not copy protected characters, dialogue, exact blocking, set dressing, or franchise identifiers unless the user provides authorized references and explicitly requests that workflow.
@@ -239,8 +242,7 @@ Seedance prompt blocks should normally use these Chinese sections when the user 
 【Seedance 完整提示词】
 【基础风格】
 【角色/场景/素材锁定】
-【运镜与时间轴】(integrate duration rationale, frame structure/composition, focus path, camera movement, action timing, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, ending state)
-【动作调度】
+【运镜与时间轴】(integrate duration rationale, frame structure/composition, focus path, camera movement, martial choreography/body mechanics, action timing, contact/recoil/recovery, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, ending state)
 【声音设计】
 【画面清洁与限制】
 ```
@@ -361,6 +363,9 @@ Before finalizing, verify:
 - Retake guidance, when requested, uses keep / post / edit / re-roll / rewrite and changes only one variable unless a full strategy change is justified.
 - Action has causality, contact/result, and sound confirmation.
 - Action conflict has route, contact point, counterforce, escalation/charge, decisive result, aftermath, and consequence.
+- Martial action selects the correct primary route: unarmed combat, weapon combat, or energy technique; hybrid combat has at most one secondary route.
+- Martial choreography, weapon continuity, and energy collision are integrated into exact `【运镜与时间轴】` beats, with no default separate fight/action/technique section.
+- Unarmed combat uses attack-response and recovery; weapon combat locks hands, direction, weight, material collision, and invariants; energy techniques preserve body source, charge-up, collision/counterforce, material response, cost, and residual state.
 - Body motion is decomposed into visible body parts, weight shift, contact point, recoil, and recovery when motion matters.
 - Lighting has source, direction, intensity, shadow, and material reaction.
 - Editing has a cut reason.
