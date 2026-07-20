@@ -17,7 +17,7 @@ Story -> Director -> Storyboard -> Prompt -> Video
 
 Use Story, Director, and Storyboard as silent reasoning layers unless the user explicitly requests analysis. The final artifact is still copy-ready prompt text, but the prompt must contain the director's storyboard decisions through camera, blocking, action causality, light, sound, edit reason, and ending state.
 
-Default visible output is Chinese, clear, and copy-ready. Do not expose internal library names, test cases, retrieval notes, or English template headings unless the user asks for analysis. User-facing segment titles should be Chinese, such as `### 第01段｜8-15秒｜[场景功能]`. Do not output `Segment 01`, `Shot 01`, `STYLE LOCK`, `VISUAL ANCHOR`, `CAMERA/LENS LOOK`, or `Prompt:` as visible headings. Use English only as short technical terms inside Chinese sentences when it reduces model ambiguity, such as `slow dolly in`, `rack focus`, `screen-left`, or `foreground`.
+Default visible output is Chinese, clear, and copy-ready. Do not expose internal library names, test cases, retrieval notes, or English template headings unless the user asks for analysis. User-facing segment titles should be Chinese, such as `### 第01段｜建议10-15秒｜[场景功能]`, with only the segment-level suggested duration. Do not output `Segment 01`, `Shot 01`, `STYLE LOCK`, `VISUAL ANCHOR`, `CAMERA/LENS LOOK`, or `Prompt:` as visible headings. Use English only as short technical terms inside Chinese sentences when it reduces model ambiguity, such as `slow dolly in`, `rack focus`, `screen-left`, or `foreground`.
 
 Convert user material into a reusable director system:
 
@@ -52,7 +52,7 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - Every action has spatial relationship, force source, contact point or failure point, result, and sound confirmation.
 - Every action conflict is an exchange, not a one-sided display: route -> threat -> evade/block/contact -> counterforce -> escalation/charge -> decisive contact -> aftermath.
 - For martial action, silently route the request to `空手格斗`, `武器格斗`, or `能量招式`; hybrid fights choose one primary route and at most one secondary route. Use the matching three-way martial-action module in `references/FILM_LANGUAGE_OPERATING_SYSTEM.md`.
-- Martial choreography is time-bound content. Put attack, defense, contact, recoil, recovery, weapon continuity, charge-up, energy collision, and aftermath inside the matching `【运镜与时间轴】` beats. Do not output separate `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` sections unless the user explicitly requests an action-design sheet or choreography analysis.
+- Martial choreography is CUT-bound content. Put attack, defense, contact, recoil, recovery, weapon continuity, charge-up, energy collision, and aftermath inside the matching `【运镜与时间轴】` CUTs. Do not output separate `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` sections unless the user explicitly requests an action-design sheet or choreography analysis.
 - Precise martial arts, weapon routines, or complex techniques should prefer an action-reference video when available. Lock it to assigned motion path, timing, contact rhythm, or camera dimensions only; do not let it overwrite identity, costume, scene, color, story, or sound.
 - Every camera instruction names shot size, lens feel, camera position, movement, and what the frame reveals.
 - Every camera movement is chosen for story function: reveal scale, transfer power, express realization, preserve action continuity, distort time, or change emotional pressure.
@@ -68,7 +68,7 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - If reference-audio purpose is ambiguous, full music defaults to `final BGM + beat grid`; drum hits, wind whooshes, short SFX, or beat tracks default to `silent beat guide / SFX guide`. If the user says no BGM, treat the audio as silent beat guide and never output it as final music.
 - `【声音设计】` must not contradict the audio/voice lock inside `【角色/场景/素材锁定】`: if reference audio is not output, do not later describe that same reference audio as background music.
 - If a reference audio or video voice is used for dubbing, lock voice tone separately from face/body/dialogue and repeat the voice lock in each independent segment where that character or narrator speaks.
-- Dialogue, narration, internal OS, and off-screen voice are timeline events, not standalone lists. By default, do not output separate `【台词】` or `【台词/旁白】` sections. Put every spoken line inside `【运镜与时间轴】` with time range, speaker, exact line, diegetic/off-screen/narration/internal OS source, lip-sync or no-lip-sync, and what the image shows during the line.
+- Dialogue, narration, internal OS, and off-screen voice are timeline events, not standalone lists. By default, do not output separate `【台词】` or `【台词/旁白】` sections. Put every spoken line inside the matching `【运镜与时间轴】` CUT with speaker, exact line, diegetic/off-screen/narration/internal OS source, lip-sync state, what the image shows, and purposeful reactions from every visible listener. `No lip-sync` is only a mouth lock, not the listener's whole performance.
 - Painter, illustrator, art movement, or style references must be translated into visible line, color, composition, texture, light, mood, and use case inside `【基础风格】`; do not rely on artist names alone.
 - Every lighting instruction names source, direction, intensity, shadow behavior, atmosphere, and material reaction. Never write only "warm light" or "cold light".
 - `【基础风格】` is not a mood label. It must contain the global photography and lighting decision for the segment, translated into visible image qualities.
@@ -89,6 +89,11 @@ Use `references/cinematic-rule-library-v3.md` only as the legacy master style ru
 - Prefer positive executable wording. Put negative constraints together at the end under `【画面清洁与限制】` or `Negative / avoid rules`.
 - Preserve user-specified duration, aspect ratio, language, no-subtitle/no-BGM requests, dialogue, scene facts, and reference-image roles. Do not rewrite dialogue unless asked.
 - When reviewing a generated take, use a five-verdict retake protocol: keep, fix in post, edit one layer, re-roll, or rewrite. Change only one variable per retake whenever possible: prompt clause, seed, mode, or reference. If the same flaw repeats across two takes, diagnose and rewrite rather than adding adjectives.
+- Default visible `【运镜与时间轴】` uses `CUT 1 / CUT 2 / ...` without per-CUT seconds. Keep exact timing in the silent `<=15s` plan. Show start/end seconds only when the user requests precision timecode or when audio/VFX/rig/keyframe synchronization or the target workflow requires it.
+- Treat uploaded generated/review clips as analysis evidence by default, not generation references. Accepted footage is canon; rejected footage is not. Partial acceptance ends at the user's edit point, and fix-in-post inherits the edited state. Keep production-history wording outside the copyable prompt.
+- Before using a reference, distinguish what it directly proves, merely implies, and does not show. Use one controlling reference per dimension, rebuild unsupported reverse angles in text, and prove scale with absolute anchors.
+- Every visible movable subject has a purposeful task; fixed structures and placed props stay fixed. In multi-character action, normally assign one primary actor, one responder, and one contact point per CUT. Lock prop size, owner, grip/contact points, fixed/moving parts, openings, and air gaps before movement.
+- Browse silently only when unfamiliar action, rig/camera path, mechanism/material, culture/period behavior, safety process, or named-scene grammar needs verification. Extract only executable terminology, physics, axis, path, contact, and cut-point changes; never put research URLs or notes in the video prompt.
 
 Highest-priority model rule:
 
@@ -137,7 +142,7 @@ Before writing prompts, extract:
 - Character goals, pressure, flaws, and relationship shifts.
 - Scene geography: entrances, exits, object positions, danger line, crowd route.
 - Base style decision: camera/lens style or visible camera qualities, focal/depth feel, lighting source/direction/contrast, palette/LUT, atmosphere, and material reaction.
-- Timeline beat design: shot function, duration range, information density, motion intensity, attention track, marker, transition type, sound bridge, and emotional hold/release.
+- Timeline beat design: shot function, hidden duration range, information density, motion intensity, attention track, marker, transition type, sound bridge, and emotional hold/release.
 - Frame structure: screen-left/right, center, upper/lower frame, foreground, midground, background, frame edge, occluders, focus start/end, and entrance/exit direction.
 - Reference-image consistency: what the image proves, what it only suggests, what conflicts with the story, and whether user confirmation is required.
 - World rules: realistic, mythic, sci-fi, supernatural, comedic, disaster.
@@ -194,24 +199,7 @@ Choose one or combine two, but always translate the framework into concrete shot
 
 ## Photography Style Generator
 
-Select the best style by subject and atmosphere, then write the visible result into the final prompt. Do not only write the equipment name.
-
-```text
-Bad: ARRI ALEXA 35 + Cooke S4/i
-Good: 画面具有宽动态范围、柔和高光过渡、真实肤色、自然暗部层次、专业影视剧组布光。
-```
-
-| Subject / atmosphere | Camera and lens style | Required visible wording |
-|---|---|---|
-| 真实电影感、专业剧组感 | ARRI ALEXA 35 + Cooke S4/i | 宽动态范围、柔和高光、真实肤色、厚实暗部、自然暗部层次、专业影视剧组布光 |
-| 高级韩剧、偶像悬疑、人物情绪 | ARRI ALEXA Mini LF + ARRI Signature Prime | 大画幅、干净高级、低饱和、肤色自然、浅景深、背景柔和分离 |
-| 雨夜、霓虹、都市犯罪 | Sony VENICE 2 + Zeiss Supreme Radiance | 夜景暗部干净、霓虹反射、冷暖混合光、轮廓光明显、湿地面高光 |
-| 游戏广告、BOSS战、爆装备、VFX | RED V-RAPTOR XL + Tokina Vista | 高分辨率、锐利动态、动作清晰、特效密度高、金属和能量边缘清楚 |
-| 企业科技宣传片 | ARRI Mini LF / Canon Cinema EOS | 干净、专业、可信、现代工业秩序感、柔和受控高光 |
-| 温情人物、生活方式广告 | Canon Cinema EOS + Canon Sumire | 肤色温柔、自然光、亲和真实、柔和反差、生活质感 |
-| 复古年代、胶片感 | ARRICAM 35mm Film + Cooke S4/i | 胶片颗粒、柔和高光、厚实暗部、复古色彩、轻微卤化 |
-| 史诗奇幻、大场面 | ARRI ALEXA 65 + Prime 65 | 65mm大画幅、宏大沉浸、空气感强、人物与世界尺度清楚 |
-| 好莱坞商业大片 | Panavision DXL2 + Primo 70 | 宽银幕、华丽厚重、英雄感、空间压迫、干净大制作质感 |
+Select style by subject and atmosphere, then translate it into visible dynamic range, highlight roll-off, skin tone, shadow depth, focal/depth behavior, motivated light, palette, material response, and genre texture. Equipment names alone are never sufficient. Retrieve the full camera/lens selector from `references/FILM_LANGUAGE_OPERATING_SYSTEM.md` only when the task needs a specific photography package.
 
 ## Shot Compiler
 
@@ -242,7 +230,7 @@ Seedance prompt blocks should normally use these Chinese sections when the user 
 【Seedance 完整提示词】
 【基础风格】
 【角色/场景/素材锁定】
-【运镜与时间轴】(integrate duration rationale, frame structure/composition, focus path, camera movement, martial choreography/body mechanics, action timing, contact/recoil/recovery, dialogue/narration timing with speaker and lip-sync state, marker, sound cue, cut reason, ending state)
+【运镜与时间轴】(default CUT labels without seconds; integrate hidden duration rationale, frame structure/composition, focus path, camera movement, martial choreography/body mechanics, action timing, contact/recoil/recovery, dialogue/narration with speaker, lip-sync state and listener reactions, marker, sound cue, cut reason, ending state)
 【声音设计】
 【画面清洁与限制】
 ```
@@ -281,9 +269,9 @@ Default structure:
 
 ```text
 For Seedance or any output using Chinese section headings, do not output standalone 【画面结构与构图】, 【焦点路径】, or 【结尾状态】 by default. Use:
-【运镜与时间轴】: each time beat includes shot size, camera position, movement, screen-left/right, foreground/midground/background, composition, focus path, action timing, and ending state.
-If there is dialogue, narration, internal OS, or off-screen voice, include it in the matching time beat, not as a separate line list: speaker + exact line + voice source + lip-sync/no-lip-sync + image focus during the line.
-For each time beat, choose duration by function and readability: impact flashes can be under 1s, single information/dialogue beats often need 1-2s, spatial scans and multi-person posture often need 2-3s, emotional/atmosphere holds often need 3-5s, and immersive long-take or monologue beats can need 5-8s or longer only when internal markers keep the shot alive.
+【运镜与时间轴】: each CUT includes shot size, camera position, movement, screen-left/right, foreground/midground/background, composition, focus path, action timing, and ending state.
+If there is dialogue, narration, internal OS, or off-screen voice, include it in the matching CUT, not as a separate line list: speaker + exact line + voice source + lip-sync/no-lip-sync + image focus + visible listener reactions during the line.
+Choose each CUT's duration silently by function and readability, verify the whole segment fits `<=15s`, and expose seconds only in precision-timecode mode.
 
 ## 导演分析
 - 故事核心:
@@ -297,7 +285,7 @@ For each time beat, choose duration by function and readability: impact flashes 
 
 ## 连续分镜提示词
 
-### 第01段｜8-15秒｜[场景功能]
+### 第01段｜建议10-15秒｜[场景功能]
 【基础风格】
 【角色/场景/素材锁定】
 【运镜与时间轴】
@@ -350,9 +338,9 @@ Before finalizing, verify:
 - Famous-scene feelings are translated into original cinematic grammar, not copied as protected IP.
 - Actor emotion is visible through Chinese-readable target/obstacle/tactic, face, breath, body, rhythm, and mask-vs-leak layers.
 - Visual reversal changes knowledge, power, danger, scale, or consequence.
-- `【运镜与时间轴】` integrates frame structure, focus path, camera movement, action timing, and ending state per time beat unless the user asks for no timeline.
-- Timeline beat durations match shot function, information density, motion intensity, dialogue/action readability, emotional hold, sound bridge, and Seedance limits.
-- Every dialogue, narration, internal OS, or off-screen voice line is bound to a specific `【运镜与时间轴】` beat with speaker, exact line, source, lip-sync state, and image focus.
+- `【运镜与时间轴】` integrates frame structure, focus path, camera movement, action timing, and ending state per CUT unless the user asks for no timeline.
+- Default visible timeline uses CUT labels without per-CUT seconds; hidden durations match shot function, information density, motion intensity, dialogue/action readability, emotional hold, sound bridge, and Seedance limits.
+- Every dialogue, narration, internal OS, or off-screen voice line is bound to a specific `【运镜与时间轴】` CUT with speaker, exact line, source, lip-sync state, image focus, and visible listener reactions.
 - Reference audio role is explicit: final BGM, silent beat guide, SFX guide, ambience bed, or voice anchor; if it is silent rhythm control, the prompt says not to output that audio and names the final audible layer.
 - Seedance segment packing is correct: continuous action, same speaker, and same-space story beats are grouped into `5-15s` prompt blocks; only scene/location changes, disruptive shot-scale/camera changes, primary character/speaker changes, time-state changes, or completed action units start a new independent block.
 - Segment boundary contrast is correct: adjacent independent segments do not end/start on the same character with the same shot scale and composition, and segment transitions are not forced with mask/wipe effects unless story-motivated.
@@ -364,7 +352,7 @@ Before finalizing, verify:
 - Action has causality, contact/result, and sound confirmation.
 - Action conflict has route, contact point, counterforce, escalation/charge, decisive result, aftermath, and consequence.
 - Martial action selects the correct primary route: unarmed combat, weapon combat, or energy technique; hybrid combat has at most one secondary route.
-- Martial choreography, weapon continuity, and energy collision are integrated into exact `【运镜与时间轴】` beats, with no default separate fight/action/technique section.
+- Martial choreography, weapon continuity, and energy collision are integrated into matching `【运镜与时间轴】` CUTs, with no default separate fight/action/technique section.
 - Unarmed combat uses attack-response and recovery; weapon combat locks hands, direction, weight, material collision, and invariants; energy techniques preserve body source, charge-up, collision/counterforce, material response, cost, and residual state.
 - Body motion is decomposed into visible body parts, weight shift, contact point, recoil, and recovery when motion matters.
 - Lighting has source, direction, intensity, shadow, and material reaction.
@@ -377,4 +365,4 @@ Before finalizing, verify:
 
 Do not ask clarifying questions unless missing information would materially change the result. Make reasonable cinematic assumptions and label them briefly.
 
-Keep final outputs production-oriented: director decisions, numbered shots, durations, transitions, and executable prompt blocks.
+Keep final outputs production-oriented: director decisions, CUT labels, transitions, and executable prompt blocks. Keep exact durations silent unless precision timing is required.

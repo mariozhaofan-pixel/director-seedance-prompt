@@ -7,7 +7,7 @@ scope: GPT 多文件知识库包轻量回归测试
 
 ## 文件上限测试
 
-结果：PASS。
+结果：PASS（2026-07-21）。
 
 上传 Knowledge 文件为 `01` 到 `08` 共 8 个 Markdown 文件；`00_CREATE_OR_OVERWRITE_PROMPT.md` 只用于复制 Instructions，不上传；`09_LIGHTWEIGHT_TEST_REPORT.md` 和 `10_KNOWLEDGE_INDEX.md` 只供本地维护，不上传。
 
@@ -33,7 +33,7 @@ scope: GPT 多文件知识库包轻量回归测试
 PASS 标准片段：
 
 ```text
-0-3s, wide shot maps the danger geometry: harvested rice rows fill foreground, the elderly man bends in midground screen-right, the harvester rear sits background center but its blind triangle is hidden by straw. Focus starts on fallen rice ears in his hand, racks to the rear wheel line. Reverse beep is partially masked by engine rumble.
+CUT 1，wide shot maps the danger geometry：harvested rice rows fill foreground，the elderly man bends in midground screen-right，the harvester rear sits background center but its blind triangle is hidden by straw。Focus starts on fallen rice ears in his hand，racks to the rear wheel line。Reverse beep is partially masked by engine rumble。
 ```
 
 ## 测试 2：参考图与剧情冲突
@@ -112,7 +112,7 @@ PASS 标准：
 PASS 标准片段：
 
 ```text
-2-5s, the fighter runs from screen-left foreground to midground center; right foot plants hard, left shoulder dips under the incoming swing, left hand pushes the opponent's wrist away. Contact point is wrist against forearm; cloth rustle and one sharp foot scrape confirm the dodge.
+CUT 2，the fighter runs from screen-left foreground to midground center；right foot plants hard，left shoulder dips under the incoming swing，left hand pushes the opponent's wrist away。Contact point is wrist against forearm；cloth rustle and one sharp foot scrape confirm the dodge。
 ```
 
 ## 测试 6：剧本分段打包
@@ -132,8 +132,8 @@ PASS 标准片段：
 PASS 标准：
 
 ```text
-第01段｜12-15秒｜稻田同一空间内：建立收割机、老人、盲区、倒车声和危险距离，用 4 个 internal beats 完成，不拆成 4 个独立提示词。
-第02段｜6-10秒｜动作结果与反应确认，因动作链结束而单独成段。
+第01段｜建议12-15秒｜稻田同一空间内：建立收割机、老人、盲区、倒车声和危险距离，用 4 个 CUT 完成，不拆成 4 个独立提示词。
+第02段｜建议6-10秒｜动作结果与反应确认，因动作链结束而单独成段。
 ```
 
 ## 测试 7：中文输出体验
@@ -146,7 +146,7 @@ PASS 标准：
 
 期望输出：
 
-- 标题使用 `### 第01段｜8-15秒｜[场景功能]`。
+- 标题使用 `### 第01段｜建议10-15秒｜[场景功能]`。
 - 栏目使用 `【基础风格】`、`【角色/场景/素材锁定】`、`【运镜与时间轴】`、`【声音设计】`、`【画面限制】`。
 - 不输出 `Segment 01`、`Shot 01`、`STYLE LOCK`、`VISUAL ANCHOR`、`CAMERA/LENS LOOK`、`Prompt:`。
 - 英文只保留必要短术语，例如 `slow dolly in` 或 `rack focus`，不能整段英文。
@@ -154,7 +154,7 @@ PASS 标准：
 PASS 标准：
 
 ```text
-### 第01段｜12-15秒｜稻田危险区域建立
+### 第01段｜建议12-15秒｜稻田危险区域建立
 【基础风格】
 【角色/场景/素材锁定】
 【运镜与时间轴】
@@ -220,7 +220,7 @@ PASS 标准：
 PASS 标准：
 
 ```text
-本段不重复老人进入盲区的过程，只从他已经位于 screen-right midground 的实际状态开始；本段停在驾驶员仍未察觉、收割机尾部继续逼近之前，不出现救援车或医院画面。
+CUT 1：老人已经位于 screen-right midground，弯腰拾取稻穗；驾驶员仍在驾驶室内看向后视镜，收割机尾部从 background center 缓慢逼近。CUT 2：焦点从老人手中的稻穗转到被稻秆遮住的盲区边界，结尾停在驾驶员仍未察觉、危险距离继续缩短的可见状态。
 ```
 
 ## 测试 11：模型预算过载拆段
@@ -258,7 +258,7 @@ PASS 标准：
 PASS 标准：
 
 ```text
-### 第02段｜8-12秒｜医院走廊后果
+### 第02段｜建议8-12秒｜医院走廊后果
 【基础风格】延续写实纪录片电影质感、35mm自然透视、低饱和秋季色彩和克制高动态范围；本段改为医院走廊顶部冷白 fluorescent light，瓷砖地面有硬反光，阴影更干净，气氛从田野危险转为安静压抑。
 ```
 
@@ -273,7 +273,7 @@ PASS 标准：
 期望输出：
 
 - 静默调用空手格斗路由，不显示内部知识库名称。
-- 在 `【运镜与时间轴】` 中按秒写攻击、格挡、膝击接触、低扫、反作用和恢复姿态。
+- 在 `【运镜与时间轴】` 中按 CUT 写攻击、格挡、膝击接触、低扫、反作用和恢复姿态，默认不标单 CUT 秒数。
 - 不输出单独 `【打斗提示词】`、`【招式说明】` 或 `【动作调度】`。
 - 保持双方 screen-left/right、前后脚、护架和接触方向连续。
 - 不扩写额外连招；声音落在可见接触帧。
@@ -281,7 +281,7 @@ PASS 标准：
 PASS 标准片段：
 
 ```text
-【运镜与时间轴】3-7秒，拳手A左手扣住拳手B后颈形成单侧箍颈，髋部前送，右膝由下向上撞向B腹部护架；B双肘内收承受接触，上身后弓，鞋底在湿地面滑退半步，水花沿受力方向喷开。
+【运镜与时间轴】CUT 2，拳手A左手扣住拳手B后颈形成单侧箍颈，髋部前送，右膝由下向上撞向B腹部护架；B双肘内收承受接触，上身后弓，鞋底在湿地面滑退半步，水花沿受力方向喷开。
 ```
 
 ## 测试 14：武器格斗路由与动作参考维度锁定
@@ -304,7 +304,7 @@ PASS 标准片段：
 PASS 标准片段：
 
 ```text
-【运镜与时间轴】3-5秒，金属接触点保持在画面中央，短暂 slow motion；两把剑因碰撞向相反方向弹开，双方手腕和肩部出现反震。
+【运镜与时间轴】CUT 2，金属接触点保持在画面中央，短暂 slow motion；两把剑因碰撞向相反方向弹开，双方手腕和肩部出现反震。
 ```
 
 ## 测试 15：能量招式路由与实体因果
@@ -326,8 +326,58 @@ PASS 标准片段：
 PASS 标准片段：
 
 ```text
-【运镜与时间轴】8-12秒，主角借格挡形成的躯干旋转完成一次右掌反击，掌根接触对手胸前护甲；电能在实体接触后才向外扩散成三层递减冲击环。
+【运镜与时间轴】CUT 3，主角借格挡形成的躯干旋转完成一次右掌反击，掌根接触对手胸前护甲；电能在实体接触后才向外扩散成三层递减冲击环。
 ```
+
+## 测试 16：默认 CUT 与精确时码路由
+
+输入摘要：完整剧本，未要求逐秒；另做一次带音乐重拍点的精确卡点请求。
+
+期望输出：
+
+- 普通剧本使用 `CUT 1 / CUT 2 / ...`，不显示每个 CUT 的秒数，段落标题只给建议总时长。
+- 静默规划仍保证整段不超过 15 秒、对白能说完、动作能完成。
+- 只有卡点请求显示起止秒数或 marker。
+
+## 测试 17：双人对白的听者反应
+
+输入摘要：两人面对面对话，A说话，B在同一画面听。
+
+期望输出：
+
+- A 的准确台词、声音来源和 lip-sync 写在对应 CUT。
+- B 不说话但仍有视线/面部变化，加手、呼吸、肩线、重心、脚步或道具反应之一。
+- 不用“嘴不动”代替 B 的完整表演；不让 A、B 默认同时开口。
+
+## 测试 18：参考证据与新机位
+
+输入摘要：一张正面场景图，但剧情要求反向机位和不同动作方向。
+
+期望输出：
+
+- 先区分图片直接证明、仅暗示和未显示的维度。
+- 图片只控制材质、光线和已见布局；新机位用文字重建轴线、左右、前中后景和镜头高度。
+- 不从图片凭空推断背面布局；尺度使用绝对锚点。
+
+## 测试 19：部分验收与提示词历史隔离
+
+输入摘要：用户只接受一条视频到中间剪辑点，尾部作废，并说明字幕后期移除。
+
+期望输出：
+
+- 下一段从剪辑点的可见状态、动作相位、镜头相位和声音相位继续。
+- 继承“字幕已移除”的修后状态。
+- 可复制提示词不出现“上一段已发生”“不要重演”“下一段再发生”等制作历史。
+
+## 测试 20：提示词-视频配对复盘
+
+输入摘要：同一动作规则有两组提示词和生成视频。
+
+期望输出：
+
+- 按身份、构图、动作路线、接触、运镜、光线、声音、结尾标记遵循/误读/遗漏/过度执行/漂移。
+- 两次重复成功才升为 A 级稳定规则；单次成功只作为 B 级候选；项目专名和偶然风格为 C 级，不泛化。
+- 审片视频默认不自动成为下一次生成的 @视频参考。
 
 ## 发现与修补
 
@@ -350,6 +400,11 @@ PASS 标准片段：
 - 新增武戏三路由：空手格斗、武器格斗、能量招式按需求静默调用，混合战斗只保一个主路由和最多一个次路由。
 - 武戏动作强制进入 `【运镜与时间轴】`：攻击、防御、接触、反作用、恢复姿态、武器连续性、蓄势和能量碰撞不再默认拆成独立栏目。
 - 新增武戏动作密度、动作参考视频质量、兵器重量/握法/不变量、能量招式实体因果和单 beat 主特效限制。
+- 默认时间轴改为 CUT，不显示单 CUT 秒数；精确时码仅由用户或同步工作流触发。
+- 新增双向对白表演，避免听者因“嘴不动”变成站桩。
+- 新增素材证据分层、新机位重建、绝对尺度锚点和有限联网核实路由。
+- 新增可见主体任务图、道具/容器拓扑、拿取链和 VFX 物理状态链。
+- 新增部分验收、后期修后正史、提示词历史隔离和提示词-视频配对证据分级。
 
 ## 本地验证结果
 
@@ -358,5 +413,10 @@ PASS 标准片段：
 - Knowledge 上传文件数量：`01` 到 `08` 共 8 个；`00` 只作为创建/覆盖提示词，不上传；`09/10` 本地维护不上传。
 - 关键规则检索：`AUDIO RHYTHM LOCK`、`VOICE LOCK`、`screen-left`、`foreground`、`hard cut`、`one continuous shot`、`基础风格`、`图文一致性`、`Hitchcock`、`bullet-time`、`180 degree`、`eyeline` 均可检索。
 - 分段打包规则检索：`生成段落`、`5-15秒`、`12-15秒`、`不要默认一镜一段`、`同空间`、`同主要人物`、`同一连续动作`、`动作链结束` 均可检索。
+- 新规则检索：`CUT 1`、`精确时码模式`、`听者反应`、`直接证明`、`部分验收`、`道具拓扑`、`提示词-视频配对学习` 均可检索。
 - 文本质量检查：未命中待办标记、乱码替换符或旧编码残留。
-- Codex Skill 校验：在 Skill Creator 环境中运行 `quick_validate.py <skill-directory>`，预期返回 `Skill is valid!`。
+- Codex Skill 校验：源仓库和已安装副本分别返回 `Skill is valid!`。
+- 冲突检索：三类旧的“默认逐秒输出”指令在活动运行文件中均为 0 命中；保留的秒数只位于明确标注的静默容量表或精确时码示例。
+- 结构检查：8 个 Knowledge、UTF-8、代码围栏、待办标记和 `git diff --check` 均通过；未跟踪的 `docs/` 计划稿未纳入运行文件或 GPT 包。
+- 轻量回归：普通对白默认 CUT、武器动作与道具连续性、参考证据/新机位冲突、音频卡点精确时码 4 项均通过。
+- GPT 包检查：配置与源文件哈希一致，`01-08` 共 8 个知识文件全部一致，未包含 `09/10` 维护文件。

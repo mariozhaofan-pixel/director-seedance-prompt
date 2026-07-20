@@ -53,7 +53,7 @@ visual reversal: the harmless rice stalks in foreground become the object that h
 
 | 技法 | 用途 | 写法 |
 | --- | --- | --- |
-| rhythmic montage | 训练、准备、调查、事故前奏 | `short montage of hands, tools, warning sign, machine vibration, each shot 0.5-1s` |
+| rhythmic montage | 训练、准备、调查、事故前奏 | `short rhythmic CUTs of hands, tools, warning sign and machine vibration; each CUT carries one readable clue` |
 | intellectual montage | 概念对照 | `cut from locked gate to clenched hand to silent machine panel` |
 | emotional montage | 情绪累积 | `faces, objects and empty spaces repeat with rising sound` |
 | time compression | 压缩漫长过程 | `morning light shifts to noon through three match cuts` |
