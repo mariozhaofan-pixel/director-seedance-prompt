@@ -59,6 +59,8 @@ screen-left metal pipe stays fixed in foreground, midground tractor handlebar mo
 1. **世界拓扑 World topology**：不随镜头改变的墙、门、窗、道路、工位排数、座位、桌椅朝向、人物站位、入口/出口、危险线和行动轴。
 2. **画面投影 Frame projection**：由当前摄影机位置和看向方向决定的 screen-left/right、foreground/midground/background、人物正面/斜正面/背面、遮挡和可见范围。
 
+静态末尾帧进入下一独立段时，只能向世界拓扑层提供角色站位与相互距离，不能向画面投影层提供任何参数。下一段 `CUT 1` 必须 `hard cut/direct cut` 到新摄影机起点、看向、焦段和景别；角色身份从原角色参考/文字恢复，场景从原场景文字、已验收场景设定或原始场景图恢复，再由新机位重新计算人物角度、遮挡、前中后景与 screen-left/right。
+
 `background` 永远相对摄影机定义，不相对人物定义。人物面对某扇门，只说明门位于人物身体前方；门能否成为画面背景，取决于摄影机是否位于人物身后并朝门拍。摄影机改到门一侧反拍人物正面时，门通常位于摄影机后方或画外，人物的画面背景应变为其身体后方的工位、墙面或其他真实空间。
 
 每个复杂场景先建立静默空间账本：

@@ -181,7 +181,7 @@ Default user-facing behavior: place reference usage, character identity, scene i
 
 ```text
 REFERENCE DIMENSION LOCK:
-@ImageN controls [identity/costume/scene/prop/color/first frame/final frame] only.
+@ImageN controls [identity/costume/scene/prop/color/first frame/position-only final frame] only.
 @VideoN controls [camera path/action choreography/edit rhythm/VFX transition/sound] only.
 @AudioN controls [BGM/silent beat guide/motion rhythm/impact timing/cut markers/camera-speed feel/ambience/SFX/voice tone/narrator voice/character voice] only.
 Silent rule: all unassigned dimensions remain controlled by the user's script and current segment locks.
@@ -1122,7 +1122,7 @@ Use this engine for continuation, extend, next part, repair-tail, multi-segment 
 Core rules:
 
 - Plan globally in the production ledger, compile locally: understand the full story and final outcome, but put only current-segment generation facts in the model prompt.
-- Accepted footage is canon. If the user accepts a generated clip or final frame, its visible state overrides the written plan.
+- Accepted results are canon for story state, but their control dimensions differ. A full accepted clip can inform completed action, character state, motion phase, and audio phase. A still final frame is position-only: it supplies character world positions and mutual spacing, not the next shot's image.
 - Rejected footage is not canon and cannot become the parent of the next prompt.
 - A clip may be accepted only up to an edit point. The discarded tail is not canon; inherit the visible, motion, camera, and audio state at the accepted edit point.
 - If the user chooses fix-in-post, inherit the expected edited state, not the raw flaw.
@@ -1149,15 +1149,16 @@ unresolved uncertainty
 
 Compiler behavior:
 
-- A previous clip or final frame carries visible state. Text carries the delta: current action, endpoint, missing open-motion/camera/audio phase, and high-risk locks.
-- Do not re-describe everything in an attached source. If the prose conflicts with the image/video, the model treats it as drift.
-- If a still final frame is attached, infer pose, screen position, wardrobe, props, environment, light, and framing from the still; only ask about what a still cannot show: motion at cut, camera movement phase, or audio phase.
+- A full accepted clip may update the silent ledger with completed story/action state. It becomes a generation reference only for explicitly assigned action, rhythm, or sound dimensions.
+- If a still final frame is attached, extract only character world positions and mutual spacing. Do not inherit its camera, lens, shot scale, composition, screen-left/right, depth layers, focus, scene pixels, lighting, costume detail, pose, or action phase.
+- Route the remaining dimensions to canonical sources: character references/text control identity and costume; scene text, approved world topology, or the original scene image controls set geometry, materials, light, and dressing; the current script/blocking controls action, facing, and contact; the current CUT controls camera, lens, shot scale, composition, and focus.
+- `CUT 1` must explicitly `hard cut` or `direct cut` to a new camera origin/look direction, focal length, and shot scale. Recompute subject angle, foreground/midground/background, occlusion, and screen-left/right from this new view. The still final frame must not be used as a first-frame continuation.
 - Keep production history, segment relationships, completed beats, and reserved future beats in the hidden ledger or a human-facing note outside the copy block. The model-facing prompt states only the present opening state, current action, and visible OUT; it does not say “上一段已发生”, “不要重演”, or “下一段再发生”, and it does not name future dialogue/actions/scenes/characters as exclusions.
 
 Model-facing continuity phrasing should stay Chinese and present-tense:
 
 ```text
-@视频1 命名为开场状态A，控制首帧姿态、位置、动作相位、镜头相位和声音相位。开场可见状态为 [具体状态]；动作沿 screen-left -> screen-right 完成 [当前动作]；最终停在 [结尾状态]。
+@图片1 命名为尾帧位置A，只控制角色在场景世界坐标中的站位与相互距离。角色身份/服装由角色参考A控制；场景拓扑、材质、光线和陈设由[剧本文字/场景参考A]控制。CUT 1：hard cut to [新摄影机起点/看向]，[焦段与新景别]；根据尾帧位置A放置角色，按新机位重算人物角度、前中后景、screen-left/right 与焦点路径，并由本段剧本执行当前动作。
 ```
 
 ### Beat Firewall Engine
@@ -2275,7 +2276,7 @@ Run this gate silently before delivery. It is a prompt-side failure prevention p
 | duplicate identity risk | same character appears as clone, mirror self, memory self, or time double | name each instance as a separate role with separate wardrobe/time-state anchors |
 | reference-audio leakage | reference audio is only a beat guide but may be heard in output | write a clear no-output rule; use simplified beat/SFX guide, stems, or final audio replacement; keep final sound layer explicit |
 | audio-style drift | music mood pushes the scene toward dance, game-like combat, close-up emotion, or long lyrical hold against the story | re-state scene function, action route, contact points, shot purpose, and ending state; use fewer music-driven beats |
-| continuation without evidence | next-part prompt assumes the previous planned ending happened | require accepted clip, final frame, or exact visible-end description; begin from observed state |
+| continuation without evidence | next-part prompt assumes the previous planned ending happened | require accepted clip, position-only final frame, or exact visible-end description; confirm story state, then direct-cut to a newly specified shot |
 | completed-beat replay | the prompt repeats an action already shown in accepted footage | mark it already happened in the hidden ledger; the copy prompt starts from the present visible state and writes only new action |
 | reserved-future leakage | the prompt performs a later beat early | move the beat to reserved future and add a stop-before endpoint |
 | budget overload | identity, bold motion, dense scene, readable text, and dialogue are all primary | choose one primary spend, one secondary spend, then split or simplify the rest |
@@ -2469,7 +2470,7 @@ Final checklist:
 - Default visible timeline uses CUT labels without per-CUT seconds; precision timecode appears only for an explicit request or required audio/VFX/rig/keyframe synchronization.
 - Seedance segment is independent and <=15s.
 - Seedance segmentation follows packing logic: do not output one prompt per storyboard shot; pack compatible beats into 5-15s blocks, and split only at strong scene, camera-readability, character/speaker, time-state, or completed-action boundaries.
-- Continuation starts from accepted footage, an accepted final frame, or an exact visible-end description; planned endings are not treated as actual endings.
+- Continuation confirms story state from accepted footage, a position-only final frame, or an exact visible-end description; a still final frame supplies only character world positions/mutual spacing, and the next prompt direct-cuts to a newly specified shot rebuilt from canonical character/scene sources.
 - Completed and reserved-future beats remain only in the production ledger; the prompt contains current executable facts without history or future-negative lists.
 - Prompt budget has one primary spend and at most one secondary spend; overloaded identity/action/crowd/dialogue/text demands are simplified or split.
 - Retake advice, if requested, uses keep / post / edit-one-layer / re-roll / rewrite and changes one variable at a time unless the strategy itself must change.
