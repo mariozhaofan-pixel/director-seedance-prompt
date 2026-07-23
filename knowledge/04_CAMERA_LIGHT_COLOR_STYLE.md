@@ -58,25 +58,62 @@ Texture: [realistic / filmic / PBR / documentary / commercial sharpness].
 
 ## 运镜语法
 
+完整运镜指令按下式编译：
+
+```text
+[承载装置/运动类型] + [相对主体的路线和方向] + [速度与加减速轮廓] + [主体在画面中的保持方式] + [起点画面] + [终点画面] + [剧情作用]
+```
+
+只写“推进、拉远、平滑、渐进、快速”都不完整。`smooth` 描述稳定性或加减速曲线，不等于慢；`gradual` 描述变化过程，不说明方向和终点；`fast` 必须同时给目标、可读主体和制动终点。
+
 | 运镜 | 情绪 / 剧情 | 错误用法 | 稳定写法 |
 | --- | --- | --- | --- |
+| locked-off | 观察、权力僵持、证据、喜剧延迟 | 画面无内部变化 | `locked-off camera; actor task, focus or sound carries the beat` |
+| pan left/right | 横向寻找、交接信息、接住入画 | 不写起止对象 | `pan right from the empty doorway to the entering doctor, ending with both characters readable` |
+| tilt up/down | 垂直揭示、从后果回到人物 | 只写上摇/下摇 | `tilt up from the dropped report to the listener's face` |
+| pedestal / boom up-down | 保持镜头朝向的垂直位移 | 与 tilt 混淆 | `camera pedestals down from eye level to desk height while lens stays level` |
 | slow dolly in | 压力逼近、情绪收紧 | 只写“推进” | `slow dolly in toward the fixed danger point` |
 | fast dolly back | 惊吓、尺度突然变大 | 画面主体丢失 | `fast dolly back, subject stays centered while danger fills background` |
 | lateral truck | 追踪、横向路径 | 方向不清 | `camera trucks left parallel to the worker's movement` |
+| follow / lead tracking | 跟随路线、引导逃亡或进入 | 不写摄像机在前还是在后 | `lead tracking shot moves backward ahead of the runner, maintaining a readable full body` |
 | orbit | 展示关系、困局 | 过快眩晕 | `slow 120-degree orbit around both characters, axis remains readable` |
 | descending spiral orbit | 坠落、命运压迫 | 空间漂移 | `descending spiral orbit from high angle to shoulder height` |
 | crane rise | 尺度揭示 | 无信息变化 | `crane rise reveals blocked exit behind the crowd` |
+| crane descend | 压力落到人物、从地图进入困局 | 下降但无落点 | `crane descends from the office layout into the trapped employee's desk` |
 | tilt up reveal | 从物到威胁 | 只写“上摇” | `tilt up from muddy wheel track to the towering machine rear` |
 | push-in tension | 心理压迫 | 多个主体抢焦点 | `push-in tension on the driver's eyes in mirror` |
 | pull-back scale reveal | 人与巨物关系 | 拉远后信息空 | `pull back reveals elderly man inside the harvester blind triangle` |
 | handheld panic | 逃亡、混乱 | 随机晃动 | `handheld panic with readable subject center, footsteps shake frame` |
 | steadicam glide | 优雅、潜入、仪式 | 与粗粝场景冲突 | `steadicam glide through narrow corridor, no visible cut` |
 | whip pan | 快速转移注意 | 乱切无目标 | `whip pan from shouted warning to machine rear impact zone` |
+| zoom / crash zoom | 改变取景角而不改变透视位置；突发线索 | 与 dolly 混写 | `short crash zoom to the red value on the fixed report image` |
 | rack focus | 信息转移 | 焦点对象不清 | `rack focus from rice stalks in foreground to hidden figure behind them` |
 | bullet time | 超现实冲击 | 无原因炫技 | `bullet-time freeze, debris hangs in air, camera arcs around contact point` |
 | Hitchcock dolly zoom | 恐惧认知崩塌 | 滥用 | `Hitchcock dolly zoom on the driver's realization, background stretches away` |
 
-每个 time beat 只用一个主运镜；需要多个运镜时分到不同 time beat。
+每个 time beat 只用一个主运镜；只有机械耦合且共同完成同一剧情变化的复合运动可计为一个主运镜，否则分到不同 time beat。
+
+### 运镜速度与组合
+
+速度词必须落到可见运动曲线：
+
+| 速度轮廓 | 适合 | 可执行写法 |
+| --- | --- | --- |
+| subtle micro-movement | 纪实呼吸感、轻微不安 | `low-amplitude irregular handheld drift, face remains readable` |
+| very slow / slow | 倾听、压迫、发现 | `very slow dolly in at a steady pace, ending before the desk edge` |
+| moderate / walking pace | 走位、带领、空间浏览 | `lateral track at the actor's walking pace` |
+| brisk / fast | 追逐、惊吓、信息突变 | `fast pull-back with a clear stop as the exit enters frame` |
+| snap / whip | 单一注意力跳转 | `snap pan from the warning hand to the moving wheel` |
+| gradual acceleration | 威胁累积、追逐升级 | `tracking move gradually accelerates with the runner` |
+| gradual deceleration | 抵达、认知、后果 | `camera decelerates into a stable close-up and holds` |
+| ease-in / ease-out | 稳定商业、抒情、产品展示 | `smooth ease-in, constant middle speed, soft ease-out on the hero object` |
+| speed ramp | 接触前蓄势、撞击、后果 | `slow before contact, snap to real speed on impact, brief slow aftermath` |
+
+- 运镜节奏与演员主动作同向或有明确反向理由；人物匀速走，摄影机通常同节奏跟随，紧张升级才逐步加速。
+- 手持必须同时写晃动幅度、频率、身体/步伐来源和可读主体：低幅低频呼吸式漂移适合纪实与轻微不安，高频微震适合紧张，剧烈晃动只服务逃生或灾难冲击；产品细节展示和已有复杂复合运镜默认不再叠加手持。
+- POV 必须点名视角来源、视线高度和运动逻辑，例如“郭大江眼睛 POV”“低于人眼的动物 POV”“车辆前挡风玻璃 POV”“无人机镜头 POV”。除非用户要求持续沉浸式主观镜头，POV 作为短暂信息/情绪视角使用，避免长时间失去客观空间。
+- 组合运镜只保一个复合主句：`dolly zoom` 写清摄影机和变焦的相反方向及主体大小保持；`orbit + zoom` 写圆心、旋转角度、远近变化和终点；`lateral truck + counter-pan` 写轨道方向、反向摇摄和主体居中。
+- 复杂复合运镜优先调用 `@视频`，但参考视频只控制已指派的运镜路径、速度和节奏，不控制当前角色、地点、服装、剧情或声音。
 
 ## 对白场景的镜头调度
 

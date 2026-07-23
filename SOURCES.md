@@ -14,6 +14,13 @@ This project contains original operational rules synthesized from practical test
 - [qiaomu-artist-style](https://github.com/joeseesun/qiaomu-artist-style) - comparative research on artist and visual-style descriptors.
 - [seedance2-skill](https://github.com/dexhunter/seedance2-skill) - comparative research on multimodal Seedance prompting patterns.
 - [NeoDomain public showcase](https://neodomain.cn/video-works-view?id=211) - public workflow presentation used only as high-level production context.
+- [Adobe Story reference](https://helpx.adobe.com/uk/pdf/adobe_story_reference.pdf) - camera-movement terminology including pan, tilt, pedestal, trucking, crane/jib, whip pan, focus pull, and dolly zoom.
+- [Adobe Dimension camera tools](https://helpx.adobe.com/dimension/desktop/interface/tools/camera-tools.html) - mechanical distinctions among orbit, pan, dolly, tripod pivot, roll, field of view, and dolly zoom.
+- [ARRI 360 EVO](https://www.arri.com/en/camera-systems/camera-stabilizer-systems/360-evo) and ARRI cinematographer case studies - practical evidence for matching dollies, handheld, stabilized systems, cranes, and dynamic roll to scene purpose.
+- [wudi/douyin_download.py](https://gist.github.com/wudi/b08ab8dbc29930673ee2cb22a87a5f18) - open-source downloader used on 2026-07-24 to retrieve the original Douyin media for local audio-visual verification.
+- [张百川AI：Seedance @语法](https://v.douyin.com/TKzhEY38DNI/) - original media, timestamped audio transcript, and matching frames verified for assigning explicit purposes to image, video, and audio references.
+- [张百川AI：台词标点与语气](https://v.douyin.com/TxcIiO_sKOM/) - original media, timestamped speech, and on-screen examples verified for punctuation, parenthesized internal OS, literal-asterisk stress, and speech-synchronized bracketed character actions; this project's narrower operational forms remain confirmed by the project owner.
+- [张百川AI：真实感、手持与POV](https://v.douyin.com/3pr5aDOV4H8/), [高级复合运镜](https://v.douyin.com/WX-TC2rsbns/), [基础运镜](https://v.douyin.com/9lYYOjy-QmY/), [运镜速度控制](https://www.douyin.com/video/7660635843991719168), and [参考视频复刻运镜](https://www.douyin.com/video/7661622062968016128) - original media and paired audio/frame evidence used to verify movement mechanics, speed profiles, handheld/POV parameters, reference-video scope, and misuse boundaries.
 
 ## Authorized Martial-Action Research Inputs
 
