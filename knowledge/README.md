@@ -4,12 +4,12 @@
 
 | 文件 | 职责 |
 | --- | --- |
-| `01_CORE_EXECUTION_CONTRACT.md` | 核心身份、输出契约、Seedance 硬约束 |
-| `02_REFERENCE_ROUTER_AND_LOCKS.md` | 图片、视频、音频、声线和参考维度锁定 |
-| `03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md` | 画面结构、空间轴线、构图、场景功能和群像调度 |
-| `04_CAMERA_LIGHT_COLOR_STYLE.md` | 摄影机、镜头、运镜、光线、色彩和视觉风格 |
-| `05_ACTION_PERFORMANCE_BODY_MECHANICS.md` | 动作因果、肢体运动、演员表演，以及空手格斗、武器格斗、能量招式三路由 |
-| `06_TIMELINE_EDITING_SOUND.md` | 时间轴、台词绑定、剪辑、转场和声音叙事 |
+| `01_CORE_EXECUTION_CONTRACT.md` | 核心身份、输出契约、Seedance 硬约束、独立段零记忆冷启动 |
+| `02_REFERENCE_ROUTER_AND_LOCKS.md` | 图片、视频、音频、声线、文字资产及逐段参考维度锁定 |
+| `03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md` | 世界拓扑、摄影机投影、空间轴线继承、构图、场景功能和群像调度 |
+| `04_CAMERA_LIGHT_COLOR_STYLE.md` | 摄影机、镜头、运镜、对白镜头调度、光线、色彩和视觉风格 |
+| `05_ACTION_PERFORMANCE_BODY_MECHANICS.md` | 动作因果、肢体运动、剧情动作调度、动作幅度、双向/多人表演，以及空手格斗、武器格斗、能量招式三路由 |
+| `06_TIMELINE_EDITING_SOUND.md` | 时间轴、剧情密度时长、段内台词跨 CUT、段内因果接力、跨段完整重锚、空间拓扑/轴线继承、对白-动作-镜头协同、剪辑、转场和声音叙事 |
 | `07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md` | 类型片语法、名场面感觉和视觉反转机制 |
 | `08_MODEL_QC_REPAIR.md` | 目标视频模型适配、稳定性检查和故障修复 |
 

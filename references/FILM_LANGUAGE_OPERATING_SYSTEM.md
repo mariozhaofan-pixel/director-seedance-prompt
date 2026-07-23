@@ -10,7 +10,7 @@ Visible output contract:
 
 - Default final output is Chinese, clear, and copy-ready.
 - Do not expose internal library names, test cases, retrieval notes, or English template headings unless the user asks for analysis.
-- User-facing segment titles should be Chinese, such as `### 第01段｜建议10-15秒｜[场景功能]`; keep only a suggested total duration in the title.
+- User-facing segment titles should show the packed duration, such as `### 第01段｜建议13-15秒｜[场景功能]` for a continuous packed scene. A 5-7 second title is reserved for a strong boundary or a complete beat with no compatible neighbor.
 - Do not output `Segment 01`, `Shot 01`, `STYLE LOCK`, `VISUAL ANCHOR`, `CAMERA/LENS LOOK`, or `Prompt:` as visible headings.
 - Use English only as short technical terms inside Chinese sentences when it reduces model ambiguity, such as `slow dolly in`, `rack focus`, `screen-left`, or `foreground`.
 
@@ -19,7 +19,7 @@ Non-negotiable rules:
 - One storyboard beat = one primary information unit. One Seedance model segment = a packed generation unit that may contain several compatible beats.
 - Every cut must have a reason: information change, emotional change, viewpoint change, conflict escalation, scale reveal, or action-result confirmation.
 - Shot/beat duration must be earned by story function, information density, shot scale, motion intensity, continuity need, emotional hold, sound bridge, and Seedance limits. Do not apply fixed second buckets mechanically.
-- Seedance segment duration target is `5-15s`, preferably `12-15s` when the story, space, speaker, and action are continuous.
+- Seedance timing uses two levels: estimate the shortest readable duration of each beat, then pack adjacent compatible beats into the fewest coherent `<=15s` segments. If two candidate segments total `>15s and <20s`, first compress them into one `13-15s` segment through cross-CUT dialogue, concurrent action/reaction, and removal of repeated establishing or holds. Near-15 duration comes from more continuous story content, never from stretching one action.
 - Every action must include spatial relationship, contact point or force source, failure risk, result, and sound confirmation.
 - Every action conflict must behave as an exchange: route -> threat -> evade/block/contact -> counterforce -> escalation/charge -> decisive contact -> aftermath.
 - Every lighting description must include source, direction, intensity, shadow behavior, and material reaction. Never write only "warm light" or "cold light".
@@ -57,30 +57,37 @@ Language and ambiguity rules:
 - Add English only when it prevents ambiguity in camera movement, shot grammar, body blocking, continuity, subject count, or model behavior.
 - Useful English locks include: `continuous long take`, `one continuous shot`, `ENG news camera`, `lateral tracking shot`, `lateral truck`, `slow push-in`, `slow dolly in`, `rack focus`, `slow motion`, `low-frequency rumble`, `a single three-headed hellhound`, `three heads on one shared body`.
 - Prefer positive executable wording. Express one idea once.
-- Put negative requirements at the end under `【画面清洁与限制】`; do not scatter many negative clauses through the main prompt.
+- Translate story-action constraints into positive desired states first: subject count, route, object state, frame structure, visible text state, and sound source. Describe what actors do, not absent behavior.
+- Preserve a default technical hygiene template unless the user explicitly requests the corresponding element: no BGM; no subtitles, watermark, logo, or garbled text; natural complete body and hands; no extra limbs, duplicated people, or body penetration. Add at most 1-3 evidenced task-specific limits after this baseline.
+- Final actor-language pass: all actor-performance clauses default to affirmative present action. Encode continuity by repeating subject + body part/prop + route + cadence in each relevant CUT. The fixed hygiene template is exempt; other actor negation requires an explicit user prohibition or a failure demonstrated by generated evidence.
 
 Seedance duration and independence:
 
-- One Seedance prompt segment must be `<=15s` and `<=10000 characters`; target `5-15s`, preferably near `15s` when continuity allows.
+- One Seedance prompt segment must be `<=15s` and `<=10000 characters`. Pack compatible beats before splitting; a projected two-block total greater than 15 seconds and less than 20 seconds is a compression candidate for one `13-15s` block. Do not leave an avoidable `5-7s` fragment or pad a sparse beat with prolonged action, reaction, slow motion, atmosphere, or ending hold.
 - Multi-segment output must make every segment copyable alone. Never write "延续上一段", "承接上一镜", "同上设定不变", or any dependency on hidden context.
-- Each segment must restate scene, character, subject appearance, costume, key props, style, camera movement, action, dialogue, sound, visual cleanliness, and continuity state.
+- Treat each segment as a zero-memory cold start. Each segment must restate scene, character, subject appearance, costume, screen position/facing, key props and contact state, fixed/moving object state, reference purposes, opening action phase, style, camera movement, action, dialogue, sound, visual cleanliness, and continuity state.
+- Every action clause names actor + body part/tool + exact object/destination + route/contact point + visible result. Do not open an independent segment with orphan wording such as "继续", "停止吹气", "收好东西", "沿来时路线", "门缓慢回落", or a pronoun without an in-segment referent.
+- CUT relay and cross-CUT dialogue apply only inside one independent segment. Across segment boundaries, transform the accepted previous OUT state into a fully restated opening IN state; repeat every active asset/voice/text lock in the new block.
+- Separate immutable world topology from camera-relative projection. Lock walls, doors, windows, rows, seats, entrances, character world positions/facing, routes, hazards, line of action, and camera side; then derive camera origin/look direction, subject front/back view, visible objects, depth planes, and screen-left/right for every CUT. Background belongs to the camera view, not the character's facing direction.
+- A faced object appears behind the subject only in a rear/OTS camera looking toward it. In a frontal reverse shot, that object is normally behind camera/off-screen and the subject's physical rear environment becomes the image background. Never preserve a door or workstation as "background" across all angles.
+- User-approved spatial corrections become canon. New shots may reframe or reverse while staying on the locked axis side, but cannot move fixed topology; intentional axis crossing needs a neutral-axis shot, visible crossing move, or explicit spatial re-establishment.
 - If crowds, background people, bystanders, lines, herds, or background extras appear, each segment and each WS/EWS/wide beat must restate their density, screen layer, flow direction, congestion point, and visibility. Soft blur is allowed, but background people remain visible unless their exit, dispersal, occlusion, or crop-out is explicitly described.
 - If a user explicitly demands one single Seedance video longer than 15 seconds, ask whether to compress into 15 seconds or split into multiple segments. If they ask for a finished deliverable and do not forbid splitting, split automatically.
-- Distinguish storyboard cuts from Seedance segments. Do not output one prompt block per storyboard shot by default. Pack adjacent storyboard beats into one Seedance prompt when they share the same location, same primary character or speaker, and one continuous action/dialogue chain. Split early only for scene/location change, disruptive shot-scale or camera setup change, primary character/speaker change, time-state change, or the end of a causal action unit. Inside one Seedance prompt, use one continuous shot or 3-6 internal `CUT` units with simple, motivated cut markers.
+- Distinguish storyboard cuts from Seedance segments. Do not output one prompt block per storyboard shot by default. Pack adjacent storyboard beats into one Seedance prompt when they share the same location, same primary character or speaker, and one continuous action/dialogue chain. Split early only for scene/location change, disruptive shot-scale or camera setup change, primary character/speaker change, time-state change, or the end of a causal action unit. Inside one Seedance prompt, write a one-continuous-shot plan as visible `CUT 1` with internal markers, or use 3-6 visible `CUT` units with simple, motivated cut markers. Never replace the visible CUT timeline with unlabeled prose.
 - Adjacent independent segments should not end and start on the same character with the same shot scale and composition. Open the next segment with a changed shot scale, camera angle, subject, action state, spatial scale, or information focus. Do not force mask/fabric-wipe/foreground-occlusion transitions between segments unless a real story object naturally crosses the lens.
 
 Default complete Seedance structure:
 
 ```text
-### 【Seedance 完整提示词】
+### 第01段｜建议[节拍打包后的具体总时长]｜[场景功能]
 【基础风格】
 【角色/场景/素材锁定】
 【运镜与时间轴】
 【声音设计】
-【画面清洁与限制】
+【画面限制】
 ```
 
-Do not output standalone `【台词】`, `【台词/旁白】`, `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` sections. Dialogue, narration, martial choreography, body mechanics, weapon contact, energy collision, internal OS, and off-screen voice must be placed inside the matching `【运镜与时间轴】` CUT with visible state. Exact timing is optional and appears only in precision-timecode mode.
+Do not output standalone `【台词】`, `【台词/旁白】`, `【打斗提示词】`, `【招式说明】`, or default `【动作调度】` sections. Dialogue, narration, internal OS, and off-screen voice may occupy one CUT or continue across consecutive `【运镜与时间轴】` CUTs with exact clauses and begin/continue/finish state; martial choreography and other visible mechanics stay in their matching CUTs. Exact timing is optional and appears only in precision-timecode mode.
 
 Always auto-fill `【基础风格】` for cinematic video prompts. Choose camera/lens style by subject and atmosphere, then translate equipment into visible image qualities: dynamic range, highlight behavior, shadow depth, skin tone, depth of field, lighting, color, and genre mood. Do not write equipment names as decoration.
 
@@ -107,9 +114,9 @@ Recommended output priority for Seedance complete prompts:
 ```text
 【基础风格】camera/lens + lighting/color lock
 -> 【角色/场景/素材锁定】character + scene + props + reference roles + audio/voice anchors with short locked names
--> 【运镜与时间轴】CUT units integrating silent duration rationale, frame structure/composition, focus path, camera movement, martial choreography/body mechanics, action timing, contact/recoil/recovery, dialogue/narration with speaker, lip-sync state and listener reaction, marker, sound cue, cut reason, and ending state
+-> 【运镜与时间轴】CUT units integrating silent duration rationale, frame structure/composition, focus path, camera movement, martial choreography/body mechanics, action timing, contact/recoil/recovery, dialogue/narration with exact source, natural lip-sync for on-screen speech, listener reaction, marker, sound cue, cut reason, and ending state
 -> 【声音设计】
--> 【画面清洁与限制】
+-> 【画面限制】
 ```
 
 Seedance anti-misread rules:
@@ -130,8 +137,8 @@ Seedance anti-misread rules:
 User-preservation rules:
 
 - Preserve user-specified duration, aspect ratio, language, "no subtitles", "no BGM", exact dialogue, fixed scene facts, and reference-image purpose.
-- If the user says "不要字幕，只要台词", do not mention subtitles; write only spoken dialogue.
-- Do not add BGM unless requested. If the user says no BGM, write: `无背景音乐，只保留现场声、动作声、环境声。`
+- If the user says "不要字幕，只要台词", keep `无字幕` once in `【画面限制】` and place the spoken dialogue inside one timeline CUT or distribute it across consecutive CUTs with uninterrupted source attribution.
+- When music is not requested, explicitly write no BGM once in `【声音设计】`, followed by the audible production-sound layers. User-requested music replaces the no-BGM clause.
 - For partial revisions, keep the original prompt's structure, narrative, style, characters, dialogue, spatial relationship, and time rhythm; change only the requested problem.
 - Treat project-local vocabulary as authoritative. Compile the user's clarified meaning literally instead of replacing it with a generic film-school meaning. Keep motion words distinct by support, force source, path, speed, and endpoint: 漂、飞、跃、跑、滑、回收、消散 are not synonyms.
 
@@ -311,10 +318,10 @@ Sound binding:
 - Sound must be bound to action. Use it to confirm contact, scale, material, speed, or silence.
 - Examples: rain impact, monster hiss, electric arc while fist clenches, gear mesh, steam jet, metal scrape from sword draw, high-speed air rip, explosion shockwave, ground impact, glass/water/table reflections vibrating.
 
-Visual cleanliness and neutral expression:
+Positive state and high-risk limits:
 
-- Keep `【画面清洁与限制】` short and targeted to the likely failures: image blur, identity drift, face drift, hairstyle/costume drift, subject count errors, prop appearing from nowhere, spatial confusion, jump cuts, action stutter, low-quality VFX, unnatural dynamic lighting.
-- Add specialized avoid rules only when relevant: mecha structure collapse, armor turning liquid, helmet appearing suddenly, wrong finger count, weapon appearing from nowhere, energy arc disappearing; multi-head count drift; exaggerated crying or fake tears.
+- State the desired result in executable positive terms first: one identified subject, fixed costume topology, one owned prop already in the correct hand, readable screen direction, continuous action path, stable material behavior, or one energy arc persisting through contact.
+- Start `【画面限制】` with the fixed hygiene line: no subtitles, watermark, logo, or garbled text; complete natural body and hands; no extra limbs, duplicated people, or body penetration. Then add at most 1-3 current high-risk failures evidenced by the task, reference conflict, or prior generation.
 - Use neutral visual wording when needed: `尸体` -> `倒地的人物`; `死亡` -> `被击倒 / 失去战斗能力`; `血腥` -> `冲击痕迹 / 战斗痕迹 / 烟尘`; `残肢` -> `破碎护甲 / 飞散碎片`; `杀死` -> `击倒`.
 
 ## 0B. Silent Decision Engines
@@ -511,6 +518,79 @@ ENTRY PATH: [subject] enters from frame-left foreground, moves diagonally toward
 OCCLUSION: [foreground object/person/smoke/door frame] briefly crosses the lens and motivates the transition.
 ```
 
+### Dramatic Blocking & Dialogue Orchestration Engine
+
+Purpose: when a script states plot and dialogue but leaves performance vague, turn intention into professional actor blocking, dialogue timing, listener behavior, and camera attention without inventing a different story. This is a silent compiler; it does not create a visible `【动作调度】` section. Its decisions belong inside one CUT or a consecutive CUT chain in `【运镜与时间轴】`.
+
+Silent blocking ledger:
+
+```text
+OBJECTIVE / OBSTACLE / TACTIC:
+RELATIONSHIP / POWER:
+AVAILABLE TASK / PROP / ROUTE:
+PRE-LINE TRIGGER:
+SPEAKER ACTION UNDER LINE:
+SEMANTIC TURN:
+REACTION OWNER / LISTENER ACTION:
+DISTANCE OR LEVEL CHANGE:
+POST-LINE STATE:
+CAMERA ATTENTION TRANSFER:
+```
+
+Under-specified screenplay rules:
+
+- Preserve explicit dialogue, order, causality, approved performance beats, prop ownership, and ending. Add only low-cost actions that externalize subtext, maintain geography, motivate a cut, or prepare the next beat.
+- Derive blocking from what the character is already trying to do. Prefer carrying, setting down, handing over, withholding, cleaning, checking, entering, crossing, sitting, rising, closing distance, protecting an exit, or continuing scene work over arbitrary pacing and gesturing.
+- Do not invent a new plot event, relationship, key prop, injury, exit, or outcome to make the image busy. Ask only when a blocking choice would change one of those facts.
+- A performance action must earn its place by doing at least one job: reveal objective/subtext, change distance or power, keep spatial continuity, transfer audience attention, create a cut point, or establish the next state.
+
+Dialogue phase rule:
+
+```text
+pre-line trigger/approach -> line entry -> playable action under the line -> listener reaction at the semantic turn -> post-line body/prop/distance/focus state
+```
+
+- A line does not have to begin on the first frame. Let a swallow, object placement, threshold crossing, glance, interrupted task, sound cue, or change of distance create the need to speak.
+- Match speech to physiology. Avoid long natural dialogue during full sprint, breath-hold, choking, maximum exertion, or a complex contact beat; move the line before the force, into a recovery breath, or after the result.
+- The camera follows meaning, not automatically the mouth. Keep the source of speech clear, then use shared framing, focus transfer, J-cut/L-cut, or reaction cut when the listener, object, or danger space owns the semantic turn.
+- A single line may continue naturally across consecutive CUTs. Split the exact wording only at a natural clause, keyword, reveal, reversal, or listener-understanding point. The first CUT marks the named speaker beginning the first clause; the next CUT marks the same uninterrupted voice continuing or finishing the remaining clause. Never restart or repeat words at the edit.
+- If the continuing speaker remains visible, preserve natural lip-sync; after cutting away, label the same speaker's off-screen voice and let the image move to the listener, object, or space through J-cut/L-cut. Dialogue, action, listener reaction, focus transfer, and reframing should overlap whenever readable instead of playing sequentially.
+- First estimate duration from the exact line at a natural performance pace. Add only the minimum pre-line trigger and post-line state needed for causality. A normal action or reaction ends once readable; only story-changing silence, hesitation, shock, or power hold earns separate duration.
+- End the line on a changed state that the next CUT can inherit. Do not let speaker and listener return to neutral marks after the sentence.
+
+Wide and multi-person blocking:
+
+- In WS/MS dialogue, define one primary speaker action, one lower-amplitude first-listener response, and at most one simpler third-person/background task. Place them across foreground, midground, and background so the viewer can scan the hierarchy.
+- Stagger reactions. Do not make every visible character stop, turn, nod, gesture, or shift weight on the same word.
+- Secondary action remains slower, smaller, lower contrast, or farther from focus than the primary action. If it competes with lip-sync, simplify it or split the CUT.
+- Background characters keep their established task and direction unless the line changes their knowledge. A crowd remains a directional group rather than dozens of independent performances.
+- If a visible listener cannot perform a readable reaction at the chosen scale, crop, occlude, move them off-screen with a motivated route, or cut to the reaction owner instead of leaving a vacant body in frame.
+
+Action amplitude gate:
+
+- In work, travel, pursuit, conflict, or fast dialogue, continue the character's purposeful task through the beat.
+- In slow emotional pressure, attentive listening, shock, authority, ritual, concealment, deadlock, comic delay, or deliberate self-control, use precise low-amplitude behavior: breath shift, grip change, gaze transfer, jaw tension, weight transfer, delayed blink, or prop handling.
+- A locked-off camera can intensify evidence, power, inevitability, or delay when focus, light, environment, sound, another character, or a small body action advances toward a release/cut condition.
+- Keep one primary attention event per CUT. Secondary bodies use simpler, lower-amplitude actions that support subtext, spatial clarity, or the next state.
+- Describe only visible events that occur. Omit inert-state labels and let unspecified body regions retain their current state.
+
+Dialogue camera grammar:
+
+| Dramatic function | Blocking and camera choice |
+|---|---|
+| power imbalance | deep two-shot, height difference, foreground pressure, dominant figure may hold while the listener leaks tension |
+| intimacy | shared tight two-shot, prop handoff or distance change, restrained lateral move or short arc |
+| avoidance / concealment | diagonal staging, negative space, mismatched eyelines, frame-within-frame, rack focus from task/prop to face |
+| threat / interrogation | route or exit blocked in depth, slow push or motivated locked-off pressure, reaction owner remains readable |
+| comedy delay | serious continuous task, held shared frame, delayed look or reaction cut after the wrong detail lands |
+| confession / reversal | speaker mask first, semantic turn transfers focus or image to listener, ending frame shows changed relationship |
+
+Prompt kernel:
+
+```text
+BLOCKING: [speaker] enters/continues [motivated task], begins the exact line after [trigger], and completes [main action] at [semantic turn]. [listener] occupies [depth layer], shifts gaze from [A] to [B], then performs [lower-amplitude hand/breath/weight/prop response]. [third person/background] continues [simple task]. The line ends on [new body/prop/distance/focus state], motivating [hold/reframe/reaction cut].
+```
+
 ### Body-Part Action Decomposition Engine
 
 Purpose: turn generic verbs into visible mechanics so the model can animate body motion instead of guessing a result.
@@ -547,7 +627,7 @@ Rules:
 - For a conflict exchange: attacker route -> defender counter-route -> evade/block/contact -> counterforce -> escalation or charge -> decisive contact -> aftermath consequence.
 - For accidents and safety scenes, keep the description neutral and procedural; the body mechanics clarify causality without graphic injury detail.
 - Give every visible movable subject a current task. The primary actor performs the story action; visible secondary subjects perform lower-intensity watching, preparing, avoiding, supporting, or reacting. Fixed architecture, placed props, and fixed machine parts remain fixed.
-- In dialogue, the speaker owns the main action chain. Every visible listener gets gaze/facial response plus one hand, prop, breath, shoulder, weight, step, or fabric response. `no lip-sync` is only a mouth lock, never the whole performance. Crop, occlude, or move out a listener that the frame cannot support.
+- In dialogue, the speaker owns the main action chain and uses natural lip-sync. Every visible listener gets gaze/facial response plus one hand, prop, breath, shoulder, weight, step, or fabric response. Narration, internal voice, and off-screen speech normally need only a clear source label; add a mouth-attribution lock only after an observed source error or genuine multi-speaker ambiguity. Crop, occlude, or move out a listener that the frame cannot support.
 - For multi-person precision action, each CUT normally has one primary actor/attacker, one responder, and one contact point. Stage others in waves or off-screen rather than making everyone execute complex motion at once.
 - Lock prop topology before motion: absolute size, owner, hand/grip points, connected parts, opening direction, fixed/moving parts, contact surfaces, and air gaps. Pickup is separation -> approach -> contact -> grip/load -> movement.
 - Compile material/VFX change as initial state -> trigger -> carrier -> path -> boundary/contact -> final state -> residue. Compile energy as body/weapon source -> charge -> physical contact/counter -> material response -> recoil -> residue.
@@ -765,6 +845,9 @@ Rules:
 - Locked-off is not boring: it means evidence, inevitability, precision, or institutional coldness.
 - Stabilized movement means the camera has intent; choose it when the viewer must follow action rather than feel panic.
 - If using orbit, spiral, zoom-out, or dolly zoom-out, state the story reason: reveal scale, trap the character, show transformation, or express realization.
+- Dialogue does not default to flat eye-level shot/reverse-shot. Choose shared two-shot, deep staging, foreground obstruction, height difference, negative space, restrained lateral reframe, reaction hold, or motivated locked-off pressure from relationship and scene function.
+- Camera motion cannot replace actor blocking. If the lens moves while every body remains neutral and no information, power, distance, or focus changes, redesign the performance before adding more camera movement.
+- A locked-off camera is valid when purposeful low-amplitude behavior, changing focus/light/environment/sound, and a release or cut condition keep the beat progressing.
 
 Prompt kernel:
 
@@ -812,10 +895,12 @@ Purpose: decide shot order, cut reason, duration, transition, and Seedance compr
 Timeline logic:
 
 ```text
-CLIP UNIT: one shot = one primary information unit.
+CUT UNIT: one CUT = one explicit change objective; multiple supporting body, focus, camera, material, sound, or environment changes may coexist when they establish, drive, confirm, or hand off that objective.
+INHERITED STATE: exact terminal action phase, screen vector, focus, material motion, and sound carried from the previous CUT.
 TRACK OF ATTENTION: what the viewer follows: face, object, route, danger, sound, or reaction.
 MARKER: key moment inside the shot: reveal, contact, realization, impact, line, silence.
 TRANSITION: hard cut, reaction cut, match cut, match on action, sound bridge, J-cut, L-cut, foreground occlusion.
+RELAY CARRIER: the already-visible wingbeat, mouth opening, limb/weapon path, gaze, focus shift, debris/material, natural occlusion, or sound cue that the next CUT receives.
 DURATION RATIONALE: why the shot lasts this long: impact, scan, dialogue, posture, atmosphere, immersion, or emotional release.
 ENDING STATE: exact visual/sound state that lets the next segment begin independently.
 ```
@@ -824,6 +909,7 @@ Visible timeline mode:
 
 - Default: `CUT 1 / CUT 2 / ...`, no per-CUT seconds. The compiler still allocates hidden duration and verifies the whole segment fits `<=15s`.
 - Precision timecode: show start/end seconds or markers only when requested, or when audio beat sync, VFX/rig triggers, keyframe alignment, first/last-frame alignment, or the delivery workflow needs exact timing.
+- One continuous shot: keep the visible `CUT 1` label, then use internal `BEAT A / B / C` markers with one explicit change objective and any causal supporting changes per BEAT, with no implied edit.
 
 Rules:
 
@@ -833,15 +919,21 @@ Rules:
 - Use match cut when a shape, gesture, color, or sound connects two ideas.
 - Use J-cut when sound from the next shot should arrive before the image, creating anticipation.
 - Use L-cut when the previous shot's sound should continue over the next image, preserving emotional or spatial continuity.
-- Use foreground occlusion when the cut should feel diegetic and model-friendly: passing person, door frame, cloth, vehicle, smoke.
+- Use foreground occlusion only when a real story object naturally crosses the lens and the next CUT continues its material, direction, speed, or revealed subject: wing, opening mouth, passing person, door frame, cloth, vehicle, smoke.
+- Every CUT inherits the previous terminal action phase, completes one explicit change objective, and exits on a concrete relay carrier. Supporting body, focus, material, sound, or environment changes may be multiple; split only when a second change becomes an equal narrative result, new action goal, or new result owner.
+- Preserve phase and vector across a cut: do not replay the approach, wind-up, step, grip, wingbeat, fall, or focus cue that the previous CUT already completed. A deliberate vector reversal needs visible contact, resistance, reaction, or a spatial reset.
+- Use the scale ladder only with a shared relay: micro cause -> body action -> spatial result -> reaction, or the reverse. The shared hand, weapon, gaze, debris, sound, or screen direction must survive the scale change.
+- Do not start every line at the first frame. Let a pre-line action, approach, swallow, prop placement, sound, or interrupted task create the speaking moment, then cut or reframe at the semantic turn or post-line state.
+- In dialogue, cut to the character, object, or space that owns the new meaning. The speaker may continue over that image through a clear J-cut/L-cut, but speaker identity and spatial relation must remain unambiguous.
 - Use practical duration buckets as defaults, not as law. Duration must follow shot function, information density, motion intensity, emotional hold, sound bridge, and model limits.
 - For Seedance, build 15 seconds as 3-6 internal beats, not as many full scenes. Use 6-8 beats only for montage, fight impacts, or rapid parallel information.
-- If a shot needs more than one action chain, split it. If the ending state cannot be named, the cut is not ready.
+- Apply a readability-duration gate: sub-second CUTs carry one insert, impact, flash, or natural occlusion only. Give approach, preparation, contact, recoil, dialogue, reaction, and scale reveal enough screen time to read.
+- If a CUT needs more than one independent visible state change, split it. If the inherited state, relay carrier, or ending state cannot be named, the cut is not ready.
 
 Prompt kernel:
 
 ```text
-EDIT LOGIC: cut because [information/emotion/viewpoint/conflict/scale/action-result] changes; transition is [type]; duration is [range] because [density/motion/emotion/sound]; ending state is [exact image + sound state].
+EDIT LOGIC: enter from [inherited state/action phase]; complete one explicit change objective [state A -> state B] with [causal supporting body/focus/material/sound changes]; cut because [information/emotion/viewpoint/conflict/scale/action-result] changes; relay through [moving carrier/focus/material/sound]; ending state is [exact image + sound state received by next CUT].
 ```
 
 ### Shot Duration & Timeline Beat Engine
@@ -882,6 +974,7 @@ Rules:
 - Use eyeline match when a look motivates the next shot: face looks -> object/hazard appears -> reaction returns.
 - Use reaction cuts when meaning depends on understanding, guilt, fear, shock, or relief.
 - Dialogue, voiceover, and internal OS require enough time for the line. If the line is too long, split the beat or extend the shot; never cram unreadable speech into a short impact cut.
+- Assign each beat the shortest readable hold, then keep packing compatible beats into the same `<=15s` generation segment. If two adjacent candidates total greater than 15 seconds and less than 20 seconds, overlap action/reaction with speech and remove redundancy to target 13-15 seconds; split only at a strong boundary or if the compressed chain remains over 15 seconds.
 - A 15s Seedance segment normally contains 3-6 beats. Use 6-8 beats only for montage, fight impacts, or parallel danger. Use 2-3 beats for an immersive long take with strong internal markers.
 - Default `【运镜与时间轴】` writes: `CUT N | [shot function] | [shot scale/camera] | [frame/focus/action] | [dialogue + speaker/lip-sync/listener reaction if any] | [sound marker] | [cut reason/ending state]`. Precision mode may prefix the CUT with a start-end timecode.
 
@@ -954,19 +1047,20 @@ Run these engines in this exact order before the prompt:
 9. Plot Reversal & Visual Impact v3: decide whether the scene needs danger-line reveal, object value flip, false victory, delayed consequence, scale inversion, power swap, or moral reversal.
 10. Famous Scene Feeling Compiler v3: if the user asks for a film/anime/scene feeling, translate it into original scene grammar without copying protected details.
 11. Actor Emotion & Physical Performance v3: define 目标、阻碍、策略、表面控制、真实泄露、节拍反转、面部、呼吸、身体、手、视线、重心变化和反应归属。
-12. Cinematography Decision: refine shot scale, camera height, distance, focal feel, movement, and reveal behavior.
-13. Camera Movement Semantics v3: choose movement because it reveals scale, transfers power, discovers danger, clarifies route, preserves action continuity, distorts time, or expresses realization.
-14. Montage & Time-Distortion: if the beat needs montage, memory, flashback, speed ramp, or time-slice, define connective tissue and final story state.
-15. Genre Scene Grammar Pack: if the user gives a broad feeling, choose horror threshold, crime power, action route, disaster scale, sci-fi perception, romance memory, animation impact, or absurd comedy grammar.
-16. Lighting Motivation: refine source, direction, contrast, shadow, and material reaction when the beat needs local lighting detail.
-17. Editorial Rhythm: why the shot order and cut type serve information, emotion, viewpoint, conflict, scale, or action-result.
-18. Shot Duration & Timeline Beat: choose beat durations by function, density, motion, emotion, sound, and Seedance compression.
-19. Sound Dramaturgy + Voice Lock: what sound leads, confirms, narrows, bridges, stops, or preserves character/narrator voice identity.
-20. Sequence State & Beat Firewall: for continuation or long projects, record actual accepted opening state, completed beats, current segment job, reserved future beats, and endpoint.
-21. Prompt Budget Allocation: choose identity fidelity, motion boldness, or scene density as the primary spend; downgrade or split the rest.
-22. Retake / Take Review Protocol: when reviewing a generated take, choose keep, fix in post, edit one layer, re-roll, or rewrite; change only one variable per retake when possible.
-23. Model Compiler: compress into Seedance or target-model prompt constraints.
-24. Seedance Stability Gate v2: catch drift risks before delivery.
+12. Dramatic Blocking & Dialogue Orchestration: when action is under-specified, preserve story facts while assigning objective-driven speaker action, semantic listener response, multi-person depth hierarchy, action-amplitude choices, and post-line state.
+13. Cinematography Decision: refine shot scale, camera height, distance, focal feel, movement, and reveal behavior.
+14. Camera Movement Semantics v3: choose movement because it reveals scale, transfers power, discovers danger, clarifies route, preserves action continuity, distorts time, or expresses realization.
+15. Montage & Time-Distortion: if the beat needs montage, memory, flashback, speed ramp, or time-slice, define connective tissue and final story state.
+16. Genre Scene Grammar Pack: if the user gives a broad feeling, choose horror threshold, crime power, action route, disaster scale, sci-fi perception, romance memory, animation impact, or absurd comedy grammar.
+17. Lighting Motivation: refine source, direction, contrast, shadow, and material reaction when the beat needs local lighting detail.
+18. Editorial Rhythm: why the shot order and cut type serve information, emotion, viewpoint, conflict, scale, or action-result.
+19. Shot Duration & Timeline Beat: choose beat durations by function, density, motion, emotion, sound, and Seedance compression.
+20. Sound Dramaturgy + Voice Lock: what sound leads, confirms, narrows, bridges, stops, or preserves character/narrator voice identity.
+21. Sequence State & Beat Firewall: for continuation or long projects, record actual accepted opening state, completed beats, current segment job, reserved future beats, and endpoint.
+22. Prompt Budget Allocation: choose identity fidelity, motion boldness, or scene density as the primary spend; downgrade or split the rest.
+23. Retake / Take Review Protocol: when reviewing a generated take, choose keep, fix in post, edit one layer, re-roll, or rewrite; change only one variable per retake when possible.
+24. Model Compiler: compress into Seedance or target-model prompt constraints.
+25. Seedance Stability Gate v2: catch drift risks before delivery.
 ```
 
 Minimal hidden ledger:
@@ -987,6 +1081,7 @@ ACTION EXCHANGE / ESCALATION:
 VISUAL REVERSAL / IMPACT:
 FAMOUS-SCENE FEELING TRANSLATION:
 PERFORMANCE INTENT / PUBLIC MASK / PRIVATE LEAK:
+DRAMATIC BLOCKING / DIALOGUE PHASE / REACTION OWNER / ACTION AMPLITUDE GATE:
 CAMERA DECISION:
 CAMERA MOVEMENT SEMANTICS:
 MONTAGE / TIME DISTORTION:
@@ -1166,9 +1261,9 @@ Universal prompt skeleton:
 【基础风格】: project-level camera/lens look, focal/depth behavior, color/texture/genre baseline, plus scene-specific lighting source/direction/contrast, atmosphere, and material response. Required in every independent segment; never write only "同上".
 【角色/场景/素材锁定】: character identity, scene identity, props, color card, voice/audio anchors, and every @image/@video/@audio role. Assign short locked names; state exclusions only when ambiguity, conflict, protected identity/brand/voice, audio leakage, or drift risk makes them necessary.
 【运镜与时间轴】: default to CUT labels without per-CUT seconds; each CUT includes shot type, camera position, shot size, movement, frame structure, composition, focus path, action/dialogue, listener response, marker, sound cue, cut reason, and ending state. Duration rationale stays silent unless precision timecode is required. Use locked names instead of repeatedly calling @references.
-【声音设计】: environment/action/dialogue only; no background music unless requested.
-【画面限制】: concise model failure prevention rules.
-NEGATIVE RULES: identity drift, beauty filter, extra text, random motion, unsupported style.
+【声音设计】: default no BGM; environment/action/dialogue plus any explicitly requested music, which replaces the no-BGM clause.
+【画面限制】: fixed hygiene line first: no subtitles/watermark/logo/garbled text; complete natural body and hands; no extra limbs/duplicated people/body penetration.
+TASK-SPECIFIC LIMITS (only if needed): [0-3 evidenced risks that cannot be expressed as a positive subject count, route, object state, frame structure, or sound-source instruction].
 ```
 
 Template selector:
@@ -1189,7 +1284,7 @@ Template selector:
 | Lateral Market Tracking Crowd | city/crowd/culture | lanes, stalls, foreground occlusion, crowd direction |
 | Low-Angle Dialogue Reveal | power dialogue, hidden figure | low angle reveals relation and background clue |
 | Top-Down Tabletop Dialogue | map, ritual, conspiracy | table geometry and hand placement carry information |
-| Deadpan Reaction Shot | dry comedy, robot/symbol acting | face remains still; small symbol or object carries reaction |
+| Deadpan Reaction Shot | dry comedy, robot/symbol acting | delayed blink or tiny gaze shift; a small symbol or object carries the dominant reaction |
 | Three-Beat Escalation Sequence | narrative upgrade | setup -> information device -> emotional decision |
 | Sand-Burst Monster Chase | buried creature pursuit | sand surface -> burst -> chase vector -> ending threat |
 | Mechanical Arm Body-Scan Fall | scan, restraint, medical/mechanical danger | scanning action, body contact, falling result |
@@ -1303,7 +1398,7 @@ Beat-to-segment rules:
 
 - First create fine storyboard beats for information order, camera logic, action causality, and sound cues.
 - Then pack beats into Seedance generation segments. The segment is the output prompt block; the beat is only an internal time-axis unit.
-- Default packing target: `5-15s`, preferably `12-15s` when readable.
+- Default packing algorithm: beat timing -> compatibility check -> pack into `<=15s` -> if two candidates total `>15s and <20s`, compress them into `13-15s` -> split only at a strong boundary or unresolved overflow. Avoid standalone `5-7s` fragments when a compatible neighbor exists.
 - Pack together: continuous action, same speaker, same primary character, same location, same time state, same emotional direction, or sound-bridged continuity.
 - Split early only when the scene/location changes, shot scale or camera setup changes enough to confuse the model, primary character/speaker changes, physical geography must be re-established, time state changes, or a causal action unit ends.
 - Do not split only because a new micro fact appears, a reaction happens, or the storyboard would traditionally cut to a close-up. Keep those as internal time beats if they remain in the same continuous scene.
@@ -1313,13 +1408,13 @@ Beat-to-segment rules:
 
 Default segment lengths:
 
-| Segment type | Use for | Default length |
+| Segment type | Use for | Packed range |
 |---|---|---:|
-| Packed scene unit | same location + same speaker/character + continuous story | 8-15s |
-| Action unit | one causal physical chain | 6-15s |
-| Dialogue / monologue unit | one person or exchange in same space | 6-15s |
-| Establishing + pressure | location, scale, danger geometry, first pressure | 5-12s |
-| Reveal + reaction | object/truth/world plus immediate human response | 5-12s |
+| Packed scene unit | same location + same speaker/character + continuous story | 5-15s |
+| Action unit | one causal physical chain | 5-15s |
+| Dialogue / monologue unit | one person or exchange in same space; line may span CUTs | 5-15s |
+| Establishing + pressure | location, scale, danger geometry, first pressure | 5-10s |
+| Reveal + reaction | object/truth/world plus immediate human response | 5-10s |
 | Montage | compressed multi-info sequence | 5-15s total, with internal 0.5-2s beats |
 | Transition bridge | sound/image bridge to next scene | 5s only if it must stand alone; otherwise attach to previous or next segment |
 
@@ -2040,7 +2135,7 @@ Rules:
 
 - Do not write only "he is sad", "she is angry", "he is terrified". Convert emotion into visible face, breath, body, rhythm, and silence.
 - Emotion needs a trigger: a seen object, heard sound, line of dialogue, blocked exit, touch, memory clue, or spatial reveal.
-- Strong emotion can be still. A held face, delayed blink, swallowed breath, or frozen hand can carry more weight than a large gesture.
+- Strong emotion often reads through small precise behavior: delayed blink, swallowed breath, grip change, gaze transfer, changing focus, environmental motion, or sound narrowing. Bind it to a trigger and a release/cut condition.
 - Separate mask and leak: `calm face + fingers tighten around the cup`, `polite smile + shoulders stop moving`, `deadpan face + fast purposeful walk`.
 - Dialogue performance is action. State whether the character attacks, deflects, begs, controls, withholds, or tests the other person.
 - Use reaction cuts when the emotion's meaning matters more than the event itself.
@@ -2048,6 +2143,7 @@ Rules:
 - If the user asks for a "feeling", do not output a psychology essay. Compile it into 目标、阻碍、策略、表面控制、真实泄露和节拍反转.
 - Strong performance often uses contradiction: calm face + violent hand, polite smile + frozen shoulders, soft voice + controlling eyeline, fast walk + deadpan face.
 - A beat reversal must have a visible trigger: new sound, object reveal, touch, line, blocked exit, eye contact, or background movement.
+- In dialogue, attach the tactic to a playable task or distance change, then let the listener's semantic reaction alter the next state. Do not let the camera move while both actors remain neutral simply to simulate energy.
 
 Feeling-to-performance quick map:
 
@@ -2308,7 +2404,7 @@ Choose duration silently by function and readability, verify the packed segment 
 
 ## 连续分镜提示词
 
-### 第01段｜建议10-15秒｜[场景功能]
+### 第01段｜建议[节拍打包后的具体总时长，如13-15秒]｜[场景功能]
 【基础风格】
 【角色/场景/素材锁定】
 【运镜与时间轴】
@@ -2327,7 +2423,7 @@ Choose duration silently by function and readability, verify the packed segment 
 Compact prompt block:
 
 ```text
-第01段｜建议10-15秒｜[场景功能]
+第01段｜建议[节拍打包后的具体总时长，如13-15秒]｜[场景功能]
 【基础风格】
 【角色/场景/素材锁定】
 【运镜与时间轴】
@@ -2361,7 +2457,7 @@ Final checklist:
 - CAMERA / TIME AXIS integrates hidden duration rationale, screen-left/right, foreground/midground/background, subject/object positions, focus path, movement, marker, sound cue, cut reason, and ending state.
 - Crowd/background continuity is explicit when present: background extras and blurred crowds do not disappear between beats, wide shots, or segments unless the prompt states how they leave, disperse, are occluded, or are cropped out.
 - Hidden CUT durations match shot function, information density, motion intensity, dialogue/action readability, emotional hold, sound bridge, and target-model limits.
-- Dialogue CUTs include speaker/source/lip-sync plus purposeful listener reactions; `no lip-sync` never substitutes for a listener's body performance.
+- Dialogue CUTs include the speaker, exact source, natural lip-sync for on-screen speech, and purposeful listener reactions; narration, internal voice, and off-screen speech normally use source labeling without extra mouth instructions.
 - Every visible movable subject has a task; fixed structures and placed props remain fixed unless a visible cause changes them.
 - Reference evidence is separated into proven, implied, and absent dimensions; new axes and absolute scale are not invented from unsupported image evidence.
 - Prop topology, grip, fixed/moving parts, contact/air gaps, and pickup sequence are physically coherent when relevant.
