@@ -90,6 +90,7 @@ repair_scope=local：需要新证据，或改变CUT/BEAT、时间、对白分配
 | 空手/兵器/能量实际交锋 | `knowledge/05C_COMBAT_CHOREOGRAPHY.md` + `knowledge/06A_COMBAT_TIMING.md`（截拳道/咏春加05F） |
 | 复杂道具、枪战/载具/飞行/机甲/生物/团队物理、追逐或事故、视效 | `knowledge/05D_ACTION_SCENE_PHYSICS.md` |
 | 车辆主体、车拍、驾驶或汽车展示 | `knowledge/05G_VEHICLE_CINEMA.md` |
+| 承担剧情的幼童、婴儿、宠物或灵宠的表演与同框 | `knowledge/05H_CHILD_PET_PERFORMANCE.md` |
 | 动作交换接续空白或需变化；由05路由后选1–2条 | `knowledge/05A_COMBAT_EXCHANGE_VARIANTS.md` |
 | 容量、时间轴、对白、CUT接力和段落边界 | `knowledge/06_TIMELINE_EDITING_SOUND.md` |
 | 特定转场、主观状态转换、扩展声音或音频卡点 | `knowledge/06B_TRANSITIONS_SOUND.md` |

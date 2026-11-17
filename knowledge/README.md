@@ -28,6 +28,7 @@
 - [05E_EXPRESSION_CUES](05E_EXPRESSION_CUES.md)：按需表情细节、表达状态与必要参考资产交接；表演决策仍由05维护
 - [05F_MARTIAL_STYLES](05F_MARTIAL_STYLES.md)：截拳道与咏春写实近身打戏：站架、招式写法、段落模板、训练戏与风格锁；由05C按需路由
 - [05G_VEHICLE_CINEMA](05G_VEHICLE_CINEMA.md)：车辆身份锁、车身左右与驾驶侧、车辆机位方位、车拍运镜、日常驾驶物理、车漆反射、产品展示段与车辆专项修复；追逐碰撞仍由05D负责
+- [05H_CHILD_PET_PERFORMANCE](05H_CHILD_PET_PERFORMANCE.md)：萌宝萌宠表演：幼童、婴儿、宠物和灵宠的能力边界、可选表演机制、多角色同框与镜头可读性；由05按需路由
 - [06_TIMELINE_EDITING_SOUND](06_TIMELINE_EDITING_SOUND.md)：时间轴：CUT/BEAT、时长与口播容量、台词绑定、分段拼接、切镜理由、2.5 五行合同
 - [06A_COMBAT_TIMING](06A_COMBAT_TIMING.md)：打戏时码：版本化时码、动作耗时账本、慢动作原子窗
 - [06B_TRANSITIONS_SOUND](06B_TRANSITIONS_SOUND.md)：转场与声音库：具体转场、主观时空匹配、声音层、音频卡点
