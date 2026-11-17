@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "director-seedance-prompt",
-  "edition": "2026-11-18-v28",
+  "edition": "2026-11-18-v29",
   "path_base": "package-root",
   "embedded_capabilities": [
     {
@@ -54,8 +54,8 @@
     },
     {
       "path": "SKILL.md",
-      "bytes": 22569,
-      "sha256": "70cfffcfdbed2d9dabd0b44eeb3ee1788ad8818122d07792450871e8be368c38"
+      "bytes": 22631,
+      "sha256": "ad4bd488db70903d43c54d79f9ddfa07d5449ea5a007a9ec8c5c2df430e39b76"
     },
     {
       "path": "agents/openai.yaml",
@@ -69,8 +69,8 @@
     },
     {
       "path": "capabilities/asset-preproduction/ASSET_PREPRODUCTION.md",
-      "bytes": 22255,
-      "sha256": "7e955d8a990346c298398e666736284771d538b151db63620be3f66b6351ca6e"
+      "bytes": 22378,
+      "sha256": "704f23d18d1d613f9f2482bf2e9492bb627e4d934268f03c6aaedcad22cf8a84"
     },
     {
       "path": "capabilities/asset-preproduction/references/HIGGSFIELD_ASSET_ROUTING.md",
@@ -314,13 +314,13 @@
     },
     {
       "path": "knowledge/04A_LIVE_ACTION_TEXTURE.md",
-      "bytes": 2817,
-      "sha256": "aba95b8c5db632846a4084fa351d59fb27f74eb28a817a74cba15da0d09f1156"
+      "bytes": 5488,
+      "sha256": "f8f47fa64677b5347895432217ba61f6ff90326e17bc982be9d4fc84ce557386"
     },
     {
       "path": "knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md",
-      "bytes": 47447,
-      "sha256": "a4f52352eb4bd155514eddf110915220fd46de7f0cc0eb3694b966b761e1746e"
+      "bytes": 50077,
+      "sha256": "518478e25f8e98790f3d53d8c8bb05c47281c48313c3712a1e0013ef2a59c1a7"
     },
     {
       "path": "knowledge/05A_COMBAT_EXCHANGE_VARIANTS.md",
@@ -334,8 +334,8 @@
     },
     {
       "path": "knowledge/05C_COMBAT_CHOREOGRAPHY.md",
-      "bytes": 42135,
-      "sha256": "8e2efb578d9e782e76211935c02a1ce0097a5fc5558d737822b62f3ec180b1c6"
+      "bytes": 46404,
+      "sha256": "b60d4513b444169cf8048fe0e26071aeb71c07276a85f639fffe36be86c54ede"
     },
     {
       "path": "knowledge/05D_ACTION_SCENE_PHYSICS.md",
@@ -399,13 +399,13 @@
     },
     {
       "path": "knowledge/08_MODEL_QC_REPAIR.md",
-      "bytes": 92846,
-      "sha256": "8f8bdeecd5139c2f149cf38f13e13c37ad3f89623c1e037d8199fe06ae71a822"
+      "bytes": 93941,
+      "sha256": "0398c58d078e36ce9ef80215e5b903288c12b145946900cda51b8269b3ac6ee7"
     },
     {
       "path": "knowledge/README.md",
-      "bytes": 7405,
-      "sha256": "a80d9654ef5becbbf6f0965aecb78c89a5fd5d2114c6777237cf81301c09d795"
+      "bytes": 7435,
+      "sha256": "c97efd71579580d204babb1062e3ac790bffcf76913531f4b481cda66d6e8700"
     },
     {
       "path": "knowledge/styles/STYLE_ROUTER.md",
@@ -445,12 +445,12 @@
     {
       "path": "maintenance/10_KNOWLEDGE_INDEX.md",
       "bytes": 5385,
-      "sha256": "0831b64876e66d24117ae9530782caef88176a2a5f8bd2318c1a9721f3f132a4"
+      "sha256": "fdf165500b0b8390e267d5f2fbbbc3ea5d458b3063887f5b9cd1916e5cdee6ee"
     },
     {
       "path": "maintenance/CHANGELOG.md",
-      "bytes": 28261,
-      "sha256": "9141c81f21b6357e7d3181dbec2050a57da5acdca99f0fda8e8cc5dcab4d17f6"
+      "bytes": 29472,
+      "sha256": "8680d7bd83c7067a9d43a8524a76bc009a6176c9c4ecdedc88da43e3368d7dc1"
     },
     {
       "path": "maintenance/README.md",
@@ -606,6 +606,11 @@
       "path": "scripts/test_supplements_v28.py",
       "bytes": 3302,
       "sha256": "363d9855a5e70b92130fbd596cb6293a166962c43f2267a5fd66c3b22dff3f69"
+    },
+    {
+      "path": "scripts/test_supplements_v29.py",
+      "bytes": 3252,
+      "sha256": "886a22f8c1b00a7cbd4a3584e4eff3ecff56c55a81693d733a44bb4c3bc38a12"
     },
     {
       "path": "scripts/test_validate_combat_prompt.py",

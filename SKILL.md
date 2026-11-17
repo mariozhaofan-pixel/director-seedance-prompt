@@ -82,7 +82,7 @@ repair_scope=local：需要新证据，或改变CUT/BEAT、时间、对白分配
 | 角色翻唱、对歌声口型、剧情内唱词、演唱稿局部修订 | `knowledge/02I_COVER_PERFORMANCE.md` → 内置共用翻唱规则 |
 | 参考片/链接、证据提取或事实核实 | `knowledge/02E_MEDIA_EVIDENCE.md` |
 | 空间、轴线、构图、群众、进出场 | `knowledge/03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md` |
-| 摄影机、光学、光色与基础风格（真人/写实质感另读04A） | `knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md` |
+| 摄影机、光学、光色与基础风格（真人/写实质感与写实人物肤质另读04A；二维手绘动画按04的二维分支） | `knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md` |
 | 新编风格选择；用户更换光影运镜规则或提供对标视频 | `knowledge/styles/STYLE_ROUTER.md` |
 | 表演、持续对白、哭笑、情绪管理、通用身体机制、舞蹈 | `knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md` |
 | 表情精修/微表演需要更具体的可见线索、关键近景缺少面部证据，或需要表情状态参考资产；普通情绪词不自动触发 | `knowledge/05E_EXPRESSION_CUES.md`（05仍负责表演决策，micro沿用已加载内容） |

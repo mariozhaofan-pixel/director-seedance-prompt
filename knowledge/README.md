@@ -19,7 +19,7 @@
 - [02L_PLATFORM_PROFILES](02L_PLATFORM_PROFILES.md)：目标平台硬限制（段长、素材数、宽高比）
 - [03_VISUAL_GRAMMAR_AND_SCENE_ROUTER](03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md)：画面语法：世界拓扑与画面投影、构图、群像调度、逐 CUT 画面重建
 - [04_CAMERA_LIGHT_COLOR_STYLE](04_CAMERA_LIGHT_COLOR_STYLE.md)：摄影光色：基础风格六项、摄影机与镜头、景别、运镜语法与速度、布光、调色、画家与流派
-- [04A_LIVE_ACTION_TEXTURE](04A_LIVE_ACTION_TEXTURE.md)：可选的真人/写实质感模块：逐镜光影、抗CG、克制表演；由04按需路由
+- [04A_LIVE_ACTION_TEXTURE](04A_LIVE_ACTION_TEXTURE.md)：可选的真人/写实质感模块：逐镜光影、抗CG、写实人物肤质与眼睛、克制表演；由04按需路由
 - [05_ACTION_PERFORMANCE_BODY_MECHANICS](05_ACTION_PERFORMANCE_BODY_MECHANICS.md)：表演与身体：动作因果、对话双向表演、情绪管理、声音身份、舞蹈
 - [05A_COMBAT_EXCHANGE_VARIANTS](05A_COMBAT_EXCHANGE_VARIANTS.md)：打斗交换变体：十五种可拍的攻防关系变化，按需检索
 - [05B_COMBAT_BRIEF](05B_COMBAT_BRIEF.md)：打戏简报：信息不足时的追问与研究边界
