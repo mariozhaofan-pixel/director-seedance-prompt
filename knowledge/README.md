@@ -40,6 +40,7 @@
 - [campus-relationship](styles/campus-relationship/campus-relationship.md)：青春校园人物关系与轻喜剧
 - [commercial-reversal](styles/commercial-reversal/commercial-reversal.md)：都市商业轻喜剧、身份反转与物件接力
 - [phone-vlog](styles/phone-vlog/phone-vlog.md)：手机 Vlog：自拍、同伴手持拍、镜面自拍、放着录
+- [folk-fantasy-realism](styles/folk-fantasy-realism/folk-fantasy-realism.md)：写实民俗奇幻：暖色自然光与夕阳侧逆光、超现实动作、巨物与材料解体、克制喜剧
 - [restrained-realism](styles/restrained-realism/restrained-realism.md)：克制写实、人与环境尺度、信息触点
 - [STYLE_ROUTER](styles/STYLE_ROUTER.md)：风格路由：规则来源、选包、新反推入口
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "director-seedance-prompt",
-  "edition": "2026-11-18-v27",
+  "edition": "2026-11-18-v28",
   "path_base": "package-root",
   "embedded_capabilities": [
     {
@@ -40,7 +40,7 @@
     {
       "path": "INSTALL.md",
       "bytes": 6198,
-      "sha256": "27243d6a5ada8e28a06c86e5301080f5f147f6aaf674c9230b5d569fc72182ab"
+      "sha256": "b0210925cf61b25369f754967acaf8584924bb818dd726b985229470072b7108"
     },
     {
       "path": "LICENSE",
@@ -49,8 +49,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 12219,
-      "sha256": "2ee7bc9efe6712845595574e3cdaecb299410a1d765835071d271781c3bbd5ff"
+      "bytes": 12317,
+      "sha256": "959f71d624d832fff6e44b5cc27c4535cff41c3378f76c39f6f78afa2e70fca3"
     },
     {
       "path": "SKILL.md",
@@ -404,13 +404,13 @@
     },
     {
       "path": "knowledge/README.md",
-      "bytes": 7213,
-      "sha256": "cb70af8c01aac84fa673101de86a73f743f79d8240557e51017d0594a441882b"
+      "bytes": 7405,
+      "sha256": "a80d9654ef5becbbf6f0965aecb78c89a5fd5d2114c6777237cf81301c09d795"
     },
     {
       "path": "knowledge/styles/STYLE_ROUTER.md",
-      "bytes": 7103,
-      "sha256": "00f78b69d5c8497e8893ee40d142601e6feb3caefe893e1e360f37157589a345"
+      "bytes": 7878,
+      "sha256": "d160468b57d6ba6ae691c9367d981ba0d8ad58bd66e59dcbca1f69f97329511b"
     },
     {
       "path": "knowledge/styles/bright-ensemble/bright-ensemble.md",
@@ -428,6 +428,11 @@
       "sha256": "1f6bca02f85a64e0d918127983861c283c903145558b04f59652093159c282d4"
     },
     {
+      "path": "knowledge/styles/folk-fantasy-realism/folk-fantasy-realism.md",
+      "bytes": 53703,
+      "sha256": "b259112220648f9b3c01d3f27bc79f117fcb69503dc3f5638b410a944e8aac97"
+    },
+    {
       "path": "knowledge/styles/phone-vlog/phone-vlog.md",
       "bytes": 11839,
       "sha256": "1c39dddde533db096a1491ed46142aea19237003d4ff4249105395dc68c5e0fc"
@@ -439,13 +444,13 @@
     },
     {
       "path": "maintenance/10_KNOWLEDGE_INDEX.md",
-      "bytes": 5284,
-      "sha256": "e0c56ecf878f5aec199140524c94e129fcdb99f16aa8399928633fba7204624a"
+      "bytes": 5385,
+      "sha256": "0831b64876e66d24117ae9530782caef88176a2a5f8bd2318c1a9721f3f132a4"
     },
     {
       "path": "maintenance/CHANGELOG.md",
-      "bytes": 27396,
-      "sha256": "7a2256c9e788b99bd731b63a15fcb6947d48e0065118b60d78790f560d4d9177"
+      "bytes": 28261,
+      "sha256": "9141c81f21b6357e7d3181dbec2050a57da5acdca99f0fda8e8cc5dcab4d17f6"
     },
     {
       "path": "maintenance/README.md",
@@ -465,7 +470,7 @@
     {
       "path": "maintenance/editions/package-readme.md.in",
       "bytes": 3176,
-      "sha256": "ffd87c4f9ab486571530299f95b4742f35896203bb8fb3e580ae3cf939414275"
+      "sha256": "c691341d24e8dc376e857e3b3187166f26ef2ea2714bda2347e321901fe2aa63"
     },
     {
       "path": "references/FEISHU_BASE_LAYOUT.md",
@@ -596,6 +601,11 @@
       "path": "scripts/test_supplements_v27.py",
       "bytes": 3376,
       "sha256": "a8a8220aaf0d1791e7970d5c159764b0547ae72f341c028f8ee291aef475a997"
+    },
+    {
+      "path": "scripts/test_supplements_v28.py",
+      "bytes": 3302,
+      "sha256": "363d9855a5e70b92130fbd596cb6293a166962c43f2267a5fd66c3b22dff3f69"
     },
     {
       "path": "scripts/test_validate_combat_prompt.py",

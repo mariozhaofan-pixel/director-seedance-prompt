@@ -38,11 +38,12 @@
 | [07A_PAINTING_HOMAGE_ROUTER](../knowledge/07A_PAINTING_HOMAGE_ROUTER.md) | 5271 |
 | [08_FAST_PREFLIGHT](../knowledge/08_FAST_PREFLIGHT.md) | 6187 |
 | [08_MODEL_QC_REPAIR](../knowledge/08_MODEL_QC_REPAIR.md) | 38905 |
-| [STYLE_ROUTER](../knowledge/styles/STYLE_ROUTER.md) | 2903 |
+| [STYLE_ROUTER](../knowledge/styles/STYLE_ROUTER.md) | 3214 |
 | [bright-ensemble](../knowledge/styles/bright-ensemble/bright-ensemble.md) | 9890 |
 | [campus-relationship](../knowledge/styles/campus-relationship/campus-relationship.md) | 8567 |
 | [commercial-reversal](../knowledge/styles/commercial-reversal/commercial-reversal.md) | 9562 |
 | [phone-vlog](../knowledge/styles/phone-vlog/phone-vlog.md) | 4569 |
+| [folk-fantasy-realism](../knowledge/styles/folk-fantasy-realism/folk-fantasy-realism.md) | 19687 |
 | [restrained-realism](../knowledge/styles/restrained-realism/restrained-realism.md) | 7278 |
 
 ## 内置功能资源
