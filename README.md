@@ -1,0 +1,81 @@
+# Director Seedance Prompt
+
+把故事、剧本、分镜、素材和已验收提示词编译为中文电影化视频提示词。导演、表演、空间、摄影光色、剪辑声音、参考控制、连续性、武戏与修复能力按任务加载。
+
+## 使用与运行
+
+唯一技能入口是[SKILL.md](SKILL.md)。新项目先选择本地工作或飞书协作；用户已明确模式、提供飞书链接或要求新建云表时直接沿用。需要视频编译且Seedance版本、光影规则来源尚未明确时，在同轮合并确认，避免分别启动多次问答。已有项目和有界修稿不重问已确定选项；仅配置飞书或管理资产不询问视频版本。用户规则优先，没有规则时只选一个适合当前故事的库内包。
+
+新编先规划授权范围，默认交付当前2段；已验收稿走micro/local有界修复。每段保持标题与五栏、2.5时间轴前五行、独立冷启动和模型可见载荷边界。知识职责与条件文件见[知识目录](knowledge/README.md)，真实格式示例见[2.5标准样例](examples/seedance_25_standard.md)。
+
+## 执行层
+
+- [核心卡](knowledge/00_CORE_CARD.md)是常规编译唯一必读的规则卡：新会话、上下文压缩或换集后先重读核心卡和项目层；每段按九步走（取证→衔接→剧情门→编译卡→出场资产→写→验证→交付→两段一批差分），十四条硬规则各带合格/不合格例子。
+- [编译卡](knowledge/02J_SHOT_CARD.md)把世界拓扑、上一段实际结尾、逐CUT画面投影、出场、资产和动作状态落成文件；世界方位只在卡里推算，提示词写画面左右、前中后景、朝向镜头和可见地标。
+- [项目层插槽](knowledge/02K_PROJECT_SLOT.md)：项目规则、lint补充、事故日志和编译卡放在用户项目目录，每次编译读取；Skill 保持所有用户同一版本，项目经验不回写 Skill。
+- [平台限制](knowledge/02L_PLATFORM_PROFILES.md)记录段长、素材数与宽高比上限。
+- 可选配套 `director-retro`（单独安装包）负责记事故、集尾复盘并把验证过的经验提升进项目层，不修改本 Skill。
+- 各版本的变化见[更新记录](maintenance/CHANGELOG.md)。
+
+## 资产与风格能力
+
+- 场景按[02A](knowledge/02A_PROJECT_WORKFLOW.md)优先文生：短暂/非复用场景直接文字编译，复用场景才判断图像必要性；先准备所需方向，反打方向确需复用图时才补B。用户明确指定场景出图范围优先。场景图提供固定空间基线，CUT保留人物、环境与摄影的自然动态。
+- [表情管理与细节库](knowledge/05E_EXPRESSION_CUES.md)按需补充20类可组合的可见表情线索；人物目的、情绪管理、幅度与跨镜余态仍由05决定。细节落入原CUT/BEAT，表情参考图沿现有资产预制与同Base同步路线，不额外生成一套角色板，也不要求安装emotion-prompt。
+- [飞书资产工作区](knowledge/02H_FEISHU_ASSET_WORKSPACE.md)是可选模式：一个多维表内用项目总览、剧本交付、资产库、段落交付四表登记采用剧本及历史修订、总索引、图片、生图提示词、段落提示词和用户视频；编剧定稿及已采用改稿自动同步到同一Base，导演按精确修订接回；各批当前剧本分别保留。生成前先查询下载复用，本地制作后主动增量同步。接入已有Base或创建总表时，链接默认可编辑；新建总表同时启用密码分享，便于协作者编辑记录和上传素材、视频。按需读取[部署指南](references/FEISHU_WORKSPACE_SETUP.md)与[表布局](references/FEISHU_BASE_LAYOUT.md)。分享密码与API授权分别校验，内部成员免密不等于密码失效；用户明确的权限限制优先，本地模式不检查或安装飞书环境。
+- 静态资产预制默认按[Higgsfield资产能力接口](knowledge/02F_HIGGSFIELD_ASSET_PREPRODUCTION.md)，进入本包内置的完整资产预制功能与模型路由资料。角色板、场景、道具、状态、反向机位和局部修图使用同一能力标准；平台由用户选择与真实工具决定，无需另装资产技能。
+- [人物资产接口](knowledge/02B_CHARACTER_BOARD.md)让缺失的可辨配角优先生成独立角色板，左侧大头照、右侧正面与背面全身；可辨多人群演可一次生成多人半身资产并逐个绑定身份。面部不可辨且无需个体身份的街道/背景群像优先文生。既有身份按人复用，用户文字锁定例外保留；完整标准仍只有内置资产功能一份。
+- 缺少生图能力时走[接口建议与无生图模式](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)：建议配置OpenAI GPT Image 2.5；用户确认无生图后交付资产生图提示词与文生视频提示词，状态分别登记，不被缺图等待卡住。
+- [编剧协作](knowledge/01A_SCREENWRITER_HANDOFF.md)可将格式整理、修改意见或已授权修稿交给独立viral-screenwriter；该技能也能把视频提示词任务交回导演，按范围接回且不循环推荐。
+- [风格路由](knowledge/styles/STYLE_ROUTER.md)先读类型目录，再读取唯一选中的英文类型规则。库内五类为campus-relationship、restrained-realism、bright-ensemble、commercial-reversal、phone-vlog（手机Vlog：自拍、同伴手持拍、镜面自拍）。
+- 用户提供光影/运镜/表演对标视频时，进入内置[规则反推功能](capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)，执行完整规则书写、全帧视频取证和真实听音流程；所需协议与配套脚本随包提供。规则文件生成后返回原编译范围。仅剧情/身份/尾态证据走素材路线。
+- [翻唱演唱接口](knowledge/02I_COVER_PERFORMANCE.md)调用内置同源翻唱规则及音频工具：自动分离整曲人声/备用伴奏、识别歌词、分析节奏和≤30秒切段，再结合角色资产编译全部授权段。支持清唱、伴奏、弹唱及剧情内唱词；纯素材/通用演唱草稿不启动模型与工程问答，具体模型仍保留真实硬上限。
+- 三项完整功能封装在 `capabilities/`，只在触发时加载。功能入口采用用途文件名，整个目录只有根入口一个 `SKILL.md`。原始资产与规则反推技能不再是安装依赖。
+
+## 校验与审核
+
+[scripts/validate_prompt.py](scripts/validate_prompt.py)提供一般候选公共校验，并以警告形式提示世界方位词、静止状态词、贴图式构图、画外音缺口型说明、缺无字幕卫生句、@图片编号断档，以及POV句式、阵列词、敏感词、多人同镜代词、负面词与正文打架、眼睛颜色、主观镜头眼罩、空泛质量词、拍摄者与器材入画、200mm以上漏写极浅景深、车辆缺左右舵、车身左右缺画面投影和车头朝向与可见车身侧矛盾，以及可选的逐 CUT 口播容量粗估（`--speech-lang zh|ja`），`--project-lint`加载项目层规则；[check_assets.py](scripts/check_assets.py)按平台限制检查参考图宽高比，[take_evidence.py](scripts/take_evidence.py)对上一段成片出联系表、切点、尾段区间与结尾状态草稿；[validate_combat_prompt.py](scripts/validate_combat_prompt.py)保留武戏兼容入口。传入已解析version、duration、profile、timeline与timestamp-policy；支持JSON结果，明确checked和not_verified。
+
+无时码不声称验证了0–T覆盖；脚本不代替空间、表演、动作容量或素材证据判断。普通新稿一次快速预检，失败只复查受影响项；只有入口已触发冷审才使用密封包。
+
+## Skill 安装与分发
+
+后续每次发布同时交付**飞书连接版**与**独立版**。飞书连接版保留可选云端协作和本地执行；独立版仅使用本地文件夹、索引与台账，移除云端接入、授权、同步入口及专用资源。两版保留相同导演、表情、资产预制、规则反推和翻唱能力，均使用`director-seedance-prompt/`与同一个调用名，一次安装所选的一版，不叠加安装。维护源码只保留一套共同规则，构建命令为`python -B scripts/build_editions.py --output-dir <仓库外输出目录> --version <版本号>`；未来版本替换版本号，始终成对构建并校验。
+
+本项目仅维护原生 Skill。安装包解压得到 `director-seedance-prompt/`，将整个目录放入宿主的技能目录（Claude Code 为 `~/.claude/skills/`）。更新时先将旧目录备份到技能目录之外，再放入完整新目录，避免覆盖安装留下废弃文件。刷新技能或重新打开会话后，用 `$director-seedance-prompt` 调用。
+
+包内仅有一个 `SKILL.md`；`knowledge/` 和 `capabilities/` 按路由加载，`agents/openai.yaml` 提供原生 Skill 的界面元数据。提示词运行校验脚本需要 Python 3.10+，只使用标准库；媒体取证脚本所需Python库、FFmpeg、ASR/OCR及可听媒体工具按其运行环境说明检查。安装包保留知识模块、三项完整内置功能、五类风格、示例、脚本、测试和来源资料，排除缓存、媒体原件、模型权重、历史安装包和备份。
+
+编剧 `viral-screenwriter` 仍按用户要求与导演互相协作，独立安装；真实生图使用宿主工具或用户授权接口。资产预制及规则反推的功能知识、协议和配套脚本已在本包内，媒体访问和模型服务仍以实际可用工具为准。普通编译可继续完成不依赖缺失工具的部分。
+
+飞书模式复用已有连接器或独立部署的官方CLI。首次安装、授权和资产下载会增加启动时间，后续设备可复用云端资产，但须各自保持有效登录。飞书CLI、其依赖、官方飞书Skills与凭据不打进导演Skill，也不为更新本包覆盖现有飞书配置。包内仅提供运行规则、布局蓝图与本地同步规划工具；云端完成状态以实际写入、读回和附件验证为准。
+
+## 维护
+
+- 修改唯一运行入口或对应知识模块，再从已验证的源码生成 Skill 安装包。
+- 翻唱共用规则只在cover-performance-director源码的core目录维护；使用其maintenance/sync_director.py同步到本包capabilities/cover-performance，并用--check核对。独立版与导演两发行包共用核心逐字节一致；两处输出适配各自维护。发布时使用独立版maintenance/build_release.py统一构建和核对，避免只更新一份。
+- 独立翻唱源码与安装包见[翻唱仓库](https://github.com/mariozhaofan-pixel/cover-performance-director)，本次版本变化见[更新记录](maintenance/CHANGELOG.md)。
+- 运行 python -B -m unittest discover -s scripts -p "test_*.py"。
+- 检查新增模块路由、外部依赖、本地链接、完整打包与真实行为；不以文件数量或字数下降代替能力保留。
+- 历史参考和维护记录不作为默认运行上下文。当前模块/大小索引见[维护索引](maintenance/10_KNOWLEDGE_INDEX.md)。
+
+## 来源与声明
+
+本项目与 ByteDance、Seedance 及文中提及的摄影器材、电影公司或模型服务商不存在隶属或官方合作关系；相关名称仅用于兼容性说明、技术描述或教育性引用。
+
+## 版权与使用限制
+
+Copyright (c) 2026 MARIOZHAOFAN. All rights reserved.
+
+本仓库公开可见，供阅读、学习、个人测试和非商业使用。公开可见不等于开源授权。
+
+**禁止商用。** 未获得作者书面授权前，禁止以下行为：
+
+- 用于任何商业目的，包括收费制作服务、客户交付物和其他产生收入的工作流程。
+- 复制、改名、换壳、整理后在其他仓库、网站、网盘、社群、课程或模板库中再发布。
+- 将本项目整体或部分打包为付费产品、商业服务、SaaS、API、插件、GPT/Agent 商品、培训资料或代运营方案。
+- 用于模型训练、微调或构建数据集。
+- 删除版权声明、联系方式或使用限制后分发，或把本项目及其轻度修改版署为自己的作品。
+
+需要商用授权、再发布许可或合作，请联系微信：**MARIOZHAOFAN**
+
+完整条款见 [LICENSE](LICENSE)。

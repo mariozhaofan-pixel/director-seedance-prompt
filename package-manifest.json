@@ -1,0 +1,619 @@
+{
+  "schema_version": 1,
+  "package": "director-seedance-prompt",
+  "edition": "2026-11-17-v26",
+  "path_base": "package-root",
+  "embedded_capabilities": [
+    {
+      "name": "asset-preproduction",
+      "entry": "capabilities/asset-preproduction/ASSET_PREPRODUCTION.md",
+      "origin": "higgsfield-asset-preproduction"
+    },
+    {
+      "name": "reference-rule-extraction",
+      "entry": "capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md",
+      "origin": "reverse-camera-light-performance-rules",
+      "includes_video_evidence": true
+    },
+    {
+      "name": "cover-performance",
+      "entry": "capabilities/cover-performance/COVER_PERFORMANCE.md",
+      "origin": "cover-performance-director",
+      "core_version": "1.2.0",
+      "shared_core_manifest": "capabilities/cover-performance/shared-core.json"
+    }
+  ],
+  "optional_external_skills": [
+    "viral-screenwriter"
+  ],
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 55,
+      "sha256": "9dde4f8fb7cc89adda79e2ee22004eac0bf2193a4fc8112a7e54401a924946a8"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 88,
+      "sha256": "3792ba40de9cb289c9b01bcbb65644782b0e9b3f64067ff234bb55a9d67d0c4a"
+    },
+    {
+      "path": "INSTALL.md",
+      "bytes": 6198,
+      "sha256": "27243d6a5ada8e28a06c86e5301080f5f147f6aaf674c9230b5d569fc72182ab"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 2254,
+      "sha256": "0340c9db546bddc8b7c45179c43d0d501124c34ff5e1a71f709a78c10e4272d0"
+    },
+    {
+      "path": "README.md",
+      "bytes": 12219,
+      "sha256": "2ee7bc9efe6712845595574e3cdaecb299410a1d765835071d271781c3bbd5ff"
+    },
+    {
+      "path": "SKILL.md",
+      "bytes": 22455,
+      "sha256": "40bd8c623d300500eac03786536968a62d8f847df96e399c544b88e284cc86a1"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "bytes": 405,
+      "sha256": "df479d67d7f56be00ce39bddbac338cc8289b5decbdf8821eb5a74c98bf552a9"
+    },
+    {
+      "path": "assets/feishu-base-blueprint.json",
+      "bytes": 11894,
+      "sha256": "b5bde6986bfdf53e12f04980bb454a5c5bff8b4f5ebe8ff0c9a94b9930620a69"
+    },
+    {
+      "path": "capabilities/asset-preproduction/ASSET_PREPRODUCTION.md",
+      "bytes": 22255,
+      "sha256": "7e955d8a990346c298398e666736284771d538b151db63620be3f66b6351ca6e"
+    },
+    {
+      "path": "capabilities/asset-preproduction/references/HIGGSFIELD_ASSET_ROUTING.md",
+      "bytes": 2938,
+      "sha256": "c162ac9ecfdd32acd5fc1c87393814357784fb09ccac87aaa734b0ae160eec75"
+    },
+    {
+      "path": "capabilities/cover-performance/COVER_PERFORMANCE.md",
+      "bytes": 5621,
+      "sha256": "3affeac34da578109da5be4fdaea23dacf6e04a79d96625e23dfb6435ad5303e"
+    },
+    {
+      "path": "capabilities/cover-performance/references/audio-preparation.md",
+      "bytes": 9217,
+      "sha256": "e481b58bdcb013d8206e3308932de54c1e7fe5e18bd000c391878f3f09d76894"
+    },
+    {
+      "path": "capabilities/cover-performance/references/delivery-and-repair.md",
+      "bytes": 4487,
+      "sha256": "153e7ed587e052ff448fd602f8bf8d7c72af5732ec6eeb6d7202428502ca266f"
+    },
+    {
+      "path": "capabilities/cover-performance/references/director-output.md",
+      "bytes": 2447,
+      "sha256": "a6a50f7f3139954258ac9e21aff98c8626efd9fd40be60357f9de6b469ff35e8"
+    },
+    {
+      "path": "capabilities/cover-performance/references/lyric-verification.md",
+      "bytes": 3636,
+      "sha256": "266c738f76e41d84f494dbf8252aadeccdb33b4e20189b76c1a420ec221d2b1c"
+    },
+    {
+      "path": "capabilities/cover-performance/references/materials-and-audio.md",
+      "bytes": 7013,
+      "sha256": "db3d25dd02f537ef464177a375bf2a4b6ad1c2ab5de17813be029bceb66255bb"
+    },
+    {
+      "path": "capabilities/cover-performance/references/performance.md",
+      "bytes": 3962,
+      "sha256": "616e79d499d5a05fd797b811c6cba6d8030442cd013d48ed8662350ce52da5b3"
+    },
+    {
+      "path": "capabilities/cover-performance/references/reference-audio-budget.md",
+      "bytes": 3719,
+      "sha256": "428367575aaff0705cb3efeab0dc8f14b30c5af41cebebe06375e0928eaa6f75"
+    },
+    {
+      "path": "capabilities/cover-performance/references/timing-plan.md",
+      "bytes": 2692,
+      "sha256": "3160b4fadc6fb003faaac3a69be77126d7ec6c4850a80267534239754e585bf4"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/audio_segments.py",
+      "bytes": 5616,
+      "sha256": "e5e6114f8dbf074cb615902063d86344686d95b227794bf931e514ab7b8c63e7"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/check_song_plan.py",
+      "bytes": 7912,
+      "sha256": "5686ba01460ff843f510314b196be27f879b4edb3ca5549528aa35001c2f3dfd"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/fit_reference_audio.py",
+      "bytes": 11521,
+      "sha256": "484622c510726ca59f1a926a1c089a962c752a3ce7e10e70aaa90c80673094e7"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/prepare_song.py",
+      "bytes": 22121,
+      "sha256": "7ce03cde04f85cd5c558dfadef3533bd63c2b716df363207ee6c1ec14d07ba31"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/setup_audio_runtime.py",
+      "bytes": 2806,
+      "sha256": "07ed1f1f780cf8534dea29cb9727f2a0922abcb64515565dafb069172899af08"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/test_audio_pipeline.py",
+      "bytes": 9039,
+      "sha256": "6e421da4edd5d12ab5404742ec32be130a4e85126d93dfa7a3b1b01d27196e5c"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/test_reference_audio.py",
+      "bytes": 3798,
+      "sha256": "ef90438f5b60d6aa6d4ec04333ff4d60cc15708bb0724acef1248bb8e118724d"
+    },
+    {
+      "path": "capabilities/cover-performance/scripts/test_song_plan.py",
+      "bytes": 4448,
+      "sha256": "259d7babd4985f0801a192d7cc2d2fb1bbbec7b917a952c69d39a02b2de5fae8"
+    },
+    {
+      "path": "capabilities/cover-performance/shared-core.json",
+      "bytes": 2876,
+      "sha256": "efda5da806f334156f7be59934b25682f8b0081896b82b28df60ee5bb8972d5a"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md",
+      "bytes": 5583,
+      "sha256": "d7fab1ae709aa7e4159ca487cb3a296c22b93adb1a157bcb2876800738894a05"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/RUNTIME.md",
+      "bytes": 3341,
+      "sha256": "5c81f0ba83dadec2e2dcacb8f885cf596a90bd9b4407f8d0af0d71249e1911da"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/VIDEO_EVIDENCE_PROTOCOL.md",
+      "bytes": 9699,
+      "sha256": "0b3ffe2be17e56a724555f24d9aacea89a7c913b29b82442ffd02acd018efd16"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/references/analysis-protocol.md",
+      "bytes": 10122,
+      "sha256": "22bef01fac65958bf4946d0c26174002d4ead3d7f599583a5a3a986ed6775d82"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/references/gag-context-research.md",
+      "bytes": 7348,
+      "sha256": "0b42a0ed7a51a2eb190e9f889b43c650b53c5f8f745e07019d8e6fb67cd6170c"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/references/storyboard-contract.md",
+      "bytes": 7479,
+      "sha256": "3ceb481d0d631ddf095b7582b746d0dd949a1f603a19f789e6fdba93926efd6c"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/references/writing-contract.md",
+      "bytes": 7325,
+      "sha256": "4b6d3498a17a8576873bf10b51296b8935177e59ed5efafe247010eb5e80e0a4"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/scripts/extract_subtitles_ocr.py",
+      "bytes": 26280,
+      "sha256": "9553f3d2908d7e75c62952ea37d4011be1e26c12abdad8dd4d1c1e1b589b335d"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/scripts/prepare_video_evidence.py",
+      "bytes": 65001,
+      "sha256": "ffeb486bdc012cd646d175439a596120afb4efae54a45430e87b6ae87244b86b"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/scripts/transcribe_audio.py",
+      "bytes": 11180,
+      "sha256": "e2856c0f7083909864fb0bb255dcdcd411cfdc7d8e85278433e806c8be87ed05"
+    },
+    {
+      "path": "capabilities/reference-rule-extraction/scripts/validate_storyboard.py",
+      "bytes": 28236,
+      "sha256": "dcaced960bcd9e56921410537eb3ee4069039c790cc045c7ec146123894f34d7"
+    },
+    {
+      "path": "examples/seedance_25_standard.md",
+      "bytes": 5488,
+      "sha256": "78881aabc6b1f031cf551d1d5b37560bdbfe07a19fc2ddb1296e75ad52b2af32"
+    },
+    {
+      "path": "knowledge/00_CORE_CARD.md",
+      "bytes": 7533,
+      "sha256": "d52b7ac9de641293a5265c91d5cdc18cfdbb338e1d07b1f5aaf00f29e89ced22"
+    },
+    {
+      "path": "knowledge/01A_SCREENWRITER_HANDOFF.md",
+      "bytes": 5140,
+      "sha256": "fe46b05311d190eeeb1f78fc550d187f4f590c985830c674aa5792b28a715faf"
+    },
+    {
+      "path": "knowledge/01_CORE_EXECUTION_CONTRACT.md",
+      "bytes": 36072,
+      "sha256": "a5806523c2316b20b5051393152f6c66afc83ee0e75343c83d668da8278208c2"
+    },
+    {
+      "path": "knowledge/02A_PROJECT_WORKFLOW.md",
+      "bytes": 17860,
+      "sha256": "99867c8683b6b2bf250732c7925706b4ab273edc41f6aa6e5ef8c498d22ee13a"
+    },
+    {
+      "path": "knowledge/02B_CHARACTER_BOARD.md",
+      "bytes": 4650,
+      "sha256": "673088c5f264b7091cd56f0f38cab1ff2e599b73b14e2ff1ab7e8ad4ab0b942e"
+    },
+    {
+      "path": "knowledge/02C_CONTINUATION_REFERENCES.md",
+      "bytes": 11369,
+      "sha256": "b0ecd034f47e645aaf5552d0245da21d3ad7b5f9bb42ec47bb16e660744ccdaa"
+    },
+    {
+      "path": "knowledge/02D_AUDIO_REFERENCES.md",
+      "bytes": 3223,
+      "sha256": "75a2048ba4f0bd888f19d6ae12245c980dd6fac5dd4a0d52431cf77e89f0eb26"
+    },
+    {
+      "path": "knowledge/02E_MEDIA_EVIDENCE.md",
+      "bytes": 7383,
+      "sha256": "011c94b05f7191c333ec67b79d453c1fa15f39fa8f764bddc4880f481b17c91f"
+    },
+    {
+      "path": "knowledge/02F_HIGGSFIELD_ASSET_PREPRODUCTION.md",
+      "bytes": 4040,
+      "sha256": "15b6f8fcf1013111672c7c70368a441a42a9dd4e1a43a1390bfb278745b6e001"
+    },
+    {
+      "path": "knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md",
+      "bytes": 4981,
+      "sha256": "d9405b515a4fab2ad4a06897b0a7e7ec811ab4d24b94f2cea61b378131a5435c"
+    },
+    {
+      "path": "knowledge/02H_FEISHU_ASSET_WORKSPACE.md",
+      "bytes": 13906,
+      "sha256": "657a2592619e969e6e0266346b91e3020a89e993fd52592e421bfa270bb54d52"
+    },
+    {
+      "path": "knowledge/02I_COVER_PERFORMANCE.md",
+      "bytes": 7383,
+      "sha256": "f9320f3f188474c1c20feb55c9c4e998a7908143bceb6dbc77eaebd8744ca233"
+    },
+    {
+      "path": "knowledge/02J_SHOT_CARD.md",
+      "bytes": 4466,
+      "sha256": "999e016b0e145c653a9c5a15d03c4f82283075b4f96aef3ec966384a32ccdd1a"
+    },
+    {
+      "path": "knowledge/02K_PROJECT_SLOT.md",
+      "bytes": 2977,
+      "sha256": "7bb649d929d13cce9a8cb31c540d3b77013250ef4ff0ce3782eaa61bc9298bfd"
+    },
+    {
+      "path": "knowledge/02L_PLATFORM_PROFILES.md",
+      "bytes": 1112,
+      "sha256": "aadce31cf236801e17cc8132744918f551600f729b2cf311211f7c46b9432e41"
+    },
+    {
+      "path": "knowledge/02_REFERENCE_ROUTER_AND_LOCKS.md",
+      "bytes": 18909,
+      "sha256": "1d654d0ff4a6acc95c96d4b513179315172415318a565b62902d3a2ed80e9214"
+    },
+    {
+      "path": "knowledge/03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md",
+      "bytes": 32105,
+      "sha256": "71bd315b1d0ffaad80743b28ddd0b7a83175b0c38145b7972c03042cf93579b9"
+    },
+    {
+      "path": "knowledge/04A_LIVE_ACTION_TEXTURE.md",
+      "bytes": 2817,
+      "sha256": "aba95b8c5db632846a4084fa351d59fb27f74eb28a817a74cba15da0d09f1156"
+    },
+    {
+      "path": "knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md",
+      "bytes": 47212,
+      "sha256": "87ba5d91913ab26d37060365f4b17ce13bb02ed5cdb8c9ed4cb636185871bcfb"
+    },
+    {
+      "path": "knowledge/05A_COMBAT_EXCHANGE_VARIANTS.md",
+      "bytes": 22884,
+      "sha256": "9d33dd9097627f8a354cdffcf87ffe1e347ff64a91b7ee5883784d9396403fe3"
+    },
+    {
+      "path": "knowledge/05B_COMBAT_BRIEF.md",
+      "bytes": 4058,
+      "sha256": "1cbf790fae0ae3b5d4c22adfb7fab540ba2c0b87928ec54ba0d308ec588d6fa7"
+    },
+    {
+      "path": "knowledge/05C_COMBAT_CHOREOGRAPHY.md",
+      "bytes": 42135,
+      "sha256": "8e2efb578d9e782e76211935c02a1ce0097a5fc5558d737822b62f3ec180b1c6"
+    },
+    {
+      "path": "knowledge/05D_ACTION_SCENE_PHYSICS.md",
+      "bytes": 16117,
+      "sha256": "16dea27e89c65d3732a86770bdff7de73ee65b5e85b68891d630c70bbd5511d8"
+    },
+    {
+      "path": "knowledge/05E_EXPRESSION_CUES.md",
+      "bytes": 7586,
+      "sha256": "561435d542466221e6cbb7ee9f5359f97c952e58fa913ef743170f1368c62ebb"
+    },
+    {
+      "path": "knowledge/05F_MARTIAL_STYLES.md",
+      "bytes": 31243,
+      "sha256": "930d81002e5569c73c28a1f398223a6123f892c6420ec203b76f86a1251ea6b4"
+    },
+    {
+      "path": "knowledge/05G_VEHICLE_CINEMA.md",
+      "bytes": 17806,
+      "sha256": "ae8844191c9bab9faef3f2fb8480d3d090fa626c77b0bd721d3609b5647c22eb"
+    },
+    {
+      "path": "knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md",
+      "bytes": 36594,
+      "sha256": "cd2fad4eda5203995f13f3e7a7557b11c963db4a65e8177092010806a26a75ad"
+    },
+    {
+      "path": "knowledge/06A_COMBAT_TIMING.md",
+      "bytes": 11051,
+      "sha256": "8d72ad75add7d9d4524c08ae0c3623b4de0bd1d24f2f652b0f0fdd0bfe1f5665"
+    },
+    {
+      "path": "knowledge/06B_TRANSITIONS_SOUND.md",
+      "bytes": 8237,
+      "sha256": "7394f9a7168dfd433c95eddfb5c37a224f3a05f9fd56affa02f59b28df48ee18"
+    },
+    {
+      "path": "knowledge/06_TIMELINE_EDITING_SOUND.md",
+      "bytes": 71221,
+      "sha256": "f8ae1cd17f18d83b983d31051ae6c6689c2b59a84388406e051eaabfe010a4d0"
+    },
+    {
+      "path": "knowledge/07A_PAINTING_HOMAGE_ROUTER.md",
+      "bytes": 14461,
+      "sha256": "da0dcf9d5e429f47d378574bb32e0903206604511dd2cd5bd73f829958041ec9"
+    },
+    {
+      "path": "knowledge/07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md",
+      "bytes": 18968,
+      "sha256": "725cb2844c76f50f59da416f24ee7a21e4890bce26e94dff5419f1c3d2210793"
+    },
+    {
+      "path": "knowledge/08_FAST_PREFLIGHT.md",
+      "bytes": 14704,
+      "sha256": "74457d896c63e5ac2ea64f2f996ceaf09a2fbedb1ccc124572632372248b819a"
+    },
+    {
+      "path": "knowledge/08_MODEL_QC_REPAIR.md",
+      "bytes": 92343,
+      "sha256": "e715414b05ff62e62511dcb67d18cb97aecc4205ec0c7fef3470ae99a658a764"
+    },
+    {
+      "path": "knowledge/README.md",
+      "bytes": 7004,
+      "sha256": "29c27c566f2a0e879d87d832ec88fa39150b91f4edb378f1e2168188c6397f5a"
+    },
+    {
+      "path": "knowledge/styles/STYLE_ROUTER.md",
+      "bytes": 7103,
+      "sha256": "00f78b69d5c8497e8893ee40d142601e6feb3caefe893e1e360f37157589a345"
+    },
+    {
+      "path": "knowledge/styles/bright-ensemble/bright-ensemble.md",
+      "bytes": 26534,
+      "sha256": "38de1c0fa49176109a62ac3be9ee2a9da4fccaa5cfe1924312878c9cc98dbc5b"
+    },
+    {
+      "path": "knowledge/styles/campus-relationship/campus-relationship.md",
+      "bytes": 22675,
+      "sha256": "ddfde477fefb0663d4279f37afaeba456d0d3ad67722c226c9e24d41b7b75702"
+    },
+    {
+      "path": "knowledge/styles/commercial-reversal/commercial-reversal.md",
+      "bytes": 25558,
+      "sha256": "1f6bca02f85a64e0d918127983861c283c903145558b04f59652093159c282d4"
+    },
+    {
+      "path": "knowledge/styles/phone-vlog/phone-vlog.md",
+      "bytes": 11839,
+      "sha256": "1c39dddde533db096a1491ed46142aea19237003d4ff4249105395dc68c5e0fc"
+    },
+    {
+      "path": "knowledge/styles/restrained-realism/restrained-realism.md",
+      "bytes": 19360,
+      "sha256": "c8e7827dbcd39443c0970a0398fdd2b33c153b35c13f3e589ed13fdcd5961e75"
+    },
+    {
+      "path": "maintenance/10_KNOWLEDGE_INDEX.md",
+      "bytes": 5202,
+      "sha256": "b71894c3031a59d532d2cd9148e7d3d4f83e3a536569356d4a471a0338b19b78"
+    },
+    {
+      "path": "maintenance/CHANGELOG.md",
+      "bytes": 26452,
+      "sha256": "4401142f40db977770b0b8a0aa153444ce9cbef88344688192c578d40c34cc4a"
+    },
+    {
+      "path": "maintenance/README.md",
+      "bytes": 3276,
+      "sha256": "d039b20e4186ee392263e335118e08869a56457a93b2d544eb01268f1f76ba8d"
+    },
+    {
+      "path": "maintenance/editions/local-overrides.json",
+      "bytes": 10238,
+      "sha256": "ba7f41a896cc9b6cbed13df65a958f80b7c655ebcd4d9154fbad8ad181b73eaf"
+    },
+    {
+      "path": "maintenance/editions/package-install.md.in",
+      "bytes": 1407,
+      "sha256": "9b51d7e801b9f4bd0daa61e361de4a9503d5e274f009dd0a5a9afed6fd44d0d1"
+    },
+    {
+      "path": "maintenance/editions/package-readme.md.in",
+      "bytes": 3113,
+      "sha256": "d6e409d93cdff0261cdb98ddb2e78a82a4e9901ba679a0ccf041c438f2d35166"
+    },
+    {
+      "path": "references/FEISHU_BASE_LAYOUT.md",
+      "bytes": 12485,
+      "sha256": "beff692b72dca7d8f40988f02bd949b84c5014fe009ad3a941f35eb37e5fc142"
+    },
+    {
+      "path": "references/FEISHU_SCREENPLAY_SYNC.md",
+      "bytes": 7196,
+      "sha256": "880e62539f4ff09e5ea9e1ea7782becb966221624c0de439c4880a63616d6382"
+    },
+    {
+      "path": "references/FEISHU_WORKSPACE_SETUP.md",
+      "bytes": 13284,
+      "sha256": "637b9d6542827e93a083053f4685b38660e37fbe6a9d0a8fbfa8df9bd0cd977a"
+    },
+    {
+      "path": "scripts/build_editions.py",
+      "bytes": 20802,
+      "sha256": "b39be5edfe84b26d0d6a13f58f309717afe4a0613d934fc3c88da059e9c2dce0"
+    },
+    {
+      "path": "scripts/check_assets.py",
+      "bytes": 4981,
+      "sha256": "08e453823937cfbb84e8c17a8f4b33f4578905283518101891ed065750b22413"
+    },
+    {
+      "path": "scripts/plan_feishu_sync.py",
+      "bytes": 16446,
+      "sha256": "0d7988e7d2c413cbe948a1f75b4ab25ee99e971338e05715189cb635c75445f2"
+    },
+    {
+      "path": "scripts/seal_review_packet.py",
+      "bytes": 46976,
+      "sha256": "d1598ac903da018c02db9c370fdd36459639e2560ec66602cd7f971c485c4476"
+    },
+    {
+      "path": "scripts/take_evidence.py",
+      "bytes": 11659,
+      "sha256": "ab803dacb9b6abfa772285b5bd49da6444db75bc11f889512da6957bdc5fa525"
+    },
+    {
+      "path": "scripts/test_build_editions.py",
+      "bytes": 16018,
+      "sha256": "b03a048e9553779a31d8ea2d559dbe7452fef00fc544acad1bc71b143155a461"
+    },
+    {
+      "path": "scripts/test_execution_layer.py",
+      "bytes": 7774,
+      "sha256": "1fc537c7be9848c6f9b950471394e7aec52a472bd4707010147e1b913712f34b"
+    },
+    {
+      "path": "scripts/test_plan_feishu_sync.py",
+      "bytes": 28799,
+      "sha256": "22b5fec5e6e4611e8690d96d164cb4b1292543836d4494e855dc8464b300a7c1"
+    },
+    {
+      "path": "scripts/test_review_routing_contract.py",
+      "bytes": 8377,
+      "sha256": "72c63552c8512ce85f72ed62c9abc15594f478139b4c8d7a4f813d374a2c328c"
+    },
+    {
+      "path": "scripts/test_seal_review_packet.py",
+      "bytes": 16875,
+      "sha256": "fa2724c95eee73e22784eb62b59b6e1c59b814f4a32020b34cefbb06bac2987b"
+    },
+    {
+      "path": "scripts/test_supplements_v11.py",
+      "bytes": 5051,
+      "sha256": "e81ee794b29d46dbeeae899a9974a8ec1e9ffcbb61a74bbdae1e66f00bcb0669"
+    },
+    {
+      "path": "scripts/test_supplements_v12.py",
+      "bytes": 3097,
+      "sha256": "b24292ae61f72361ea0dc9fc33b8ff48614c7602c3db946c427935e076e7dcc8"
+    },
+    {
+      "path": "scripts/test_supplements_v13.py",
+      "bytes": 5518,
+      "sha256": "04e98853ef4e66667aabc7c241e98bdbb7db1a6a8a68f48b06dd6c7a2b48aaa6"
+    },
+    {
+      "path": "scripts/test_supplements_v14.py",
+      "bytes": 2709,
+      "sha256": "02acaafb5bf1e93d91af9672bd997e6d89d060161f122330fa209826699a61a5"
+    },
+    {
+      "path": "scripts/test_supplements_v15.py",
+      "bytes": 1351,
+      "sha256": "faac675583df2984cfbc03ec132d15181a5a858868ad0c2c58bcdcf2c269e806"
+    },
+    {
+      "path": "scripts/test_supplements_v17.py",
+      "bytes": 7189,
+      "sha256": "77ad27b1810e4805bf6cf4c9eac067796f691f9fe165df0e5219178389249044"
+    },
+    {
+      "path": "scripts/test_supplements_v18.py",
+      "bytes": 3255,
+      "sha256": "fdceb96bc1324fedfddc789cb591a4fe08435887ce41451603b3bd3b9a6c92ab"
+    },
+    {
+      "path": "scripts/test_supplements_v19.py",
+      "bytes": 3996,
+      "sha256": "e8a6a88aca6a8494700576df2d4e9db8a9be5955a77f5dca4defa6de6ebfb680"
+    },
+    {
+      "path": "scripts/test_supplements_v20.py",
+      "bytes": 6777,
+      "sha256": "eee6f00def2dc80759c62357f24920effa72c44be6a163f6817bd54a3b632bb4"
+    },
+    {
+      "path": "scripts/test_supplements_v21.py",
+      "bytes": 7204,
+      "sha256": "980e91d0694daa3f213e5f659f951478696460f980cdb0f6b16214dae8a3dbb3"
+    },
+    {
+      "path": "scripts/test_supplements_v22.py",
+      "bytes": 1249,
+      "sha256": "1f09629f1032a1d2e262d78e5da81fec9fa9aa67b0685bc330ed6922b86af58c"
+    },
+    {
+      "path": "scripts/test_supplements_v23.py",
+      "bytes": 5865,
+      "sha256": "6a234e67590fbc27d795a535ce8fe1a43834376320d3de722651ea3879691a93"
+    },
+    {
+      "path": "scripts/test_validate_combat_prompt.py",
+      "bytes": 26102,
+      "sha256": "331f95e4ef38d6c3099dadedb5b3406ca4edc0519e6a6e70b6787eb3c57d0812"
+    },
+    {
+      "path": "scripts/test_validate_prompt.py",
+      "bytes": 10593,
+      "sha256": "a1a7623237f429b2df840bb9756d9f376d5e6fd66c094e55b6bd7b0d96a3d6c2"
+    },
+    {
+      "path": "scripts/validate_combat_prompt.py",
+      "bytes": 657,
+      "sha256": "fea73188f5d5e990b008ff8a1e88a0a56816ae092e2c55e861a1e875b3c16a16"
+    },
+    {
+      "path": "scripts/validate_prompt.py",
+      "bytes": 47577,
+      "sha256": "dc8dca75bc8a38b19f3918d8337afc6157c49a6c5d551bf36a18c0024ca8a6e0"
+    }
+  ],
+  "optional_runtime_integrations": [
+    {
+      "name": "feishu-base",
+      "entry": "knowledge/02H_FEISHU_ASSET_WORKSPACE.md",
+      "deployment": "host connector or separately installed official CLI; credentials excluded",
+      "planner_python": ">=3.11"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "source_skill": "cover-performance-director",
+  "core_version": "1.2.0",
+  "files": [
+    {
+      "path": "COVER_PERFORMANCE.md",
+      "bytes": 5621,
+      "sha256": "3affeac34da578109da5be4fdaea23dacf6e04a79d96625e23dfb6435ad5303e"
+    },
+    {
+      "path": "references/audio-preparation.md",
+      "bytes": 9217,
+      "sha256": "e481b58bdcb013d8206e3308932de54c1e7fe5e18bd000c391878f3f09d76894"
+    },
+    {
+      "path": "references/delivery-and-repair.md",
+      "bytes": 4487,
+      "sha256": "153e7ed587e052ff448fd602f8bf8d7c72af5732ec6eeb6d7202428502ca266f"
+    },
+    {
+      "path": "references/director-output.md",
+      "bytes": 2447,
+      "sha256": "a6a50f7f3139954258ac9e21aff98c8626efd9fd40be60357f9de6b469ff35e8"
+    },
+    {
+      "path": "references/lyric-verification.md",
+      "bytes": 3636,
+      "sha256": "266c738f76e41d84f494dbf8252aadeccdb33b4e20189b76c1a420ec221d2b1c"
+    },
+    {
+      "path": "references/materials-and-audio.md",
+      "bytes": 7013,
+      "sha256": "db3d25dd02f537ef464177a375bf2a4b6ad1c2ab5de17813be029bceb66255bb"
+    },
+    {
+      "path": "references/performance.md",
+      "bytes": 3962,
+      "sha256": "616e79d499d5a05fd797b811c6cba6d8030442cd013d48ed8662350ce52da5b3"
+    },
+    {
+      "path": "references/reference-audio-budget.md",
+      "bytes": 3719,
+      "sha256": "428367575aaff0705cb3efeab0dc8f14b30c5af41cebebe06375e0928eaa6f75"
+    },
+    {
+      "path": "references/timing-plan.md",
+      "bytes": 2692,
+      "sha256": "3160b4fadc6fb003faaac3a69be77126d7ec6c4850a80267534239754e585bf4"
+    },
+    {
+      "path": "scripts/audio_segments.py",
+      "bytes": 5616,
+      "sha256": "e5e6114f8dbf074cb615902063d86344686d95b227794bf931e514ab7b8c63e7"
+    },
+    {
+      "path": "scripts/check_song_plan.py",
+      "bytes": 7912,
+      "sha256": "5686ba01460ff843f510314b196be27f879b4edb3ca5549528aa35001c2f3dfd"
+    },
+    {
+      "path": "scripts/fit_reference_audio.py",
+      "bytes": 11521,
+      "sha256": "484622c510726ca59f1a926a1c089a962c752a3ce7e10e70aaa90c80673094e7"
+    },
+    {
+      "path": "scripts/prepare_song.py",
+      "bytes": 22121,
+      "sha256": "7ce03cde04f85cd5c558dfadef3533bd63c2b716df363207ee6c1ec14d07ba31"
+    },
+    {
+      "path": "scripts/setup_audio_runtime.py",
+      "bytes": 2806,
+      "sha256": "07ed1f1f780cf8534dea29cb9727f2a0922abcb64515565dafb069172899af08"
+    },
+    {
+      "path": "scripts/test_audio_pipeline.py",
+      "bytes": 9039,
+      "sha256": "6e421da4edd5d12ab5404742ec32be130a4e85126d93dfa7a3b1b01d27196e5c"
+    },
+    {
+      "path": "scripts/test_reference_audio.py",
+      "bytes": 3798,
+      "sha256": "ef90438f5b60d6aa6d4ec04333ff4d60cc15708bb0724acef1248bb8e118724d"
+    },
+    {
+      "path": "scripts/test_song_plan.py",
+      "bytes": 4448,
+      "sha256": "259d7babd4985f0801a192d7cc2d2fb1bbbec7b917a952c69d39a02b2de5fae8"
+    }
+  ]
+}

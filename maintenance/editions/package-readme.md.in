@@ -1,0 +1,25 @@
+# Director Seedance Prompt · @@EDITION_LABEL@@
+
+版本：@@VERSION@@
+
+把故事、剧本、分镜、素材和已验收提示词编译为中文电影化视频提示词。唯一运行入口是 [SKILL.md](SKILL.md)，使用 `$director-seedance-prompt` 调用。
+
+@@EDITION_DETAIL@@
+
+## 保留的导演能力
+
+三项内置功能保持完整：[翻唱演唱](knowledge/02I_COVER_PERFORMANCE.md)与独立翻唱skill共用歌曲时间轴、歌词与表演规则，支持清唱/伴奏/弹唱及剧情内唱词；[静态资产预制](capabilities/asset-preproduction/ASSET_PREPRODUCTION.md)包含角色板、场景、道具、状态和局部修改；[规则反推](capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)包含视频证据、全帧与音轨处理协议及配套脚本。均按需加载，无需另外安装同名技能。
+
+人物表演、[表情管理](knowledge/05E_EXPRESSION_CUES.md)、武戏、[车辆影像](knowledge/05G_VEHICLE_CINEMA.md)（车辆身份与左右舵、车身左右投影、车拍机位与运镜、车漆反射、汽车产品展示段）、空间与连续性、摄影光色、剪辑声音、五类风格库、素材参考、无生图降级、有界修复及验证器保留。缺失可辨配角优先单人角色板，可辨群演可合做多人半身资产；不可辨背景群像优先文生。人物资产采用内置 Higgsfield 统一标准，成员绑定经[02B](knowledge/02B_CHARACTER_BOARD.md)；场景图是否需要、反向图何时补充按 [02A 工程流程](knowledge/02A_PROJECT_WORKFLOW.md)及内置场景功能判断。视频始终按动态空间编译。
+
+整曲翻唱支持agent自动分离人声/备用伴奏、识别歌词、分析节奏和≤30秒切段，再以人声文件和角色资产完成授权范围编译。首次预处理自动建立隔离音频环境并下载模型；实际新音色重唱与视频生成仍需可用生成工具。用法与产物见[音频预处理](capabilities/cover-performance/references/audio-preparation.md)。
+
+新编默认规划授权范围、每批交付两段；整首自动翻唱请求覆盖为全部授权段；已有稿按修改范围处理。真实格式见 [2.5 标准样例](examples/seedance_25_standard.md)，知识入口见 [知识目录](knowledge/README.md)。可选[编剧协作](knowledge/01A_SCREENWRITER_HANDOFF.md)依赖独立安装的 `viral-screenwriter`，未安装不影响导演本身。
+
+## 安装与验证
+
+安装、升级与依赖条件见 [INSTALL.md](INSTALL.md)。安装包包含一个同名 `director-seedance-prompt/` 根目录，选一个版本安装即可。切换版本先将旧目录备份到技能目录之外，再放入完整新目录，避免残留已移除的模块。
+
+`package-manifest.json` 提供每个文件的 SHA256 与大小，清单自身除外。包内保留实际运行脚本与相应测试，不带发布构建器、维护补丁、缓存、外部 CLI、模型权重或项目原件。
+
+使用与版权限制见 [LICENSE](LICENSE)。本项目公开可见，仅限个人学习与非商业使用；禁止商用和再分发，授权请联系微信：MARIOZHAOFAN。
