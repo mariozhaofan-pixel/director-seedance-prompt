@@ -23,7 +23,7 @@
 - [表情管理与细节库](knowledge/05E_EXPRESSION_CUES.md)按需补充20类可组合的可见表情线索；人物目的、情绪管理、幅度与跨镜余态仍由05决定。细节落入原CUT/BEAT，表情参考图沿现有资产预制与同Base同步路线，不额外生成一套角色板，也不要求安装emotion-prompt。
 - [飞书资产工作区](knowledge/02H_FEISHU_ASSET_WORKSPACE.md)是可选模式：一个多维表内用项目总览、剧本交付、资产库、段落交付四表登记采用剧本及历史修订、总索引、图片、生图提示词、段落提示词和用户视频；编剧定稿及已采用改稿自动同步到同一Base，导演按精确修订接回；各批当前剧本分别保留。生成前先查询下载复用，本地制作后主动增量同步。接入已有Base或创建总表时，链接默认可编辑；新建总表同时启用密码分享，便于协作者编辑记录和上传素材、视频。按需读取[部署指南](references/FEISHU_WORKSPACE_SETUP.md)与[表布局](references/FEISHU_BASE_LAYOUT.md)。分享密码与API授权分别校验，内部成员免密不等于密码失效；用户明确的权限限制优先，本地模式不检查或安装飞书环境。
 - 静态资产预制默认按[Higgsfield资产能力接口](knowledge/02F_HIGGSFIELD_ASSET_PREPRODUCTION.md)，进入本包内置的完整资产预制功能与模型路由资料。角色板、场景、道具、状态、反向机位和局部修图使用同一能力标准；平台由用户选择与真实工具决定，无需另装资产技能。
-- [人物资产接口](knowledge/02B_CHARACTER_BOARD.md)让缺失的可辨配角优先生成独立角色板，左侧大头照、右侧正面与背面全身；可辨多人群演可一次生成多人半身资产并逐个绑定身份。面部不可辨且无需个体身份的街道/背景群像优先文生。既有身份按人复用，用户文字锁定例外保留；完整标准仍只有内置资产功能一份。
+- [人物资产接口](knowledge/02B_CHARACTER_BOARD.md)让缺失的可辨配角优先生成独立角色板，左侧正面大头特写、右侧正面全身与背面全身，出图后用脚本盖掉正面全身的头部；可辨多人群演可一次生成多人半身资产并逐个绑定身份。面部不可辨且无需个体身份的街道/背景群像优先文生。既有身份按人复用，用户文字锁定例外保留；完整标准仍只有内置资产功能一份。
 - 缺少生图能力时走[接口建议与无生图模式](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)：建议配置OpenAI GPT Image 2.5；用户确认无生图后交付资产生图提示词与文生视频提示词，状态分别登记，不被缺图等待卡住。
 - [编剧协作](knowledge/01A_SCREENWRITER_HANDOFF.md)可将格式整理、修改意见或已授权修稿交给独立viral-screenwriter；该技能也能把视频提示词任务交回导演，按范围接回且不循环推荐。
 - [风格路由](knowledge/styles/STYLE_ROUTER.md)先读类型目录，再读取唯一选中的英文类型规则。库内六类为campus-relationship、restrained-realism、bright-ensemble、commercial-reversal、phone-vlog（手机Vlog：自拍、同伴手持拍、镜面自拍）、folk-fantasy-realism（写实民俗奇幻：暖色自然光、超现实动作与克制喜剧）。

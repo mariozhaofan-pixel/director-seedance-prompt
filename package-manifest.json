@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "director-seedance-prompt",
-  "edition": "2026-11-18-v29",
+  "edition": "2026-11-18-v30",
   "path_base": "package-root",
   "embedded_capabilities": [
     {
@@ -39,8 +39,8 @@
     },
     {
       "path": "INSTALL.md",
-      "bytes": 6198,
-      "sha256": "b0210925cf61b25369f754967acaf8584924bb818dd726b985229470072b7108"
+      "bytes": 6304,
+      "sha256": "697e9882c8b02c1e0699b4cc259e9405f700df5c0b7d2da87ce42593bf5c928d"
     },
     {
       "path": "LICENSE",
@@ -49,8 +49,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 12317,
-      "sha256": "959f71d624d832fff6e44b5cc27c4535cff41c3378f76c39f6f78afa2e70fca3"
+      "bytes": 12380,
+      "sha256": "7b9ef5fd7b09e87556abb68a201355bc632819e0d321823fc794ee325b459350"
     },
     {
       "path": "SKILL.md",
@@ -69,8 +69,8 @@
     },
     {
       "path": "capabilities/asset-preproduction/ASSET_PREPRODUCTION.md",
-      "bytes": 22378,
-      "sha256": "704f23d18d1d613f9f2482bf2e9492bb627e4d934268f03c6aaedcad22cf8a84"
+      "bytes": 24099,
+      "sha256": "c1f58eaff2b6099835273354304da45f9822f5a536849f972efb7f364d6bd278"
     },
     {
       "path": "capabilities/asset-preproduction/references/HIGGSFIELD_ASSET_ROUTING.md",
@@ -249,8 +249,8 @@
     },
     {
       "path": "knowledge/02B_CHARACTER_BOARD.md",
-      "bytes": 4650,
-      "sha256": "673088c5f264b7091cd56f0f38cab1ff2e599b73b14e2ff1ab7e8ad4ab0b942e"
+      "bytes": 4752,
+      "sha256": "1a92a7eea34384b46caceaa0c992db417ac4cb3861ee106547e9462ec6b2029e"
     },
     {
       "path": "knowledge/02C_CONTINUATION_REFERENCES.md",
@@ -445,12 +445,12 @@
     {
       "path": "maintenance/10_KNOWLEDGE_INDEX.md",
       "bytes": 5385,
-      "sha256": "fdf165500b0b8390e267d5f2fbbbc3ea5d458b3063887f5b9cd1916e5cdee6ee"
+      "sha256": "0f54c0d0fdda84204a09a90ad6dbf1c88e0f935bd62b7f692f60266ed5ee573e"
     },
     {
       "path": "maintenance/CHANGELOG.md",
-      "bytes": 29472,
-      "sha256": "8680d7bd83c7067a9d43a8524a76bc009a6176c9c4ecdedc88da43e3368d7dc1"
+      "bytes": 30264,
+      "sha256": "472227a1175bdaf903b60d8e56a335ff0f33889ced1a288b50eed4fa88dad849"
     },
     {
       "path": "maintenance/README.md",
@@ -464,8 +464,8 @@
     },
     {
       "path": "maintenance/editions/package-install.md.in",
-      "bytes": 1407,
-      "sha256": "9b51d7e801b9f4bd0daa61e361de4a9503d5e274f009dd0a5a9afed6fd44d0d1"
+      "bytes": 1552,
+      "sha256": "cd6ad0d7dce28f749ba9649f3013776d3fb28395d53e4d5f978e0b4967e5e81f"
     },
     {
       "path": "maintenance/editions/package-readme.md.in",
@@ -498,6 +498,11 @@
       "sha256": "08e453823937cfbb84e8c17a8f4b33f4578905283518101891ed065750b22413"
     },
     {
+      "path": "scripts/mask_front_head.py",
+      "bytes": 11649,
+      "sha256": "03efb3fdcdb1a806de0c5ca65536cb16d8a0bb3ea9b1e4ba6b28937a9975b39e"
+    },
+    {
       "path": "scripts/plan_feishu_sync.py",
       "bytes": 16446,
       "sha256": "0d7988e7d2c413cbe948a1f75b4ab25ee99e971338e05715189cb635c75445f2"
@@ -521,6 +526,11 @@
       "path": "scripts/test_execution_layer.py",
       "bytes": 7774,
       "sha256": "1fc537c7be9848c6f9b950471394e7aec52a472bd4707010147e1b913712f34b"
+    },
+    {
+      "path": "scripts/test_mask_front_head.py",
+      "bytes": 5049,
+      "sha256": "96cbfee2fcf995d78a2cf63e17b46b2332801ba42002a05ecfbc2028571eb09c"
     },
     {
       "path": "scripts/test_plan_feishu_sync.py",
@@ -611,6 +621,11 @@
       "path": "scripts/test_supplements_v29.py",
       "bytes": 3252,
       "sha256": "886a22f8c1b00a7cbd4a3584e4eff3ecff56c55a81693d733a44bb4c3bc38a12"
+    },
+    {
+      "path": "scripts/test_supplements_v30.py",
+      "bytes": 2220,
+      "sha256": "bfb2db9bb30bc393526fac1539c0e86230891f393bbcea8f580872f46e18fa70"
     },
     {
       "path": "scripts/test_validate_combat_prompt.py",
