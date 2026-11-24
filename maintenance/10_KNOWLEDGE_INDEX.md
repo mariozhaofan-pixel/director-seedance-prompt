@@ -9,7 +9,7 @@
 | [02K_PROJECT_SLOT](../knowledge/02K_PROJECT_SLOT.md) | 1523 |
 | [02L_PLATFORM_PROFILES](../knowledge/02L_PLATFORM_PROFILES.md) | 566 |
 | [01_CORE_EXECUTION_CONTRACT](../knowledge/01_CORE_EXECUTION_CONTRACT.md) | 14997 |
-| [01A_SCREENWRITER_HANDOFF](../knowledge/01A_SCREENWRITER_HANDOFF.md) | 2022 |
+| [01A_SCREENWRITER_HANDOFF](../knowledge/01A_SCREENWRITER_HANDOFF.md) | 2182 |
 | [02_REFERENCE_ROUTER_AND_LOCKS](../knowledge/02_REFERENCE_ROUTER_AND_LOCKS.md) | 7785 |
 | [02A_PROJECT_WORKFLOW](../knowledge/02A_PROJECT_WORKFLOW.md) | 6774 |
 | [02B_CHARACTER_BOARD](../knowledge/02B_CHARACTER_BOARD.md) | 1820 |
@@ -31,13 +31,13 @@
 | [05F_MARTIAL_STYLES](../knowledge/05F_MARTIAL_STYLES.md) | 11895 |
 | [05G_VEHICLE_CINEMA](../knowledge/05G_VEHICLE_CINEMA.md) | 7467 |
 | [05H_CHILD_PET_PERFORMANCE](../knowledge/05H_CHILD_PET_PERFORMANCE.md) | 2366 |
-| [06_TIMELINE_EDITING_SOUND](../knowledge/06_TIMELINE_EDITING_SOUND.md) | 29865 |
+| [06_TIMELINE_EDITING_SOUND](../knowledge/06_TIMELINE_EDITING_SOUND.md) | 30917 |
 | [06A_COMBAT_TIMING](../knowledge/06A_COMBAT_TIMING.md) | 4857 |
 | [06B_TRANSITIONS_SOUND](../knowledge/06B_TRANSITIONS_SOUND.md) | 4532 |
 | [07_STYLE_GENRE_FAMOUS_SCENE_COMPILER](../knowledge/07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md) | 8538 |
 | [07A_PAINTING_HOMAGE_ROUTER](../knowledge/07A_PAINTING_HOMAGE_ROUTER.md) | 5271 |
 | [08_FAST_PREFLIGHT](../knowledge/08_FAST_PREFLIGHT.md) | 6187 |
-| [08_MODEL_QC_REPAIR](../knowledge/08_MODEL_QC_REPAIR.md) | 39418 |
+| [08_MODEL_QC_REPAIR](../knowledge/08_MODEL_QC_REPAIR.md) | 39735 |
 | [STYLE_ROUTER](../knowledge/styles/STYLE_ROUTER.md) | 3214 |
 | [bright-ensemble](../knowledge/styles/bright-ensemble/bright-ensemble.md) | 9890 |
 | [campus-relationship](../knowledge/styles/campus-relationship/campus-relationship.md) | 8567 |

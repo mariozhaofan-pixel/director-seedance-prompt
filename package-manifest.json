@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "director-seedance-prompt",
-  "edition": "2026-11-18-v30",
+  "edition": "2026-11-24-v31",
   "path_base": "package-root",
   "embedded_capabilities": [
     {
@@ -234,8 +234,8 @@
     },
     {
       "path": "knowledge/01A_SCREENWRITER_HANDOFF.md",
-      "bytes": 5140,
-      "sha256": "fe46b05311d190eeeb1f78fc550d187f4f590c985830c674aa5792b28a715faf"
+      "bytes": 5474,
+      "sha256": "c2b3bd5f8e5a86e1455149c7141e1b1471014021c7bac01efeb01b06fb6b9425"
     },
     {
       "path": "knowledge/01_CORE_EXECUTION_CONTRACT.md",
@@ -379,8 +379,8 @@
     },
     {
       "path": "knowledge/06_TIMELINE_EDITING_SOUND.md",
-      "bytes": 72515,
-      "sha256": "45af575073b7819d058f4ef956db2b5ef0dc236aec201569e8b00183a97fd7aa"
+      "bytes": 75331,
+      "sha256": "579a14d1db0adffa59b6ec7b3c505b154aeeca50eb134e8d7ef976b8666c99a2"
     },
     {
       "path": "knowledge/07A_PAINTING_HOMAGE_ROUTER.md",
@@ -399,8 +399,8 @@
     },
     {
       "path": "knowledge/08_MODEL_QC_REPAIR.md",
-      "bytes": 93941,
-      "sha256": "0398c58d078e36ce9ef80215e5b903288c12b145946900cda51b8269b3ac6ee7"
+      "bytes": 94730,
+      "sha256": "a94cf716bc6ffc16073ad8912573776eaf2fedc2ebd6d78c57078300d41c64d0"
     },
     {
       "path": "knowledge/README.md",
@@ -445,12 +445,12 @@
     {
       "path": "maintenance/10_KNOWLEDGE_INDEX.md",
       "bytes": 5385,
-      "sha256": "0f54c0d0fdda84204a09a90ad6dbf1c88e0f935bd62b7f692f60266ed5ee573e"
+      "sha256": "0f205716bd1f4e09ecf0cbab4cbc2ebed5708d86f29c0a0e7ef4fc504f63477c"
     },
     {
       "path": "maintenance/CHANGELOG.md",
-      "bytes": 30264,
-      "sha256": "472227a1175bdaf903b60d8e56a335ff0f33889ced1a288b50eed4fa88dad849"
+      "bytes": 31383,
+      "sha256": "0d2fddd3b8b78350b69d460cf95d89f99e0450d2dbd09a440385fc2b6794e4a8"
     },
     {
       "path": "maintenance/README.md",
@@ -626,6 +626,11 @@
       "path": "scripts/test_supplements_v30.py",
       "bytes": 2220,
       "sha256": "bfb2db9bb30bc393526fac1539c0e86230891f393bbcea8f580872f46e18fa70"
+    },
+    {
+      "path": "scripts/test_supplements_v31.py",
+      "bytes": 2640,
+      "sha256": "2d0c86fc7c0fbe754779f4cee9363bb28f9001c3a053c00bb9160d58bc5a7665"
     },
     {
       "path": "scripts/test_validate_combat_prompt.py",
