@@ -1,6 +1,6 @@
 # 导演 Skill：表情管理与飞书资产协作版
 
-本文件是源码仓库的说明；安装包里的 INSTALL.md 由 `maintenance/editions/package-install.md.in` 生成，版本以 `package-manifest.json` 的 edition 为准。内置翻唱共用核心1.2.0。支持整曲人声/伴奏分离、歌词候选与节奏分段；参考音频默认共用30秒额度，音色至少预留4秒，歌曲参考默认最多26秒，已有选段可按完整乐句截取或保调加速。独立翻唱与导演入口默认使用统一五栏。同步交付飞书连接版和本地版，两版保留表情管理、Higgsfield人物资产、规则反推、完整武戏交换库、画面句例及媒介差异，以及素材、批次和验收边界。原生 Skill，每包仅有一个根 SKILL.md。
+本文件是源码仓库的说明；安装包里的 INSTALL.md 由 `maintenance/editions/package-install.md.in` 生成，版本以 `package-manifest.json` 的 edition 为准。内置翻唱能力只在本仓库维护。支持整曲人声/伴奏分离、歌词候选与节奏分段；参考音频额度见 `capabilities/cover-performance/references/reference-audio-budget.md`，已有选段可按完整乐句截取或保调加速。翻唱默认使用导演统一五栏。同步交付飞书连接版和本地版，两版保留表情管理、Higgsfield人物资产、规则反推、完整武戏交换库、画面句例及媒介差异，以及素材、批次和验收边界。原生 Skill，每包仅有一个根 SKILL.md。
 
 ## 安装
 
@@ -8,7 +8,7 @@
 
 ## 本包已包含的完整功能
 
-- capabilities/cover-performance/：与独立翻唱skill同源的歌词、音轨、时间轴、逐乐句表演、修订和数值核对；经02I接入导演五栏，安装导演包即可使用，无需另装独立翻唱包。
+- capabilities/cover-performance/：本仓库维护的歌词、音轨、时间轴、逐乐句表演、修订和数值核对；经02I接入导演五栏，安装导演包即可使用。
 
 - capabilities/asset-preproduction/：Higgsfield 静态资产方法、模型路由、角色板、场景、道具、文字资产、状态版本、反向机位、局部编辑与验收。
 - capabilities/reference-rule-extraction/：视频反推光影、构图、运镜、表演及声音规则；完整规则书写合同、视频全帧与全部音轨取证协议、参考模板、4个配套Python脚本。
@@ -37,7 +37,7 @@
 
 ## 实际工具与运行环境
 
-真实生成图片使用宿主可用工具或用户已授权API，不要求另装特定图像Skill。缺少生图能力时提供 OpenAI Image 2.5 接口建议；用户确认无生图模式后交付同标准资产生图提示词，视频继续文生，不虚构图片。
+真实生成图片使用宿主可用工具或用户已授权API，不要求另装特定图像Skill。缺少生图能力时建议配置宿主或用户可用的最高规格生图模型；用户确认无生图模式后交付同标准资产生图提示词，视频继续文生，不虚构图片。
 
 提示词校验需要Python 3.10+，仅使用标准库。媒体取证需要实际可访问的视频/音轨、Python、FFmpeg/FFprobe及对应库；ASR/OCR按需要使用识别模型。详细运行条件见 capabilities/reference-rule-extraction/RUNTIME.md。包内包含功能协议和源码，不包含模型权重、媒体原件、凭据或第三方程序；缺少工具须如实说明，不把抽样结果或脚本准备成功当作完整观看/听音。
 

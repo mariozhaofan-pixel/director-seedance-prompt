@@ -10,7 +10,7 @@
 
 ## 执行层
 
-- [核心卡](knowledge/00_CORE_CARD.md)是常规编译唯一必读的规则卡：新会话、上下文压缩或换集后先重读核心卡和项目层；每段按九步走（取证→衔接→剧情门→编译卡→出场资产→写→验证→交付→两段一批差分），十四条硬规则各带合格/不合格例子。
+- [核心卡](knowledge/00_CORE_CARD.md)是每段都要重读的规则卡（新编另按入口读 01、02A、02J、03、04、06、08_FAST 和风格目录）：新会话、上下文压缩或换集后先重读核心卡和项目层；每段按九步走（取证→衔接→剧情门→编译卡→出场资产→写→验证→交付→两段一批差分），十四条硬规则各带合格/不合格例子。
 - [编译卡](knowledge/02J_SHOT_CARD.md)把世界拓扑、上一段实际结尾、逐CUT画面投影、出场、资产和动作状态落成文件；世界方位只在卡里推算，提示词写画面左右、前中后景、朝向镜头和可见地标。
 - [项目层插槽](knowledge/02K_PROJECT_SLOT.md)：项目规则、lint补充、事故日志和编译卡放在用户项目目录，每次编译读取；Skill 保持所有用户同一版本，项目经验不回写 Skill。
 - [平台限制](knowledge/02L_PLATFORM_PROFILES.md)记录段长、素材数与宽高比上限。
@@ -24,16 +24,16 @@
 - [飞书资产工作区](knowledge/02H_FEISHU_ASSET_WORKSPACE.md)是可选模式：一个多维表内用项目总览、剧本交付、资产库、段落交付四表登记采用剧本及历史修订、总索引、图片、生图提示词、段落提示词和用户视频；编剧定稿及已采用改稿自动同步到同一Base，导演按精确修订接回；各批当前剧本分别保留。生成前先查询下载复用，本地制作后主动增量同步。接入已有Base或创建总表时，链接默认可编辑；新建总表同时启用密码分享，便于协作者编辑记录和上传素材、视频。按需读取[部署指南](references/FEISHU_WORKSPACE_SETUP.md)与[表布局](references/FEISHU_BASE_LAYOUT.md)。分享密码与API授权分别校验，内部成员免密不等于密码失效；用户明确的权限限制优先，本地模式不检查或安装飞书环境。
 - 静态资产预制默认按[Higgsfield资产能力接口](knowledge/02F_HIGGSFIELD_ASSET_PREPRODUCTION.md)，进入本包内置的完整资产预制功能与模型路由资料。角色板、场景、道具、状态、反向机位和局部修图使用同一能力标准；平台由用户选择与真实工具决定，无需另装资产技能。
 - [人物资产接口](knowledge/02B_CHARACTER_BOARD.md)让缺失的可辨配角优先生成独立角色板，左侧正面大头特写、右侧正面全身与背面全身，出图后用脚本盖掉正面全身的头部；可辨多人群演可一次生成多人半身资产并逐个绑定身份。面部不可辨且无需个体身份的街道/背景群像优先文生。既有身份按人复用，用户文字锁定例外保留；完整标准仍只有内置资产功能一份。
-- 缺少生图能力时走[接口建议与无生图模式](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)：建议配置OpenAI GPT Image 2.5；用户确认无生图后交付资产生图提示词与文生视频提示词，状态分别登记，不被缺图等待卡住。
+- 缺少生图能力时走[接口建议与无生图模式](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)：建议使用宿主或用户可用的最高规格生图模型；用户确认无生图后交付资产生图提示词与文生视频提示词，状态分别登记，不被缺图等待卡住。
 - [编剧协作](knowledge/01A_SCREENWRITER_HANDOFF.md)可将格式整理、修改意见或已授权修稿交给独立viral-screenwriter；该技能也能把视频提示词任务交回导演，按范围接回且不循环推荐。
 - [风格路由](knowledge/styles/STYLE_ROUTER.md)先读类型目录，再读取唯一选中的风格包。库内六类为campus-relationship、restrained-realism、bright-ensemble、commercial-reversal、phone-vlog（手机Vlog：自拍、同伴手持拍、镜面自拍）、folk-fantasy-realism（写实民俗奇幻：暖色自然光、超现实动作与克制喜剧）。
 - 用户提供光影/运镜/表演对标视频时，进入内置[规则反推功能](capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)，执行完整规则书写、全帧视频取证和真实听音流程；所需协议与配套脚本随包提供。规则文件生成后返回原编译范围。仅剧情/身份/尾态证据走素材路线。
-- [翻唱演唱接口](knowledge/02I_COVER_PERFORMANCE.md)调用内置同源翻唱规则及音频工具：自动分离整曲人声/备用伴奏、识别歌词、分析节奏和≤30秒切段，再结合角色资产编译全部授权段。支持清唱、伴奏、弹唱及剧情内唱词；纯素材/通用演唱草稿不启动模型与工程问答，具体模型仍保留真实硬上限。
+- [翻唱演唱接口](knowledge/02I_COVER_PERFORMANCE.md)调用内置翻唱规则及音频工具：自动分离整曲人声/备用伴奏、识别歌词、分析节奏和≤30秒切段，再结合角色资产编译全部授权段。支持清唱、伴奏、弹唱及剧情内唱词；纯素材/通用演唱草稿不启动模型与工程问答，具体模型仍保留真实硬上限。
 - 三项完整功能封装在 `capabilities/`，只在触发时加载。功能入口采用用途文件名，整个目录只有根入口一个 `SKILL.md`。原始资产与规则反推技能不再是安装依赖。
 
 ## 校验与审核
 
-[scripts/validate_prompt.py](scripts/validate_prompt.py)提供一般候选公共校验，并以警告形式提示世界方位词、静止状态词、贴图式构图、画外音缺口型说明、缺无字幕卫生句、@图片编号断档，以及POV句式、阵列词、敏感词、多人同镜代词、负面词与正文打架、眼睛颜色、主观镜头眼罩、空泛质量词、拍摄者与器材入画、200mm以上漏写极浅景深、车辆缺左右舵、车身左右缺画面投影和车头朝向与可见车身侧矛盾，以及可选的逐 CUT 口播容量粗估（`--speech-lang zh|ja`），`--project-lint`加载项目层规则；[check_assets.py](scripts/check_assets.py)按平台限制检查参考图宽高比，[take_evidence.py](scripts/take_evidence.py)对上一段成片出联系表、切点、尾段区间与结尾状态草稿；[validate_combat_prompt.py](scripts/validate_combat_prompt.py)保留武戏兼容入口。传入已解析version、duration、profile、timeline与timestamp-policy；支持JSON结果，明确checked和not_verified。
+[scripts/validate_prompt.py](scripts/validate_prompt.py)提供一般候选公共校验，并以警告形式提示世界方位词、静止状态词、贴图式构图、画外音/旁白缺嘴唇闭合或声音来源、缺无字幕卫生句、@图片编号断档，以及POV句式、阵列词、敏感词、多人同镜代词、负面词与正文打架、眼睛颜色、主观镜头眼罩、空泛质量词、拍摄者与器材入画、200mm以上漏写极浅景深、车辆缺左右舵、车身左右缺画面投影和车头朝向与可见车身侧矛盾，以及可选的逐 CUT 口播容量粗估（`--speech-lang zh|ja`），`--project-lint`加载项目层规则；[check_assets.py](scripts/check_assets.py)按平台限制检查参考图宽高比，[take_evidence.py](scripts/take_evidence.py)对上一段成片出联系表、切点、尾段区间与结尾状态草稿；[validate_combat_prompt.py](scripts/validate_combat_prompt.py)保留武戏兼容入口。传入已解析version、duration、profile、timeline与timestamp-policy；支持JSON结果，明确checked和not_verified。
 
 无时码不声称验证了0–T覆盖；脚本不代替空间、表演、动作容量或素材证据判断。普通新稿一次快速预检，失败只复查受影响项；只有入口已触发冷审才使用密封包。
 
@@ -52,8 +52,8 @@
 ## 维护
 
 - 修改唯一运行入口或对应知识模块，再从已验证的源码生成 Skill 安装包。
-- 翻唱共用规则只在cover-performance-director源码的core目录维护；使用其maintenance/sync_director.py同步到本包capabilities/cover-performance，并用--check核对。独立版与导演两发行包共用核心逐字节一致；两处输出适配各自维护。发布时使用独立版maintenance/build_release.py统一构建和核对，避免只更新一份。
-- 独立翻唱源码与安装包见[翻唱仓库](https://github.com/mariozhaofan-pixel/cover-performance-director)，本次版本变化见[更新记录](maintenance/CHANGELOG.md)。
+- 翻唱规则与音频脚本只在本仓库 capabilities/cover-performance 维护；改动后运行该目录 scripts 下的测试。
+- 本次版本变化见[更新记录](maintenance/CHANGELOG.md)。
 - 运行 python -B -m unittest discover -s scripts -p "test_*.py"。
 - 检查新增模块路由、外部依赖、本地链接、完整打包与真实行为；不以文件数量或字数下降代替能力保留。
 - 历史参考和维护记录不作为默认运行上下文。当前模块/大小索引见[维护索引](maintenance/10_KNOWLEDGE_INDEX.md)。

@@ -4,10 +4,13 @@ from __future__ import annotations
 import bisect
 import math
 
+from cover_common import MAX_SEGMENT_SECONDS
 
-def plan_segments(total_samples, sample_rate, phrases, silences, beats, max_seconds=30.0):
-    if total_samples <= 0 or sample_rate <= 0 or not 0 < max_seconds <= 30:
-        raise ValueError("positive audio size/rate and a maximum in (0, 30] are required")
+
+def plan_segments(total_samples, sample_rate, phrases, silences, beats, max_seconds=MAX_SEGMENT_SECONDS):
+    """max_seconds is the song limit from the reference-audio budget; it is also the preferred length."""
+    if total_samples <= 0 or sample_rate <= 0 or not 0 < max_seconds <= MAX_SEGMENT_SECONDS:
+        raise ValueError(f"positive audio size/rate and a maximum in (0, {MAX_SEGMENT_SECONDS:g}] are required")
     cap = int(math.floor(max_seconds * sample_rate))
     if cap < 1:
         raise ValueError("segment cap must contain at least one sample")
@@ -62,13 +65,13 @@ def plan_segments(total_samples, sample_rate, phrases, silences, beats, max_seco
     costs = [math.inf] * len(points)
     previous = [-1] * len(points)
     costs[0] = 0.0
-    target = min(26.0, max_seconds)
     for j in range(1, len(points)):
         first = bisect.bisect_left(points, points[j] - cap)
         for i in range(first, j):
             length = (points[j] - points[i]) / sample_rate
             short_cost = 12 * max(0, min(6, max_seconds / 2) - length) if duration > max_seconds else 0
-            cost = costs[i] + 3 + ((target - length) / max(target, 1)) ** 2 + short_cost + boundary_costs[j]
+            fill_cost = ((max_seconds - length) / max(max_seconds, 1)) ** 2
+            cost = costs[i] + 3 + fill_cost + short_cost + boundary_costs[j]
             if cost < costs[j]:
                 costs[j], previous[j] = cost, i
     if previous[-1] < 0:

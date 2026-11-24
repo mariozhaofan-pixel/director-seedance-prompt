@@ -289,5 +289,26 @@ class EditionBuildTests(unittest.TestCase):
         self.assertIn("已验收基线", local_expression)
 
 
+class SourceManifestFreshnessTests(unittest.TestCase):
+    """Source checkout only (this file is not shipped): catch a manifest that was not refreshed."""
+
+    def test_manifest_and_index_match_the_working_tree(self) -> None:
+        import contextlib
+        import importlib.util
+        import io
+
+        script = Path(__file__).resolve().parents[1] / "maintenance" / "refresh_manifest.py"
+        if not script.is_file():
+            self.skipTest("maintenance/refresh_manifest.py is not present")
+        spec = importlib.util.spec_from_file_location("refresh_manifest", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            code = module.main(["--check"])
+        self.assertEqual(code, 0, "run `python -B maintenance/refresh_manifest.py` and commit the result:\n"
+                         + buffer.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

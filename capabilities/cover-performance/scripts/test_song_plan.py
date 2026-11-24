@@ -1,4 +1,10 @@
 import copy
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from check_song_plan import check_plan
@@ -107,6 +113,19 @@ class SongPlanTests(unittest.TestCase):
         original = copy.deepcopy(plan)
         check_plan(plan)
         self.assertEqual(plan, original)
+
+    def test_cli_prints_korean_lyrics_on_a_legacy_console(self):
+        plan = sample()
+        plan["lyrics"][0]["text"] = "사랑해요"
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "plan.json"
+            path.write_bytes(json.dumps(plan, ensure_ascii=False).encode("utf-8"))
+            env = {key: value for key, value in os.environ.items() if key != "PYTHONUTF8"}
+            env["PYTHONIOENCODING"] = "ascii"
+            script = Path(__file__).with_name("check_song_plan.py")
+            result = subprocess.run([sys.executable, "-B", str(script), str(path)], capture_output=True, env=env)
+        self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", "replace"))
+        self.assertIn("사랑해요", result.stdout.decode("utf-8"))
 
 
 if __name__ == "__main__":

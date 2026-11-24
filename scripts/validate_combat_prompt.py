@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Compatibility CLI/API for the Seedance combat profile.
+"""Compatibility CLI for the Seedance combat profile.
 
-All parsing and validation lives in validate_prompt.py. Existing commands and
-seal_review_packet.py keep the combat defaults and text PASS/error protocol.
+All parsing and validation lives in validate_prompt.py; this entry only changes
+the default profile to combat and keeps the text PASS/error protocol.
 """
 from __future__ import annotations
 
 import validate_prompt as _shared
-from validate_prompt import *  # Re-export the established helper API.
 
 
 def parse_args(argv: list[str] | None = None):

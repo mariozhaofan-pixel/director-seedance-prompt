@@ -45,7 +45,7 @@ class V19MartialStylesTests(unittest.TestCase):
 class V19SupplementTests(unittest.TestCase):
     def test_dance_density_and_phrases(self) -> None:
         performance = read("knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md")
-        section = performance.split("### 舞蹈与升格（补充）", 1)[1].split("\n## ", 1)[0]
+        section = performance.split("\n## 舞蹈与升格（补充）", 1)[1].split("\n## ", 1)[0]
         for phrase in ("**动作密度**", "**乐句接力**", "第一帧人物已经在跳的中途", "承重脚始终踩实", "**从视频还原**"):
             self.assertIn(phrase, section)
 

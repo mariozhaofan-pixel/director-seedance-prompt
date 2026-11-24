@@ -12,7 +12,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from test_validate_combat_prompt import make_prompt
-from validate_prompt import validate_prompt
+from validate_prompt import dialogue_lines, lint_warnings, parse_sections, speech_need, validate_prompt
 
 
 GENERAL = Path(__file__).with_name("validate_prompt.py")
@@ -144,11 +144,122 @@ class SharedValidatorTests(unittest.TestCase):
             with self.subTest(candidate=candidate):
                 self.assertEqual(self.check(candidate, profile="combat")["verdict"], "FAIL")
 
+    def test_api_rejects_non_finite_or_nonpositive_duration(self):
+        for duration in ("NaN", "Infinity", "0", "-4"):
+            with self.subTest(duration=duration):
+                self.assert_fail(self.check(self.timed_prompt(), duration), "finite and positive")
+
     def test_beat_labels_can_restart_within_new_cuts_but_not_repeat_inside_one(self):
         candidate = make_prompt("15", "CUT 1\nBEAT A\n进入。\nBEAT B\n停顿。\nCUT 2\nBEAT A\n离开。")
         self.assert_pass(self.check(candidate))
         duplicate = candidate.replace("BEAT B", "BEAT A")
         self.assert_fail(self.check(duplicate), "BEAT labels must be unique")
+
+
+def lint_prompt(lock: str = "角色A：成年女性。", style: str = "35mm。", timeline: str = "CUT 1\n测试。",
+                sound: str = "无背景音乐。", limits: str = "无字幕、无水印。") -> str:
+    return (f"### 第01段｜建议8秒｜测试\n【角色/场景/素材锁定】\n{lock}\n【基础风格】\n{style}\n"
+            f"【运镜与时间轴】\n{timeline}\n【声音设计】\n{sound}\n【画面限制】\n{limits}")
+
+
+def lint_ids(text: str) -> dict[str, str]:
+    return {w.split()[1]: w for w in lint_warnings(text, parse_sections(text, [])) if w.startswith("lint M")}
+
+
+class LintRuleTests(unittest.TestCase):
+    """Each lint follows the document that states its rule."""
+
+    def assert_lint(self, code: str, text: str, expected: bool) -> None:
+        self.assertEqual(code in lint_ids(text), expected, lint_ids(text))
+
+    def test_m1_scans_the_full_text_and_reads_english_next_to_chinese(self) -> None:
+        # 00 翻译规则: full-text search; \b fails next to Chinese characters.
+        for text in (lint_prompt(sound="风从北边吹来。"), lint_prompt(style="camera朝north看，35mm。"),
+                     lint_prompt(timeline="CUT 1\n固定world-east座位，阿红转身。"),
+                     lint_prompt(limits="无字幕，镜头不朝西边。")):
+            with self.subTest(text=text):
+                self.assert_lint("M1", text, True)
+
+    def test_m1_allows_a_projection_in_the_same_clause_and_cultural_words(self) -> None:
+        for text in (lint_prompt(timeline="CUT 1\n固定world-east座位在此反拍中投影到screen-left，camera看见人物三分之四正脸。"),
+                     lint_prompt(style="东方美学，35mm。"), lint_prompt(lock="角色A：成年女性，南方口音。"),
+                     lint_prompt(timeline="CUT 1\n角色A走向西装男人。")):
+            with self.subTest(text=text):
+                self.assert_lint("M1", text, False)
+
+    def test_m2_allows_the_body_stillness_05f_directs(self) -> None:
+        for timeline in ("CUT 1\n结构对的人被推时纹丝不动。", "CUT 1\n阿森回到窄侧身站架，完全静止，只有眼睛跟着他。"):
+            with self.subTest(timeline=timeline):
+                self.assert_lint("M2", lint_prompt(timeline=timeline), False)
+        for timeline in ("CUT 1\n石门纹丝不动。", "CUT 1\n石手悬在头顶，只有手指在动。"):
+            with self.subTest(timeline=timeline):
+                self.assert_lint("M2", lint_prompt(timeline=timeline), True)
+
+    def test_m4_covers_narration_and_inner_monologue_labels(self) -> None:
+        for timeline in ("CUT 1\n老人弯腰捡稻穗，画外旁白说：“他没有意识到。”",
+                         "CUT 1\n角色A（内心OS）画外音：“不会错。”"):
+            with self.subTest(timeline=timeline):
+                self.assert_lint("M4", lint_prompt(timeline=timeline), True)
+        for timeline in ("CUT 1\n老人弯腰捡稻穗，嘴唇闭合。\n画外旁白说：“他没有意识到。”",
+                         "CUT 1\n角色A嘴唇闭合，角色A：“（这个数值……不会错。）”",
+                         "CUT 1\n车站广播的画外音：“列车进站。”",
+                         "CUT 1\n无旁白，角色A自然 lip-sync 说：“好。”"):
+            with self.subTest(timeline=timeline):
+                self.assert_lint("M4", lint_prompt(timeline=timeline), False)
+
+    def test_m19_flags_all_direct_blood_words_only(self) -> None:
+        found = lint_ids(lint_prompt(timeline="CUT 1\n角色A额角渗血，嘴角吐血。"))
+        self.assertIn("渗血", found.get("M19", ""))
+        self.assertIn("吐血", found.get("M19", ""))
+        self.assert_lint("M19", lint_prompt(lock="角色A：中英混血成年女性，手背血管清楚，眼里有血丝，脸上没有血色。"), False)
+
+    def test_m22_reads_the_whole_cut_and_names_only_characters(self) -> None:
+        lock = "林岚：32岁成年女性。\n周远：35岁成年男性。\n钥匙：银色钥匙。\n玄关：窄长玄关。"
+        self.assert_lint("M22", lint_prompt(lock=lock, timeline="CUT 1\n林岚递出钥匙。\n周远接住，她收回手。"), True)
+        self.assert_lint("M22", lint_prompt(lock=lock, timeline="CUT 1\n林岚在玄关递出钥匙，她收回手。"), False)
+
+    def test_m24_follows_the_05_anchor(self) -> None:
+        self.assert_lint("M24", lint_prompt(lock="角色A：成年女性，银色眼镜，紫色眼影。"), False)
+        self.assert_lint("M24", lint_prompt(lock="角色A：成年女性，金色眼睛带明亮眼神光。"), True)
+        self.assert_lint("M24", lint_prompt(lock="角色A：成年女性，金色眼睛，没有眼神光。"), False)
+
+    def test_m32_reads_negative_lists_not_props(self) -> None:
+        self.assert_lint("M32", lint_prompt(timeline="CUT 1\n角色A无声举起相机。"), False)
+        self.assert_lint("M32", lint_prompt(limits="无字幕，无任何摄影机。"), True)
+
+    def test_m34_needs_no_drive_side_for_a_motorcycle(self) -> None:
+        # 05G 摩托车（补充）: the rider sits on the centreline; no 左舵/右舵.
+        ride = "CUT 1\n骑手跨上车，驾驶者拧动油门，乘客上车坐稳。"
+        for line in ("红色摩托车：街车，银色轮毂。", "白色踏板车：直坐骑姿。", "黑色机车：跑车，前趴骑姿。"):
+            with self.subTest(line=line):
+                self.assert_lint("M34", lint_prompt(lock=line, timeline=ride), False)
+        self.assert_lint("M34", lint_prompt(lock="白色轿车：四门轿车。", timeline=ride), True)
+        self.assert_lint("M34", lint_prompt(lock="红色摩托车：街车。\n白色轿车：四门轿车。", timeline=ride), True)
+
+
+class SpeechCapacityTests(unittest.TestCase):
+    def test_dialogue_forms_from_06(self) -> None:
+        self.assertEqual(dialogue_lines("CUT 1\n角色A：【贴近】“（这个数值……不会错。）”"), ["（这个数值……不会错。）"])
+        self.assertEqual(dialogue_lines("CUT 1\n角色A：我……【抬起手】你……？"), ["我……【抬起手】你……？"])
+        self.assertEqual(dialogue_lines("CUT 1\n角色A受到惊吓：*我操！*"), ["*我操！*"])
+        self.assertEqual(dialogue_lines("CUT 1\n前提：角色A在门口。\n角色B：“好。”角色A：我……【抬起手】你……？"),
+                         ["好。", "我……【抬起手】你……？"])
+        self.assertEqual(dialogue_lines("CUT 1\n角色A：成年女性，站在门口。"), [])
+
+    def test_action_marks_are_not_spoken(self) -> None:
+        self.assertEqual(speech_need("我……【抬起手】你……？", "zh")[0], 2)
+        self.assertEqual(speech_need("“我……【抬起手】你……？”", "zh")[0], 2)
+        self.assertEqual(speech_need("OK，走", "zh")[0], 3)
+
+    def test_marked_lines_count_against_the_cut(self) -> None:
+        long_line = "我们现在就从后门出去然后一直往前跑不要回头"
+        for line in (f"角色A：【贴近】“（{long_line}。）”", f"角色A：{long_line}【抬起手】快走！"):
+            with self.subTest(line=line):
+                text = make_prompt("4", f"CUT 1（0-2秒）{line}\nCUT 2（2-4秒）测试。")
+                report = validate_prompt(text, duration=Decimal("4"), timeline="timed", speech_lang="zh")
+                self.assertTrue(any(w.startswith("lint M37 dialogue may not fit CUT 1") for w in report["warnings"]),
+                                report["warnings"])
+                self.assertEqual(report["verdict"], "PASS", report["errors"])
 
 
 class SharedValidatorCliTests(unittest.TestCase):

@@ -60,7 +60,7 @@ class V17DocumentTests(unittest.TestCase):
     def test_weather_dance_speech_frames_vfx_and_sound(self) -> None:
         self.assertIn("### 天气接触与光源依据（补充）", read("knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md"))
         self.assertIn("剧情里真的淋雨、出汗时照写接触证据", read("knowledge/04A_LIVE_ACTION_TEXTURE.md"))
-        self.assertIn("### 舞蹈与升格（补充）", read("knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md"))
+        self.assertIn("\n## 舞蹈与升格（补充）", read("knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md"))
         self.assertIn("英文对白按词数估", read("knowledge/06_TIMELINE_EDITING_SOUND.md"))
         references = read("knowledge/02_REFERENCE_ROUTER_AND_LOCKS.md")
         self.assertIn("last frame target", references)

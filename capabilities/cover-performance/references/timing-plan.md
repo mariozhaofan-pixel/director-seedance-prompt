@@ -31,6 +31,6 @@
 
 `segments`按最终保留窗口无缝覆盖视频0至结尾。可选generate_start/generate_end表示更大的生成上下文，必须包住该保留窗口；重叠上下文在最终剪辑中裁去，不能重唱重叠部分。最大段长检查生成上下文长度，不只检查裁后长度；数值来自当前已核实模型，示例8秒不构成规格。
 
-命令从技能根目录执行：独立版`python -B core/scripts/check_song_plan.py 项目计划.json`；导演版`python -B capabilities/cover-performance/scripts/check_song_plan.py 项目计划.json`。
+命令从技能根目录执行：`python -B capabilities/cover-performance/scripts/check_song_plan.py 项目计划.json`。
 
 成功退出只表示数值和所声明结构一致；`not_verified`明确实际音频、歌词正确性、证据真伪、音准、生成口型和平台能力均未验证。严格时码不能把candidate换名以求通过。`require_final_track`拦截把歌曲参考当最终音轨；仍不保证平台同步效果。跨乐句切段给出警告，需要检查相位与后期方案，不能忽略警告后宣称生成就绪。

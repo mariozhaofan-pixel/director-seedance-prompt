@@ -2,13 +2,11 @@
 
 ## 使用说明
 
-仅在需要核对 Higgsfield 当前入口、模型路由或项目经验来源时读取本文件。产品能力会更新；精确上限、格式、分辨率、价格和功能入口必须以调用当天的官方页面为准。
+仅在需要核对 Higgsfield 当前入口或模型路由时读取本文件。产品能力会更新；精确上限、格式、分辨率、价格和功能入口必须以调用当天的官方页面为准。
 
-## 三类证据
+## 证据
 
-1. **官方产品说明**：可用于确认产品定位和界面工作流。
-2. **HELL GRIND 项目经验**：来自一部具体电影的生产实践，可转化为默认建议，但不是永久模型定律。
-3. **本地原始功能资料经验**：用于发现失败模式；与官方说明或当前实测冲突时降级为候选方案。
+官方产品说明用于确认产品定位和界面工作流。下表“控制重点”里的经验做法与官方说明或当前实测冲突时，以官方说明和实测为准，经验降为候选方案。
 
 ## 当前任务路由
 
@@ -23,15 +21,7 @@
 | 纹理修整 | Seedream 当前可用版本 | 皮肤、织物和表面；点改能力需实测 |
 | 反向机位/新视角 | GPT Image、Nano Banana 或 Cinema Studio 当前工具 | 先写新机位的物件排列和世界拓扑 |
 
-## HELL GRIND 可迁移经验
-
-- 资产由稳定文字描述和图片参考共同组成。
-- 角色状态、场景天气/时间和关键道具状态应分开建立资产。
-- 角色板保持中性，电影风格主要进入场景资产和最终镜头。
-- 场景使用有纵深的三分之四视角和固定地标，提前覆盖未来机位。
-- 每个参考素材必须写明角色、场景、风格、动作或声音用途。
-- 已验收图像尽量避免整图重复过模；局部变化可遮罩合回。
-- 资产在不同角度、光线、动作和多人同框下通过压力测试后再锁定。
+资产方法本身（双锚点、状态拆分、中性角色板、场景地标与方向、局部修改、压力测试）只在[静态资产预制](../ASSET_PREPRODUCTION.md)维护。
 
 ## 不升级为硬规则的项目选择
 
@@ -43,10 +33,8 @@
 
 ## 官方来源
 
-- HELL GRIND 制作项目：https://higgsfield.ai/@higgsfield.studio/projects/hell-grind
 - Soul Cast：https://higgsfield.ai/soul-cast-intro
 - Soul 2.0：https://higgsfield.ai/soul-intro
 - Soul Cinema：https://higgsfield.ai/blog/soul-cinema-preview
 - Cinema Studio：https://higgsfield.ai/cinematic-video-generator
 - Seedance 参考系统：https://higgsfield.ai/blog/generating-with-seedance-2-0
-

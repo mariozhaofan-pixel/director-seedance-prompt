@@ -10,7 +10,7 @@ scope: 项目层插槽约定。项目特有的规则、决策、检查和事故�
 
 | 文件 | 内容 | 写法 |
 | --- | --- | --- |
-| `项目规则.md` | 作品特有的规则、用户决策、Resolved Policy、增补级别（标准/最小，见[00核心卡](00_CORE_CARD.md)）、站位记录镜（开/关，默认关，见[02C](02C_CONTINUATION_REFERENCES.md)）、画幅呼吸感（开/关，默认开，见[04](04_CAMERA_LIGHT_COLOR_STYLE.md)） | 按 08_FAST 的 A–F 分组；每条写规则和来源（用户原话、日期） |
+| `项目规则.md` | 作品特有的规则、用户决策、Resolved Policy（含 `style_source` 与所用光影运镜规则文件，见[02A](02A_PROJECT_WORKFLOW.md)）、增补级别（标准/最小，见[00核心卡](00_CORE_CARD.md)）、站位记录镜（开/关，默认关，见[02C](02C_CONTINUATION_REFERENCES.md)）、画幅呼吸感（开/关，默认开，见[04](04_CAMERA_LIGHT_COLOR_STYLE.md)） | 按 08_FAST 的 A–F 分组；每条写规则和来源（用户原话、日期） |
 | `lint补充.json` | 项目自己的机械检查 | `{"rules":[{"id":"…","pattern":"正则","message":"…","scope":"timeline"}]}`；`scope` 写 `timeline`（只查【运镜与时间轴】，默认）或 `all`（查全文） |
 | `事故日志.md` | 每次返修 | 段号、用户原话、症状、根因层、改法、验证（待验证 / 有效 / 无效） |
 | `状态事件链.md` | 有跨段状态时再建：换装、受伤、湿身、污渍、道具转手 | 六列：对象｜原状态｜变化事件及位置｜新状态｜结束依据｜对应图片或缺口（见 [02A](02A_PROJECT_WORKFLOW.md)） |
@@ -21,7 +21,7 @@ scope: 项目层插槽约定。项目特有的规则、决策、检查和事故�
 ## 读取时机
 
 - 开工、上下文压缩后、每段编译前：读 `项目规则.md`；已有项目里的 `误判补充.md` 继续读取，不再新建，新的写法问题直接写进 `项目规则.md`。
-- 运行 `validate_prompt.py` 时用 `--project-lint <lint补充.json>` 一并检查。
+- 运行 `validate_prompt.py` 时用 `--project-lint <lint补充.json>` 一并检查。冷审包 `PROJECT_RULES.md`（见08，由 `seal_review_packet.py` 生成，验证器以 `--project-rules` 读取）只装一次冷审的规则与候选，和项目层的 `项目规则.md` 是两份文件；项目层的机械检查只走 `--project-lint`。
 - 用户退回一段或要求重做时：先在 `事故日志.md` 记一条，再修。
 
 ## 根因层（决定一条经验写到哪里）

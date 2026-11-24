@@ -1,17 +1,33 @@
 #!/usr/bin/env python3
-"""Regression tests for validate_combat_prompt.py."""
+"""Regression tests for validate_combat_prompt.py.
+
+Most cases call the CLI entry in-process; ValidatorCliSmokeTests keeps real subprocess runs.
+"""
 
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+
+import validate_combat_prompt
 
 
 VALIDATOR = Path(__file__).with_name("validate_combat_prompt.py")
+
+
+def run_main(main, argv: list[str]) -> SimpleNamespace:
+    """Run a CLI main() in-process and capture what a subprocess would return."""
+    stdout, stderr = io.StringIO(), io.StringIO()
+    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+        returncode = main(argv)
+    return SimpleNamespace(returncode=returncode, stdout=stdout.getvalue(), stderr=stderr.getvalue())
 
 SEGMENT_CONTRACT = (
     "前提：两名成年演员在可控场地完成已编排表演。\n"
@@ -58,7 +74,7 @@ class ValidatorCliTests(unittest.TestCase):
         version: str = "2.5",
         mode: str = "cut",
         include_positional_input: bool = False,
-    ) -> subprocess.CompletedProcess[str]:
+    ) -> SimpleNamespace:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
             candidate_path = temp_path / "candidate.md"
@@ -68,8 +84,6 @@ class ValidatorCliTests(unittest.TestCase):
             candidate_path.write_bytes(candidate_bytes)
 
             command = [
-                sys.executable,
-                str(VALIDATOR),
                 "--version",
                 version,
                 "--duration",
@@ -97,16 +111,14 @@ class ValidatorCliTests(unittest.TestCase):
                 if include_positional_input:
                     command.append(str(candidate_path))
 
-            env = os.environ.copy()
-            env["PYTHONUTF8"] = "1"
-            return subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                env=env,
-                check=False,
-            )
+            return run_main(validate_combat_prompt.main, command)
+
+    def test_max_chars_must_be_positive(self) -> None:
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            validate_combat_prompt.parse_args(["--duration", "4", "--max-chars", "0"])
+
+    def test_combat_entry_defaults_to_combat_profile(self) -> None:
+        self.assertEqual(validate_combat_prompt.parse_args(["--duration", "4"]).profile, "combat")
 
     @staticmethod
     def make_project_rules(candidate: str, *, prefix: str = "") -> str:
@@ -621,6 +633,42 @@ class ValidatorCliTests(unittest.TestCase):
         )
         self.assertNotEqual(frame_invalid.returncode, 0)
         self.assertIn("untimed CUT/BEAT", frame_invalid.stderr)
+
+
+class ValidatorCliSmokeTests(unittest.TestCase):
+    """Real subprocess runs of the compatibility entry: exit codes, streams and file reading."""
+
+    def run_cli(self, *args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [sys.executable, str(VALIDATOR), *args],
+            capture_output=True, text=True, encoding="utf-8",
+            env={**os.environ, "PYTHONUTF8": "1"}, check=False,
+        )
+
+    def test_cli_pass_and_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            candidate = Path(temp_dir) / "candidate.md"
+            candidate.write_bytes(
+                make_prompt("15", "CUT 1（0-7秒）测试。\nCUT 2（7-15秒）测试。").encode("utf-8")
+            )
+            passing = self.run_cli("--duration", "15", str(candidate))
+            failing = self.run_cli("--duration", "16", str(candidate))
+        self.assertEqual((passing.returncode, passing.stdout.strip(), passing.stderr), (0, "PASS", ""))
+        self.assertEqual(failing.returncode, 1)
+        self.assertEqual(failing.stdout, "")
+        self.assertIn("ERROR:", failing.stderr)
+
+    def test_cli_audit_package_mismatch(self) -> None:
+        candidate_text = make_prompt("4", "CUT 1（0-2秒）测试。\nCUT 2（2-4秒）测试。")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            candidate = Path(temp_dir) / "candidate.md"
+            rules = Path(temp_dir) / "PROJECT_RULES.md"
+            candidate.write_bytes(candidate_text.encode("utf-8"))
+            rules.write_bytes(ValidatorCliTests.make_project_rules(
+                candidate_text.replace("固定测试风格", "漂移风格")).encode("utf-8"))
+            result = self.run_cli("--duration", "4", "--project-rules", str(rules), "--candidate", str(candidate))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("EXACT_MATCH", result.stderr)
 
 
 if __name__ == "__main__":

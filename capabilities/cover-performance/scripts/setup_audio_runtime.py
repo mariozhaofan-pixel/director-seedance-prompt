@@ -9,6 +9,8 @@ import subprocess
 import sys
 import venv
 
+from cover_common import utf8_console
+
 # audio-separator imports audioread directly; librosa 1.x no longer installs it transitively.
 PACKAGES = ["audio-separator[cpu]==0.47.1", "faster-whisper==1.2.1", "imageio-ffmpeg==0.6.0", "audioread==3.1.0"]
 
@@ -53,6 +55,7 @@ def install(root=None):
 
 
 def main():
+    utf8_console()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--runtime", type=Path)

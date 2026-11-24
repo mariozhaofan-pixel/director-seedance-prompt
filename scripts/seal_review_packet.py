@@ -2,9 +2,11 @@
 """Seal one prompt for cold review and enforce a maximum two-round review gate.
 
 The ``seal`` command embeds the exact UTF-8 candidate text in a candidate-free
-rules template, applies an optional project JSON contract, and invokes the
-sibling ``validate_combat_prompt.py`` before atomically publishing the packet.
-The ``start`` and ``finish`` commands maintain one atomic JSON review ledger.
+rules template, applies an optional project JSON contract, and runs the shared
+checks of the sibling ``validate_prompt.py`` (combat profile by default; every
+validator policy option, including ``--project-lint`` and ``--speech-lang``, is
+forwarded) before atomically publishing the packet. The ``start`` and
+``finish`` commands maintain one atomic JSON review ledger.
 
 Optional contract shape (all top-level checks are opt-in)::
 
@@ -24,6 +26,9 @@ Optional contract shape (all top-level checks are opt-in)::
       "required_state_tokens": ["道具已交接"],
       "forbidden_state_tokens": ["道具仍未交接"]
     }
+
+``expected_cut_count`` counts CUT labels in 【运镜与时间轴】 only. ``dialogue_windows``
+use the validator's speech estimate (``--speech-lang``, else zh, or ja for kana).
 """
 
 from __future__ import annotations
@@ -34,17 +39,35 @@ import hashlib
 import json
 import os
 import re
-import subprocess
+import socket
 import sys
 import tempfile
-from decimal import Decimal, InvalidOperation
+import time
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, Iterator
+
+from validate_prompt import (
+    AUDIT_SEPARATOR_RE,
+    CUT_LABEL_RE,
+    LINE_BREAK_RE,
+    SECTIONS,
+    SEGMENT_HEADING_RE,
+    SPEECH_RATES,
+    TOOL_WRAPPER_PATTERNS,
+    add_policy_arguments,
+    format_decimal,
+    parse_sections,
+    speech_need,
+    validate_paths,
+)
 
 
 PACKET_FORMAT = "SEALED_COLD_REVIEW_V1"
 STATE_FORMAT = "SEALED_COLD_REVIEW_STATE_V1"
-VALIDATOR = Path(__file__).with_name("validate_combat_prompt.py")
+# seal/start/finish hold the state lock for seconds; an older lock was abandoned by a killed process.
+STALE_LOCK_SECONDS = 600
+KANA_RE = re.compile(r"[ぁ-ゖァ-ヺ]")
 
 CANDIDATE_HEADING = "## 候选提示词"
 REVIEW_HEADING = "## 审阅输出格式"
@@ -70,8 +93,6 @@ CONTRACT_FIELDS = {
     "forbidden_state_tokens",
 }
 
-LINE_BREAK_RE = re.compile(r"\r\n|\n|\r")
-CUT_LABEL_RE = re.compile(r"(?m)^\s*CUT\s+(\d+)\b", re.IGNORECASE)
 REPORT_FIELD_RE = re.compile(
     r"(?m)^(VERDICT|BLOCKING_FINDINGS|OPTIONAL_FINDINGS|PROTECTED_FACTS):[ \t]*(.*)$"
 )
@@ -87,8 +108,6 @@ CANDIDATE_FIELD_RE = re.compile(
 CANDIDATE_BOUNDARY_RE = re.compile(
     r"(?im)^\s*(?:BEGIN|END|START|STOP)[ _-]*(?:CANDIDATE|候选)\b"
 )
-STALE_SEGMENT_RE = re.compile(r"(?m)^\s*###\s*第\s*\d+\s*段")
-SEGMENT_ENVELOPE_RE = re.compile(r"(?m)^\s*###\s*第\s*\d+\s*段[^\r\n]*")
 CODE_FENCE_RE = re.compile(r"(?m)^\s*(?:```|~~~)")
 RESERVED_PACKET_LINE_RE = re.compile(
     r"(?im)^\s*(?:PACKET_FORMAT|REVIEW_ROUND|EXACT_MATCH|MECHANICAL_PASS|"
@@ -109,15 +128,6 @@ CANDIDATE_REVIEW_LEAK_RE = re.compile(
 )
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
-TOOL_WRAPPER_PATTERNS = (
-    (re.compile(r"\bExit[ \t]+code\b", re.IGNORECASE), "Exit code"),
-    (re.compile(r"\bProcess[ \t]+exited\b", re.IGNORECASE), "Process exited"),
-    (re.compile(r"\bOutput[ \t]*[:：]", re.IGNORECASE), "Output:"),
-    (re.compile(r"\btool[ \t]+output\b", re.IGNORECASE), "tool output"),
-    (re.compile(r"\btool[_ \t]+call\b", re.IGNORECASE), "tool call"),
-    (re.compile(r"(?im)^\s*Command[ \t]*[:：]"), "Command:"),
-)
-
 STATE_KEYS = {"format", "status", "rounds", "terminal_reason"}
 ROUND_KEYS = {
     "round",
@@ -135,26 +145,6 @@ ROUND_KEYS = {
 
 class GateError(RuntimeError):
     """Expected input, validation, or state-gate failure."""
-
-
-def positive_decimal_arg(value: str) -> str:
-    try:
-        parsed = Decimal(value)
-    except InvalidOperation as exc:
-        raise argparse.ArgumentTypeError(f"invalid decimal value: {value}") from exc
-    if not parsed.is_finite() or parsed <= 0:
-        raise argparse.ArgumentTypeError("value must be finite and greater than 0")
-    return value
-
-
-def positive_int_arg(value: str) -> int:
-    try:
-        parsed = int(value)
-    except ValueError as exc:
-        raise argparse.ArgumentTypeError(f"invalid integer value: {value}") from exc
-    if parsed <= 0:
-        raise argparse.ArgumentTypeError("value must be greater than 0")
-    return parsed
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -175,23 +165,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="review ledger path; absent means round 1, eligible ledger means round 2",
     )
     seal.add_argument("--contract", type=Path)
-    seal.add_argument("--duration", type=positive_decimal_arg, required=True)
-    seal.add_argument("--version", choices=("2.0", "2.5"), default="2.5")
-    seal.add_argument("--profile", choices=("general", "combat"), default="combat")
-    seal.add_argument("--timeline", choices=("auto", "timed", "untimed"), default="auto")
-    seal.add_argument("--mode", choices=("auto", "cut", "onetake"), default="auto")
-    seal.add_argument(
-        "--timestamp-policy",
-        choices=("integer-preferred", "decimal-allowed", "integer-required"),
-        default="integer-preferred",
-    )
-    seal.add_argument("--fps", type=positive_decimal_arg, default="24")
-    seal.add_argument(
-        "--reference-handle-policy",
-        choices=("any-section", "lock-only"),
-        default="any-section",
-    )
-    seal.add_argument("--max-chars", type=positive_int_arg, default=10000)
+    add_policy_arguments(seal, default_profile="combat")
 
     start = subparsers.add_parser(
         "start",
@@ -291,7 +265,7 @@ def check_template_hygiene(template: str) -> None:
         errors.append("template already contains a candidate heading or multi-candidate area")
     if CANDIDATE_FIELD_RE.search(template) or CANDIDATE_BOUNDARY_RE.search(template):
         errors.append("template already contains a candidate field or boundary marker")
-    if STALE_SEGMENT_RE.search(template):
+    if SEGMENT_HEADING_RE.search(template):
         errors.append("template contains a stale candidate-like segment heading")
     if REPORT_FIELD_LINE_RE.search(template):
         errors.append("template contains an old or filled review report")
@@ -311,7 +285,7 @@ def check_template_hygiene(template: str) -> None:
 def check_candidate_hygiene(candidate: str) -> None:
     if not candidate:
         raise GateError("candidate is empty")
-    segment_count = len(SEGMENT_ENVELOPE_RE.findall(candidate))
+    segment_count = len(SEGMENT_HEADING_RE.findall(candidate))
     if segment_count != 1:
         raise GateError(
             "candidate must contain exactly one independent segment envelope; "
@@ -363,21 +337,14 @@ def require_string_list(value: Any, label: str) -> list[str]:
 def json_decimal(value: Any, label: str, *, positive: bool) -> Decimal:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise GateError(f"{label} must be a JSON number")
-    try:
-        parsed = Decimal(str(value))
-    except InvalidOperation as exc:
-        raise GateError(f"{label} is not a valid decimal number") from exc
-    if not parsed.is_finite():
+    parsed = Decimal(str(value))
+    if not parsed.is_finite():  # 1e999 parses to float inf; NaN/Infinity literals are rejected earlier
         raise GateError(f"{label} must be finite")
     if positive and parsed <= 0:
         raise GateError(f"{label} must be greater than 0")
     if not positive and parsed < 0:
         raise GateError(f"{label} must be nonnegative")
     return parsed
-
-
-def spoken_character_count(text: str) -> int:
-    return sum(1 for character in text if character.isalnum())
 
 
 def validate_voice_profiles(value: Any, candidate: str, errors: list[str]) -> None:
@@ -473,7 +440,7 @@ def validate_voice_profiles(value: Any, candidate: str, errors: list[str]) -> No
                 )
 
 
-def validate_contract(contract: Any, candidate: str) -> None:
+def validate_contract(contract: Any, candidate: str, speech_lang: str | None = None) -> None:
     if not isinstance(contract, dict):
         raise GateError("contract root must be a JSON object")
     unknown = set(contract) - CONTRACT_FIELDS
@@ -487,7 +454,9 @@ def validate_contract(contract: Any, candidate: str) -> None:
         expected = contract["expected_cut_count"]
         if isinstance(expected, bool) or not isinstance(expected, int) or expected <= 0:
             raise GateError("expected_cut_count must be a positive integer")
-        actual = len(CUT_LABEL_RE.findall(candidate))
+        # Like the validator, count only the timeline; sound cues may start lines with CUT too.
+        timeline = parse_sections(candidate, []).get(SECTIONS[2], "")
+        actual = len(CUT_LABEL_RE.findall(timeline))
         if actual != expected:
             errors.append(f"expected_cut_count={expected}, candidate has {actual}")
 
@@ -510,12 +479,12 @@ def validate_contract(contract: Any, candidate: str) -> None:
             seconds = json_decimal(window["seconds"], f"{label}.seconds", positive=True)
             if dialogue not in candidate:
                 errors.append(f"{label}.text is absent from candidate: {dialogue}")
-            characters = spoken_character_count(dialogue)
-            capacity = seconds * Decimal("5.5")
-            if Decimal(characters) > capacity:
+            lang = speech_lang or ("ja" if KANA_RE.search(dialogue) else "zh")
+            units, need = speech_need(dialogue, lang)
+            if need > seconds:
                 errors.append(
-                    f"{label} needs {characters} spoken characters but {seconds} seconds "
-                    f"allow about {format(capacity, 'f')} at 5.5 characters/second"
+                    f"{label} needs about {units} spoken {lang} units ({need:.1f}s at "
+                    f"{format_decimal(SPEECH_RATES[lang])}/s) but the window is {format_decimal(seconds)}s"
                 )
 
     if "crowd_ratios" in contract:
@@ -583,8 +552,8 @@ def build_packet(
         f"CANDIDATE_CHARS={len(candidate)}",
         f"CONTRACT_APPLIED={'True' if contract_applied else 'False'}",
         f"VALIDATOR_VERSION={args.version}",
-        f"VALIDATOR_PROFILE={getattr(args, 'profile', 'combat')}",
-        f"VALIDATOR_TIMELINE={getattr(args, 'timeline', 'auto')}",
+        f"VALIDATOR_PROFILE={args.profile}",
+        f"VALIDATOR_TIMELINE={args.timeline}",
         f"VALIDATOR_DURATION={args.duration}",
         f"VALIDATOR_MODE={args.mode}",
         f"TIMESTAMP_POLICY={args.timestamp_policy}",
@@ -664,7 +633,7 @@ def validate_sealed_packet(packet: str, expected_round: int) -> str:
 
     review_heading = review_matches[0]
     separator = packet[candidate_end:review_heading.start()]
-    if re.fullmatch(r"(?:(?:\r\n)|\n|\r){2}", separator) is None:
+    if AUDIT_SEPARATOR_RE.fullmatch(separator) is None:
         raise GateError("sealed snapshot candidate boundary is not exact")
     review_break = LINE_BREAK_RE.match(packet, review_heading.end())
     if review_break is None:
@@ -678,68 +647,113 @@ def validate_sealed_packet(packet: str, expected_round: int) -> str:
     return candidate
 
 
-def validator_command(
-    args: argparse.Namespace,
-    project_rules: Path,
-    candidate: Path,
-) -> list[str]:
-    return [
-        sys.executable,
-        str(VALIDATOR),
-        "--version",
-        args.version,
-        "--profile",
-        getattr(args, "profile", "combat"),
-        "--timeline",
-        getattr(args, "timeline", "auto"),
-        "--duration",
-        args.duration,
-        "--mode",
-        args.mode,
-        "--timestamp-policy",
-        args.timestamp_policy,
-        "--fps",
-        args.fps,
-        "--reference-handle-policy",
-        args.reference_handle_policy,
-        "--max-chars",
-        str(args.max_chars),
-        "--project-rules",
-        str(project_rules),
-        "--candidate",
-        str(candidate),
-    ]
-
-
 def run_validator(
     args: argparse.Namespace,
     project_rules: Path,
     candidate: Path,
-) -> str:
-    if not VALIDATOR.is_file():
-        raise GateError(f"mechanical validator is missing: {VALIDATOR}")
-    environment = os.environ.copy()
-    environment["PYTHONUTF8"] = "1"
-    try:
-        result = subprocess.run(
-            validator_command(args, project_rules, candidate),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            env=environment,
-            check=False,
-        )
-    except OSError as exc:
-        raise GateError(f"could not launch mechanical validator: {exc}") from exc
-    if result.returncode != 0 or result.stdout.strip() != "PASS":
-        details = "\n".join(
-            part.strip() for part in (result.stderr, result.stdout) if part.strip()
-        )
+) -> list[str]:
+    """Run the shared validator in-process on the exact candidate and the temporary packet."""
+    result = validate_paths(args, candidate_path=candidate, project_rules_path=project_rules)
+    warnings = [f"WARNING: {warning}" for warning in result["warnings"]]
+    if result["errors"] or result["verdict"] != "PASS":
+        details = "\n".join(warnings + [f"ERROR: {error}" for error in result["errors"]])
         raise GateError(
             "mechanical preflight failed; no packet was published"
             + (f"\n{details}" if details else "")
         )
-    return result.stderr.strip()
+    return warnings
+
+
+def process_alive(pid: int) -> bool:
+    """False only when the process is known to have ended; an unknown answer counts as alive."""
+    if pid <= 0:
+        return False
+    if os.name == "nt":
+        # os.kill(pid, 0) would send CTRL_C_EVENT on Windows, so ask the kernel instead.
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+        kernel32.OpenProcess.restype = wintypes.HANDLE
+        kernel32.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+        kernel32.GetExitCodeProcess.restype = wintypes.BOOL
+        kernel32.CloseHandle.argtypes = (wintypes.HANDLE,)
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            return ctypes.get_last_error() != 87  # ERROR_INVALID_PARAMETER: no such process
+        try:
+            code = wintypes.DWORD()
+            if not kernel32.GetExitCodeProcess(handle, ctypes.byref(code)):
+                return True
+            return code.value == 259  # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(handle)
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except OSError:
+        return True
+    return True
+
+
+def read_lock(lock_path: Path) -> tuple[bytes, float] | None:
+    try:
+        return lock_path.read_bytes(), lock_path.stat().st_mtime
+    except FileNotFoundError:
+        return None
+
+
+def describe_lock(payload: bytes, mtime: float) -> tuple[str, str | None]:
+    """Return a description of the lock owner and why the lock is stale, or None while it may be live."""
+    fields = dict(
+        line.split("=", 1)
+        for line in payload.decode("utf-8", "replace").splitlines()
+        if "=" in line
+    )
+    pid, host = fields.get("pid", ""), fields.get("host")
+    age = max(0, int(time.time() - mtime))
+    owner = f"pid {pid or 'unknown'}" + (f" on {host}" if host else "") + f", {age} seconds old"
+    if age > STALE_LOCK_SECONDS:
+        return owner, f"it is older than {STALE_LOCK_SECONDS} seconds"
+    if not pid.isdigit():
+        # The owner writes its pid right after creating the lock; an empty lock this old was abandoned.
+        return owner, ("it records no owner" if age > 5 else None)
+    if (host is None or host == socket.gethostname()) and not process_alive(int(pid)):
+        return owner, f"process {pid} that created it is no longer running"
+    return owner, None
+
+
+def release_stale_lock(lock_path: Path) -> bool:
+    """Remove the lock only if it is still the same stale lock; return True when a retry may succeed.
+
+    A second exclusive ``.break`` file makes the check-and-remove atomic between processes, so two
+    operations that find the same stale lock cannot both remove it and then both proceed.
+    """
+    snapshot = read_lock(lock_path)
+    if snapshot is None:
+        return True
+    _, reason = describe_lock(*snapshot)
+    if reason is None:
+        return False
+    breaker = lock_path.with_name(lock_path.name + ".break")
+    try:
+        descriptor = os.open(breaker, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    except FileExistsError:
+        stale_breaker = read_lock(breaker)
+        if stale_breaker is not None and time.time() - stale_breaker[1] > STALE_LOCK_SECONDS:
+            breaker.unlink(missing_ok=True)
+        return False
+    try:
+        if read_lock(lock_path) != snapshot:
+            return True
+        lock_path.unlink(missing_ok=True)
+        print(f"WARNING: removed stale review-state lock '{lock_path}': {reason}", file=sys.stderr)
+        return True
+    finally:
+        os.close(descriptor)
+        breaker.unlink(missing_ok=True)
 
 
 @contextlib.contextmanager
@@ -748,15 +762,25 @@ def state_lock(state_path: Path) -> Iterator[None]:
     if not parent.is_dir():
         raise GateError(f"state parent directory does not exist: {parent}")
     lock_path = state_path.with_name(state_path.name + ".lock")
+    for attempt in range(2):
+        try:
+            descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError as exc:
+            if attempt == 0 and release_stale_lock(lock_path):
+                continue
+            snapshot = read_lock(lock_path)
+            owner = f" ({describe_lock(*snapshot)[0]})" if snapshot else ""
+            raise GateError(
+                f"review state is locked by another operation{owner}: {lock_path}. "
+                f"A lock is released automatically once its process has ended or after "
+                f"{STALE_LOCK_SECONDS} seconds"
+            ) from exc
+        except OSError as exc:
+            raise GateError(f"cannot create review-state lock '{lock_path}': {exc}") from exc
     try:
-        descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-    except FileExistsError as exc:
-        raise GateError(f"review state is locked by another operation: {lock_path}") from exc
-    except OSError as exc:
-        raise GateError(f"cannot create review-state lock '{lock_path}': {exc}") from exc
-    try:
-        with os.fdopen(descriptor, "w", encoding="ascii", newline="\n") as handle:
-            handle.write(f"pid={os.getpid()}\n")
+        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
+            handle.write(f"pid={os.getpid()}\nhost={socket.gethostname()}\n")
             handle.flush()
             os.fsync(handle.fileno())
         yield
@@ -971,9 +995,8 @@ def command_seal(args: argparse.Namespace) -> int:
         named_paths["contract"] = contract_path
     ensure_distinct_paths(named_paths)
 
-    candidate_bytes, candidate = read_utf8(candidate_path, "candidate")
+    _, candidate = read_utf8(candidate_path, "candidate")
     _, template = read_utf8(template_path, "template")
-    del candidate_bytes
     check_candidate_hygiene(candidate)
     check_template_hygiene(template)
 
@@ -981,7 +1004,7 @@ def command_seal(args: argparse.Namespace) -> int:
     if contract_path is not None:
         contract_bytes, contract_text = read_utf8(contract_path, "contract")
         contract = load_json_text(contract_text, "contract")
-        validate_contract(contract, candidate)
+        validate_contract(contract, candidate, args.speech_lang)
         contract_hash = bytes_sha256(contract_bytes)
 
     with state_lock(state_path):
@@ -1001,15 +1024,15 @@ def command_seal(args: argparse.Namespace) -> int:
         validate_sealed_packet(packet, round_number)
         temporary_path = write_temporary_packet(output_path, packet)
         try:
-            validator_warning = run_validator(args, temporary_path, candidate_path)
+            validator_warnings = run_validator(args, temporary_path, candidate_path)
             os.replace(temporary_path, output_path)
         finally:
             try:
                 temporary_path.unlink()
             except FileNotFoundError:
                 pass
-        if validator_warning:
-            print(validator_warning, file=sys.stderr)
+        for warning in validator_warnings:
+            print(warning, file=sys.stderr)
 
     print(f"PASS: sealed review packet published: {output_path}")
     print("EXACT_MATCH=True")
@@ -1168,9 +1191,12 @@ def command_finish(args: argparse.Namespace) -> int:
     return 0
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     try:
         if args.command == "seal":
             return command_seal(args)

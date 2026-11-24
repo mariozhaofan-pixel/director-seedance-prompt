@@ -5,7 +5,6 @@ Only stdlib + ffmpeg are required. A companion stem is backup, not an upload.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -14,24 +13,16 @@ import subprocess
 import tempfile
 import wave
 
+from cover_common import MAX_SEGMENT_SECONDS, ffmpeg_executable, sha256_file, utf8_console
+
 RATE = 44100
+FRAME_BYTES = 6  # 24-bit stereo
 
 
 def finite(value, name, positive=False):
     if not math.isfinite(value) or value < 0 or (positive and value == 0):
         raise ValueError(f"{name} must be finite and {'positive' if positive else 'nonnegative'}")
     return value
-
-
-def ffmpeg():
-    found = shutil.which('ffmpeg')
-    if found:
-        return found
-    try:
-        import imageio_ffmpeg
-        return imageio_ffmpeg.get_ffmpeg_exe()
-    except ImportError as exc:
-        raise RuntimeError('ffmpeg required; use the cover-audio runtime or install ffmpeg') from exc
 
 
 def duration(path):
@@ -55,16 +46,18 @@ def duration(path):
             return max(values)  # Keep MP3/container padding in the upload budget.
     with tempfile.TemporaryDirectory(prefix='cover-probe-') as temp:
         decoded = Path(temp) / 'decoded.wav'
-        subprocess.run([ffmpeg(), '-nostdin', '-v', 'error', '-i', str(path), '-map', '0:a:0',
+        subprocess.run([ffmpeg_executable(), '-nostdin', '-v', 'error', '-i', str(path), '-map', '0:a:0',
             '-vn', '-ac', '1', '-ar', '16000', '-c:a', 'pcm_s16le', str(decoded)], check=True)
         with wave.open(str(decoded), 'rb') as w:
             return finite(w.getnframes() / w.getframerate(), 'decoded duration', True)
 
 
-def allocate_budget(total=30., reserve=4., voice_durations=(), other_durations=(), max_song=30.):
+def allocate_budget(total=30., reserve=4., voice_durations=(), other_durations=(), max_song=MAX_SEGMENT_SECONDS):
     finite(total, 'reference audio budget', True)
     finite(reserve, 'voice reserve')
     finite(max_song, 'max song duration', True)
+    if max_song > MAX_SEGMENT_SECONDS:
+        raise ValueError(f'max song duration may be lowered but not above the {MAX_SEGMENT_SECONDS:g} s segment cap')
     voice = sum(finite(v, 'voice duration', True) for v in voice_durations)
     other = sum(finite(v, 'other audio duration', True) for v in other_durations)
     held = max(reserve, voice)
@@ -81,7 +74,7 @@ def allocate_budget(total=30., reserve=4., voice_durations=(), other_durations=(
         'video_duration_is_independent': True}
 
 
-def probe_budget(total=30., reserve=4., voices=(), others=(), max_song=30.):
+def probe_budget(total=30., reserve=4., voices=(), others=(), max_song=MAX_SEGMENT_SECONDS):
     records = []
     values = {}
     for role, paths in [('voice', voices), ('other', others)]:
@@ -130,29 +123,23 @@ def map_lyrics(data, start, end, speed):
         'source_start':start, 'source_end':end, 'tempo_factor':speed, 'phrases':output}
 
 
-def sha(path):
-    h = hashlib.sha256()
-    with Path(path).open('rb') as f:
-        for b in iter(lambda:f.read(1024*1024), b''):
-            h.update(b)
-    return h.hexdigest()
-
-
 def render(source, target, start, end, speed, target_frames):
     # atempo changes tempo while preserving pitch; never use asetrate.
     with tempfile.TemporaryDirectory(prefix='cover-fit-') as temp:
-        raw = Path(temp)/'tempo.wav'
+        # Headerless 24-bit PCM: ffmpeg's 24-bit WAV uses WAVE_FORMAT_EXTENSIBLE,
+        # which the stdlib wave module reads only from Python 3.12.
+        raw = Path(temp)/'tempo.s24le'
         filters = f'atrim=start={start:.12f}:end={end:.12f},asetpts=PTS-STARTPTS,atempo={speed:.12f}'
-        subprocess.run([ffmpeg(), '-nostdin', '-v', 'error', '-i', str(source), '-map', '0:a:0',
-            '-vn', '-af', filters, '-ar', str(RATE), '-ac', '2', '-c:a', 'pcm_s24le', str(raw)], check=True)
-        with wave.open(str(raw),'rb') as w:
-            count = w.getnframes()
-            data = w.readframes(count)
+        subprocess.run([ffmpeg_executable(), '-nostdin', '-v', 'error', '-i', str(source), '-map', '0:a:0',
+            '-vn', '-af', filters, '-ar', str(RATE), '-ac', '2', '-c:a', 'pcm_s24le', '-f', 's24le', str(raw)], check=True)
+        data = raw.read_bytes()
+        count = len(data)//FRAME_BYTES
+        data = data[:count*FRAME_BYTES]
         delta = target_frames-count
         if abs(delta)/RATE > .12:
             raise ValueError('tempo output duration differs by over 120ms; review instead of truncating content')
         # Only correct the bounded atempo sample discrepancy, never pad to video duration.
-        data = data[:target_frames*6] if delta < 0 else data + bytes(delta*6)
+        data = data[:target_frames*FRAME_BYTES] if delta < 0 else data + bytes(delta*FRAME_BYTES)
         # A 10ms ending fade prevents clicks at the selected phrase boundary.
         fade = min(round(.01*RATE), target_frames)
         content = bytearray(data)
@@ -162,11 +149,12 @@ def render(source, target, start, end, speed, target_frames):
                 pos = ((target_frames-fade+i)*2+channel)*3
                 sample = int.from_bytes(content[pos:pos+3], 'little', signed=True)
                 content[pos:pos+3] = round(sample*gain).to_bytes(3,'little',signed=True)
+        # The stdlib writer emits plain PCM (format 1), readable by wave on Python 3.10+.
         with wave.open(str(target),'wb') as w:
             w.setnchannels(2); w.setsampwidth(3); w.setframerate(RATE); w.writeframes(content)
     return {'file':target.name, 'frames':target_frames, 'sample_rate':RATE,
         'duration':target_frames/RATE, 'atempo_frames_before_correction':count,
-        'sample_correction':delta, 'end_fade_seconds':fade/RATE, 'sha256':sha(target)}
+        'sample_correction':delta, 'end_fade_seconds':fade/RATE, 'sha256':sha256_file(target)}
 
 
 def run(args):
@@ -184,7 +172,7 @@ def run(args):
         inputs.append(args.companion)
         if duration(args.companion)+1/RATE < end:
             raise ValueError('companion stem does not cover selected range')
-    hashes = {str(Path(p).resolve()):sha(p) for p in inputs}
+    hashes = {str(Path(p).resolve()):sha256_file(p) for p in inputs}
     root = args.output.expanduser().resolve()
     root.mkdir(parents=True,exist_ok=False)
     outputs = [render(source,root/'song-reference.wav',start,end,speed,frames)]
@@ -198,7 +186,7 @@ def run(args):
     if max(actual_total,reserved_total) > budget['total_seconds']+1e-6:
         raise ValueError('rendered reference audio exceeds aggregate upload budget')
     for path, checksum in hashes.items():
-        if sha(path) != checksum:
+        if sha256_file(path) != checksum:
             raise RuntimeError('input changed during fitting')
     result = {'budget':budget,'source_range':[start,end],'tempo_factor':speed,
         'pitch_preserving_filter':'ffmpeg atempo', 'actual_uploaded_total_seconds':actual_total,
@@ -211,6 +199,7 @@ def run(args):
 
 
 def main():
+    utf8_console()
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('audio',type=Path)
     parser.add_argument('--output',type=Path,required=True)
@@ -227,8 +216,8 @@ def main():
     args=parser.parse_args()
     try:
         print(json.dumps(run(args),ensure_ascii=False,indent=2))
-    except (ValueError,OSError,subprocess.CalledProcessError) as exc:
-        parser.exit(1,str(exc)+'\n')
+    except (ValueError,OSError,RuntimeError,subprocess.CalledProcessError,wave.Error) as exc:
+        parser.exit(1,f'{type(exc).__name__}: {exc}\n')
 
 
 if __name__=='__main__':

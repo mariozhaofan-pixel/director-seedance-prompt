@@ -41,7 +41,6 @@ CUT_RE = re.compile(rf"(?m)^[ \t]*CUT[ \t]+(\d+)[ \t]*{RANGE_RE}", re.IGNORECASE
 BEAT_RE = re.compile(rf"(?m)^[ \t]*BEAT[ \t]+([A-Z0-9]+)[ \t]*{RANGE_RE}", re.IGNORECASE)
 CUT_LABEL_RE = re.compile(r"(?m)^[ \t]*CUT[ \t]+(\d+)\b", re.IGNORECASE)
 BEAT_LABEL_RE = re.compile(r"(?m)^[ \t]*BEAT[ \t]+([A-Z0-9]+)\b", re.IGNORECASE)
-TITLE_RE = re.compile(r"(?m)^###\s*第\d+段[^\n]*?(\d+(?:\.\d+)?)\s*秒")
 SEGMENT_HEADING_RE = re.compile(r"(?m)^[ \t]*###[ \t]*第[ \t]*\d+[ \t]*段[^\r\n]*")
 SECTION_RE = re.compile(r"(?m)^[ \t]*(【[^】\r\n]+】)[ \t]*\r?$")
 TITLE_DURATION_RE = re.compile(
@@ -65,6 +64,11 @@ H2_SECTION_RE = re.compile(r"(?m)^##[ \t]+[^#\r\n][^\r\n]*(?=\r?$)")
 LINE_BREAK_RE = re.compile(r"\r\n|\n|\r")
 AUDIT_SEPARATOR_RE = re.compile(r"(?:(?:\r\n)|\n|\r){2}")
 
+VERSIONS = ("2.0", "2.5")
+PROFILES = ("general", "combat")
+TIMELINES = ("auto", "timed", "untimed")
+MODES = ("auto", "cut", "onetake")
+REFERENCE_HANDLE_POLICIES = ("any-section", "lock-only")
 TIMESTAMP_POLICIES = (
     "integer-preferred",
     "decimal-allowed",
@@ -104,18 +108,90 @@ FORBIDDEN_VISIBLE = [
 # Advisory lint: wordings video models tend to misread. Each warning names its rewrite; the rule text lives in
 # the owning knowledge module. IDs (M1, M2, ...) are stable check names. Warnings never change the verdict.
 WORLD_DIRECTION_RE = re.compile(
-    r"(?<![东西南北])[东南西北](?:边|侧|面|方|向|头|端)(?!西)|"
-    r"[朝往向][东南西北](?![西方面边])|"
-    r"\bworld[-_ ]?(?:left|right|north|south|east|west)\b|"
-    r"\b(?:north|south|east|west)(?:ward)?\b",
+    r"(?<![东西南北])[东南西北](?:边|侧|面|向|头|端|"
+    # 东方美学、南方口音、西方面孔 name a culture or region, not a direction in the set.
+    r"方(?!口音|人|面孔|美|风|文化|色彩|审美|式|古典|传统|奇幻|神话|元素|气质|特色|题材|语境))(?!西)|"
+    r"[朝往向][东南西北](?![西方面边装服餐瓜式京])|"
+    # \b does not work next to Chinese characters, which count as word characters.
+    r"(?<![a-z])world[-_ ]?(?:left|right|north|south|east|west)(?![a-z])|"
+    r"(?<![a-z])(?:(?:north|south)(?:-?(?:east|west))?|east|west)(?:wards?)?(?![a-z])",
     re.IGNORECASE,
 )
 STATIC_STATE_RE = re.compile(r"悬在|停在半空|停在空中|举着不动|一动不动|纹丝不动|完全静止|静止不动|定格在")
+# 05F directs two kinds of body stillness: a body that does not give under a push (结构对的人被推时纹丝不动)
+# and a fighter's still stance with one live element (完全静止，只有眼睛跟着对手). Props and limbs stay flagged.
+BODY_STILL_RE = re.compile(r"一动不动|纹丝不动|完全静止|静止不动")
+STILL_UNDER_FORCE_RE = re.compile(
+    r"(?:被|受)[^，。；\n]{0,4}(?:推|撞|顶|拉|拽|压|打|踢)|(?:推|撞|顶|拉|拽)[^，。；\n]{0,3}(?:时|一下|一把)"
+)
+STILL_LIVE_ELEMENT_RE = re.compile(r"只有[^，。；\n]{1,8}?(?:跟|动|转|眨|起伏|呼吸)")
 REFERENCE_PASTE_RE = re.compile(
     r"构图[^，。；\n]{0,8}(?:图片?\s*\d+|参考图?)[^，。；\n]{0,6}一致|照搬参考|和参考图一样"
 )
-VOICEOVER_LINE_RE = re.compile(r"(?m)^.*画外音.*$")
+VOICEOVER_RE = re.compile(r"画外音|旁白")
+VOICEOVER_NEGATION = ("无", "没有", "不加", "不用", "不要", "不配", "去掉")
+# 06: a line labelled only 画外音/旁白 needs the in-frame person's closed lips or silent action, or a clear
+# non-mouth source, or the person may lip-sync it.
+VOICEOVER_CLEAR_RE = re.compile(
+    r"嘴唇(?:保持)?(?:闭合|紧闭|闭着|不动)|双唇(?:闭合|紧闭)|闭着嘴|抿(?:着|紧)嘴|不开口|没有开口|未开口|"
+    r"(?:不对|不动|不做|不配|没有|无)口型|无声|广播|电话|录音|收音机|对讲机|扬声器|喇叭|音箱|电视|听筒"
+)
 IMAGE_HANDLE_RE = re.compile(r"@图片(\d+)")
+
+
+def cut_blocks(timeline: str) -> list[tuple[str, str]]:
+    """Split the timeline into (CUT number, text up to the next CUT label) blocks."""
+    starts = list(CUT_LABEL_RE.finditer(timeline))
+    return [(match.group(1),
+             timeline[match.start():starts[index + 1].start() if index + 1 < len(starts) else len(timeline)])
+            for index, match in enumerate(starts)]
+
+
+def world_direction_warnings(text: str) -> list[str]:
+    """M1: 00 asks for a full-text search; a world direction stays only when its own clause gives the screen
+    projection (03: 固定world-east座位在此反拍中投影到screen-left). A screen word elsewhere does not count."""
+    hits: set[str] = set()
+    for clause in CLAUSE_SPLIT_RE.split(text):
+        found = {m.group(0) for m in WORLD_DIRECTION_RE.finditer(clause)}
+        if found and not SCREEN_PROJECTION_RE.search(clause):
+            hits |= found
+    if not hits:
+        return []
+    return ["lint M1 world-direction words in prompt (translate to screen left/right, depth, camera side, or give "
+            "the screen projection in the same sentence): " + "、".join(sorted(hits)[:8])]
+
+
+def static_state_warnings(spatial_text: str) -> list[str]:
+    """M2: static-state words freeze props and limbs; 05F's directed body stillness is allowed."""
+    hits: set[str] = set()
+    for sentence in SENTENCE_SPLIT_RE.split(spatial_text):
+        for found in STATIC_STATE_RE.finditer(sentence):
+            word = found.group(0)
+            if BODY_STILL_RE.fullmatch(word) and (
+                STILL_UNDER_FORCE_RE.search(sentence) or STILL_LIVE_ELEMENT_RE.search(sentence)
+            ):
+                continue
+            hits.add(word)
+    if not hits:
+        return []
+    return ["lint M2 static-state wording (models freeze it; write an ongoing action that stops only when "
+            "blocked/caught/missed): " + "、".join(sorted(hits)[:8])]
+
+
+def voiceover_warnings(timeline: str) -> list[str]:
+    """M4: 画外音/旁白 in a CUT without closed lips, a silent action marker or a clear source (06)."""
+    flagged = []
+    for number, block in cut_blocks(timeline):
+        labelled = any(
+            not block[max(0, found.start() - 2):found.start()].endswith(VOICEOVER_NEGATION)
+            for found in VOICEOVER_RE.finditer(block)
+        )
+        if labelled and not VOICEOVER_CLEAR_RE.search(block):
+            flagged.append(number)
+    if not flagged:
+        return []
+    return ["lint M4 画外音/旁白 without closed lips or a clear source (when someone is in frame add 某某嘴唇闭合 "
+            "or the silent action; inner monologue is 角色：“（……）” with lips closed): CUT " + "、".join(flagged)]
 
 
 def lint_warnings(text: str, sections: dict[str, str], project_rules: list[dict] | None = None) -> list[str]:
@@ -124,21 +200,11 @@ def lint_warnings(text: str, sections: dict[str, str], project_rules: list[dict]
     timeline = sections.get(SECTIONS[2], "")
     lock = sections.get(SECTIONS[0], "")
     restrictions = sections.get(SECTIONS[4], "")
-    spatial_text = "\n".join((lock, timeline))
-    hits = sorted({m.group(0) for m in WORLD_DIRECTION_RE.finditer(spatial_text)})
-    if hits:
-        warnings.append("lint M1 world-direction words in prompt (translate to screen left/right, depth, camera side): "
-                        + "、".join(hits[:8]))
-    hits = sorted({m.group(0) for m in STATIC_STATE_RE.finditer(spatial_text)})
-    if hits:
-        warnings.append("lint M2 static-state wording (models freeze it; write an ongoing action that stops only when blocked/caught/missed): "
-                        + "、".join(hits[:8]))
+    warnings.extend(world_direction_warnings(text))
+    warnings.extend(static_state_warnings("\n".join((lock, timeline))))
     if REFERENCE_PASTE_RE.search(text):
         warnings.append("lint M3 composition copied from a reference image (reads as a pasted still)")
-    for line in VOICEOVER_LINE_RE.findall(timeline):
-        if "口型" not in line and "内心OS" not in line and "嘴唇闭合" not in line:
-            warnings.append("lint M4 画外音 without lip-sync note (add 人物嘴唇闭合, or write inner monologue as 角色：“（……）”)")
-            break
+    warnings.extend(voiceover_warnings(timeline))
     if restrictions and "字幕" not in restrictions:
         warnings.append("lint M11 restrictions lack a no-subtitle hygiene sentence")
     numbers = sorted({int(n) for n in IMAGE_HANDLE_RE.findall(lock)})
@@ -160,9 +226,19 @@ def lint_warnings(text: str, sections: dict[str, str], project_rules: list[dict]
 
 ARRAY_GROWTH_RE = re.compile(r"一层比一层|一排比一排|一个比一个多|越来越多|无数|成千上万|铺天盖地")
 POV_RISK_RE = re.compile(r"从画面下(?:边|缘|方)伸|画面下方伸出|镜头(?:升|降|移)到[^，。；\n]{0,8}正上方")
-SENSITIVE_RE = re.compile(r"鲜血|血泊|血流|流血|血迹|满身血|一滩血")
-LOCK_NAME_RE = re.compile(r"(?m)^(?:@[^｜\n]+｜)?([^：:｜\s@]{1,8})[：:]")
-CUT_LINE_RE = re.compile(r"(?m)^[ \t]*CUT[ \t]+(\d+)\b.*$")
+# 05: 血、鲜血、血泊等直写可能触发审核. Words that only contain 血 (血管、血丝、血色、混血、热血) are not gore.
+SENSITIVE_RE = re.compile(
+    r"(?:鲜|渗|吐|咳|呕|出|溅|喷|淌|流|满身|一滩|一摊)?(?<![混热冷心贫充气献])血"
+    r"(?![管丝色缘统脉型压糖气性])(?:泊|迹|流|滴|痕|渍|珠|污|肉|红)?"
+)
+LOCK_LINE_RE = re.compile(r"(?m)^[ \t]*(?:@[^｜\n]+｜)?([^：:｜\s@]{1,8})[：:]([^\n]*)$")
+# A lock line is a character line when it says who the person is (06: every named character gets a voice identity).
+CHARACTER_LOCK_RE = re.compile(
+    r"\d+\s*岁|成年|男性|女性|男人|女人|男孩|女孩|少年|少女|老人|老年|中年|青年|孩子|儿童|婴儿|"
+    r"口音|普通话|方言|音色|音区|嗓音|声线|共鸣|语速|无台词|"
+    r"头发|[黑白金棕红灰卷短长]发|发型|身高|体型|肤色|五官|面部|脸型|身份"
+)
+CHARACTER_LABEL_RE = re.compile(r"(?:角色|主角|配角|人物)\S")
 PRONOUN_RE = re.compile(r"(?<![其吉])[他她]")
 NEGATED_ITEM_RE = re.compile(r"(?:不出现|不要出现|没有|不要)([^，。；\n]{2,40})")
 NEGATION_PREFIX = ("不", "没", "无", "未", "别")
@@ -185,13 +261,16 @@ def extended_lint_warnings(sections: dict[str, str]) -> list[str]:
     if hits:
         warnings.append("lint M19 moderation-sensitive wording (use neutral observable wording such as 红色液体): "
                         + "、".join(hits))
-    names = {name for name in LOCK_NAME_RE.findall(lock) if name not in GENERIC_LOCK_LABELS and len(name) >= 2}
+    names = {
+        name for name, body in LOCK_LINE_RE.findall(lock)
+        if name not in GENERIC_LOCK_LABELS and len(name) >= 2
+        and (CHARACTER_LABEL_RE.match(name) or CHARACTER_LOCK_RE.search(body))
+    }
     flagged = []
-    for match in CUT_LINE_RE.finditer(timeline):
-        line = match.group(0)
-        present = [name for name in names if name in line]
-        if len(present) >= 2 and PRONOUN_RE.search(line):
-            flagged.append(match.group(1))
+    for number, block in cut_blocks(timeline):
+        present = [name for name in names if name in block]
+        if len(present) >= 2 and PRONOUN_RE.search(block):
+            flagged.append(number)
     if flagged:
         warnings.append("lint M22 他/她 in CUTs with two or more named characters (use names): CUT "
                         + "、".join(flagged))
@@ -212,11 +291,16 @@ def extended_lint_warnings(sections: dict[str, str]) -> list[str]:
     return warnings
 
 EYE_COLOR_RE = re.compile(
-    r"(?:紫|红|蓝|绿|金|琥珀|灰白|黄|棕|褐|银|青)色?的?(?:眼睛|眼眸|眼|瞳孔|瞳仁|虹膜)|"
+    r"(?:紫|红|蓝|绿|金|琥珀|灰白|黄|棕|褐|银|青)色?的?"
+    # 眼镜、眼影、眼线、眼眶 and the like are not the eye itself.
+    r"(?:眼睛|眼眸|眼瞳|眼珠|瞳孔|瞳仁|虹膜|眼(?![镜影线罩眶皮袋角睑窝神光白尾圈]))|"
     r"(?:眼睛|眼眸|瞳孔|虹膜)(?:是|呈|为)?[^，。；\n]{0,4}(?:紫|红|蓝|绿|金|琥珀|黄|棕|褐|银|青)色"
 )
-EYE_SAFE_RE = re.compile(r"不发光|眼神光|有[^，。；\n]{0,3}瞳")
+# 05: the colour is followed by 有瞳孔、不发光 (both) or by 没有眼神光; a bare 眼神光 is no anchor.
+EYE_PUPIL_RE = re.compile(r"有[^，。；\n]{0,3}瞳")
+EYE_NO_CATCHLIGHT_RE = re.compile(r"(?:没有|无|不带|不要)眼神光")
 SENTENCE_SPLIT_RE = re.compile(r"[。；\n]")
+CLAUSE_SPLIT_RE = re.compile(r"[，,。；;\n]")
 
 
 def eye_color_warnings(text: str) -> list[str]:
@@ -224,11 +308,12 @@ def eye_color_warnings(text: str) -> list[str]:
     hits = []
     for sentence in SENTENCE_SPLIT_RE.split(text):
         found = EYE_COLOR_RE.search(sentence)
-        if found and not EYE_SAFE_RE.search(sentence):
+        anchored = (EYE_PUPIL_RE.search(sentence) and "不发光" in sentence) or EYE_NO_CATCHLIGHT_RE.search(sentence)
+        if found and not anchored:
             hits.append(found.group(0))
     if not hits:
         return []
-    return ["lint M24 eye colour without 有瞳孔/不发光 (eyes may render self-luminous): "
+    return ["lint M24 eye colour without 有瞳孔、不发光 or 没有眼神光 (eyes may render self-luminous): "
             + "、".join(sorted(set(hits)))]
 
 POV_EYE_MASK_RE = re.compile(r"真实眼睛视角|眼睛视角|从眼睛(?:里|内部|中)?看出去|眼睛内部")
@@ -261,8 +346,11 @@ CREW_RE = re.compile(
     r"(?<![a-z])ronin(?:[ -]?(?:4d|2|rs|s\d)|\s*(?=跟|拍|稳定|云台))|"
     r"(?<![a-z])phantom[ -]?(?:flex|veo|tmx|v\d|4k))"
 )
+# A negative list names the gear right after the negation (无摄影机、没有任何拍摄者); a character who
+# 无声举起相机 holds a prop and is not a list.
 CREW_NEGATION_RE = re.compile(
-    r"(?:无|没有|不出现|不要出现)[^，。；\n]{0,6}?(?:摄影机|摄像机|相机|摄影师|摄像师|拍摄者|三脚架|稳定器)"
+    r"(?:无|没有|不出现|不要出现|不得出现|避免出现)(?:任何|可见的?|出现|入画的?|穿帮的?){0,2}"
+    r"(?:摄影机|摄像机|相机|摄影师|摄像师|拍摄者|三脚架|稳定器)"
 )
 FOCAL_RE = re.compile(r"(\d{3,4})\s*(?:mm|毫米)", re.IGNORECASE)
 
@@ -279,14 +367,8 @@ def crew_warnings(text: str) -> list[str]:
 
 def long_lens_warnings(sections: dict[str, str]) -> list[str]:
     """M33: CUTs at 200mm or longer must state the extreme shallow-focus result."""
-    timeline = sections.get(SECTIONS[2], "")
-    starts = list(CUT_LINE_RE.finditer(timeline))
-    flagged = []
-    for index, match in enumerate(starts):
-        end = starts[index + 1].start() if index + 1 < len(starts) else len(timeline)
-        block = timeline[match.start():end]
-        if any(int(n) >= 200 for n in FOCAL_RE.findall(block)) and "极浅景深" not in block:
-            flagged.append(match.group(1))
+    flagged = [number for number, block in cut_blocks(sections.get(SECTIONS[2], ""))
+               if any(int(n) >= 200 for n in FOCAL_RE.findall(block)) and "极浅景深" not in block]
     if not flagged:
         return []
     return ["lint M33 CUT at 200mm or longer without 超大光圈、极浅景深 (background only as unreadable "
@@ -297,7 +379,11 @@ CAR_SUBJECT_RE = re.compile(
     r"车辆|车型|轮毂",
     re.IGNORECASE,
 )
-VEHICLE_CONTEXT_RE = re.compile(CAR_SUBJECT_RE.pattern + r"|车身|车头|车门|车窗|驾驶|副驾|方向盘", re.IGNORECASE)
+# 05G 摩托车（补充）: the rider sits on the centreline, so a motorcycle line has no 左舵/右舵.
+MOTORCYCLE_RE = re.compile(r"摩托|机车|踏板车|motorcycle|motorbike|scooter", re.IGNORECASE)
+VEHICLE_CONTEXT_RE = re.compile(
+    CAR_SUBJECT_RE.pattern + "|" + MOTORCYCLE_RE.pattern + r"|车身|车头|车门|车窗|驾驶|副驾|方向盘", re.IGNORECASE
+)
 CABIN_ACTION_RE = re.compile(r"驾驶座|驾驶位|驾驶者|司机|方向盘|开车|上车|坐进车|副驾")
 DRIVE_SIDE_LOCK_RE = re.compile(r"左舵|右舵|左驾|右驾|驾驶座在|驾驶位在|方向盘在车[^，。；\n]{0,2}[左右]")
 VEHICLE_SIDE_RE = re.compile(
@@ -329,11 +415,8 @@ def nose_side_warnings(lock: str, timeline: str) -> list[str]:
         return []
     left, right = LEFT_DRIVE_RE.search(lock), RIGHT_DRIVE_RE.search(lock)
     drive = "左" if left and not right else "右" if right and not left else None
-    starts = list(CUT_LINE_RE.finditer(timeline))
     flagged = []
-    for index, match in enumerate(starts):
-        end = starts[index + 1].start() if index + 1 < len(starts) else len(timeline)
-        block = timeline[match.start():end]
+    for number, block in cut_blocks(timeline):
         noses = set(NOSE_DIRECTION_RE.findall(block))
         if len(noses) != 1:
             continue
@@ -351,8 +434,8 @@ def nose_side_warnings(lock: str, timeline: str) -> list[str]:
                     side = drive
                 else:
                     side = "右" if drive == "左" else "左"
-                if side != nose and match.group(1) not in flagged:
-                    flagged.append(match.group(1))
+                if side != nose and number not in flagged:
+                    flagged.append(number)
     if not flagged:
         return []
     return ["lint M36 visible vehicle side contradicts the nose direction (from outside, nose screen-left shows "
@@ -365,7 +448,8 @@ def vehicle_warnings(sections: dict[str, str]) -> list[str]:
     lock = sections.get(SECTIONS[0], "")
     timeline = sections.get(SECTIONS[2], "")
     warnings: list[str] = []
-    if CAR_SUBJECT_RE.search(lock) and CABIN_ACTION_RE.search(timeline) and not DRIVE_SIDE_LOCK_RE.search(lock):
+    has_car = any(CAR_SUBJECT_RE.search(line) and not MOTORCYCLE_RE.search(line) for line in lock.splitlines())
+    if has_car and CABIN_ACTION_RE.search(timeline) and not DRIVE_SIDE_LOCK_RE.search(lock):
         warnings.append("lint M34 car with driver or cabin action but no 左舵/右舵 in the vehicle main line "
                         "(drive side may flip between CUTs)")
     if not VEHICLE_CONTEXT_RE.search(lock + timeline):
@@ -384,9 +468,20 @@ def vehicle_warnings(sections: dict[str, str]) -> list[str]:
 # Speech rates from 06: Chinese about 5.5 audible characters/s; Japanese about 8 morae/s in dialogue.
 SPEECH_RATES = {"zh": Decimal("5.5"), "ja": Decimal("8")}
 SPEECH_MARGIN = Decimal("0.5")
+# 06 标点与声音表演提示: 【动作】 in a dialogue line is an action at that point of the line, not spoken text.
+ACTION_MARK_RE = re.compile(r"【[^】\n]*】")
 # Only quotes introduced by a colon or a speech verb count as dialogue; quoted signs and labels do not.
+# An action may sit between the colon and the quote: 角色A：【贴近】“（这个数值……不会错。）”.
 QUOTED_SPEECH_RE = re.compile(
-    r"(?:[：:]|(?:说|问|喊|叫|答|念|道|唱|嘀咕|低语|喃喃)[^“「『。；\n]{0,8}?)[“「『]([^”」』\n]+)[”」』]"
+    r"(?:[：:]|(?:说|问|喊|叫|答|念|道|唱|嘀咕|低语|喃喃)[^“「『。；\n]{0,8}?)"
+    r"(?:[ \t]*【[^】\n]*】)*[ \t]*[“「『]([^”」』\n]+)[”」』]"
+)
+# 06 also writes unquoted lines: an action between two spoken parts (角色A：我……【抬起手】你……？) and an
+# accented line in half-width asterisks (角色A受到惊吓：*我操！*). Everything after the colon is the line.
+INLINE_SPEECH_RE = re.compile(
+    r"(?<![^\s，。；,;：:）)”」』！？!?、])[^\s：:，。；,;“”「」『』【】（）()*]{1,12}[：:][ \t]*"
+    r"((?=[^\n“”「」『』：:]*【[^】\n]+】|\*)[^\n“”「」『』：:]+?)[ \t]*$",
+    re.MULTILINE,
 )
 SMALL_KANA = set("ぁぃぅぇぉゃゅょゎァィゥェォャュョヮ")
 
@@ -400,23 +495,31 @@ def spoken_units(line: str, lang: str) -> int:
     return len(re.findall(r"[一-鿿]", line)) + latin
 
 
+def speech_need(text: str, lang: str) -> tuple[int, Decimal]:
+    """Shared speech-capacity estimate (also used by seal_review_packet.py): audible units of spoken text
+    without 【动作】 marks, and the seconds they need at the 06 rate. Pauses come on top."""
+    units = spoken_units(ACTION_MARK_RE.sub("", text), lang)
+    return units, Decimal(units) / SPEECH_RATES[lang]
+
+
+def dialogue_lines(block: str) -> list[str]:
+    """Spoken lines of one CUT: colon- or verb-introduced quotes and 06's unquoted inline-action/accent lines."""
+    return QUOTED_SPEECH_RE.findall(block) + INLINE_SPEECH_RE.findall(block)
+
+
 def speech_capacity_warnings(timeline: str, duration: Decimal, lang: str) -> list[str]:
-    """M37: quoted dialogue that may not fit its CUT (timed) or the whole segment (untimed); estimate only."""
+    """M37: dialogue that may not fit its CUT (timed) or the whole segment (untimed); estimate only."""
     rate = SPEECH_RATES[lang]
-    labels = list(CUT_LABEL_RE.finditer(timeline))
-    timed = {m.start(): (Decimal(m.group(2)), Decimal(m.group(3))) for m in CUT_RE.finditer(timeline)}
+    timed = {m.group(1): (Decimal(m.group(2)), Decimal(m.group(3))) for m in CUT_RE.finditer(timeline)}
     warnings, total = [], Decimal(0)
-    for index, label in enumerate(labels):
-        end = labels[index + 1].start() if index + 1 < len(labels) else len(timeline)
-        block = timeline[label.start():end]
-        units = sum(spoken_units(line, lang) for line in QUOTED_SPEECH_RE.findall(block))
-        need = Decimal(units) / rate
+    for number, block in cut_blocks(timeline):
+        units, need = speech_need("\n".join(dialogue_lines(block)), lang)
         total += need
-        if units and label.start() in timed:
-            start, stop = timed[label.start()]
+        if units and number in timed:
+            start, stop = timed[number]
             if stop - start < need + SPEECH_MARGIN:
                 warnings.append(
-                    f"lint M37 dialogue may not fit CUT {label.group(1)}: about {units} {lang} units at "
+                    f"lint M37 dialogue may not fit CUT {number}: about {units} {lang} units at "
                     f"{format_decimal(rate)}/s need {need:.1f}s plus {format_decimal(SPEECH_MARGIN)}s, CUT is "
                     f"{format_decimal(stop - start)}s (rough estimate; pauses come on top)"
                 )
@@ -452,24 +555,31 @@ def positive_decimal(value: str) -> Decimal:
     return parsed
 
 
-def parse_args(
-    argv: list[str] | None = None, *, default_profile: str = "general"
-) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("input", nargs="?", help="UTF-8 prompt file; omit to read stdin")
+def positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(f"invalid integer value: {value}") from exc
+    if parsed <= 0:
+        raise argparse.ArgumentTypeError("value must be greater than 0")
+    return parsed
+
+
+def add_policy_arguments(parser: argparse.ArgumentParser, *, default_profile: str = "general") -> None:
+    """Resolved-policy options shared by this CLI and seal_review_packet.py, which forwards them unchanged."""
     parser.add_argument(
         "--duration",
         type=positive_decimal,
         required=True,
         help="expected exact seconds; decimal durations are supported",
     )
-    parser.add_argument("--version", choices=("2.0", "2.5"), default="2.5")
-    parser.add_argument("--profile", choices=("general", "combat"), default=default_profile)
+    parser.add_argument("--version", choices=VERSIONS, default="2.5")
+    parser.add_argument("--profile", choices=PROFILES, default=default_profile)
     parser.add_argument(
-        "--timeline", choices=("auto", "timed", "untimed"), default="auto",
+        "--timeline", choices=TIMELINES, default="auto",
         help="resolved display policy; auto means untimed except Seedance 2.5 combat",
     )
-    parser.add_argument("--mode", choices=("auto", "cut", "onetake"), default="auto")
+    parser.add_argument("--mode", choices=MODES, default="auto")
     parser.add_argument(
         "--timestamp-policy",
         choices=TIMESTAMP_POLICIES,
@@ -483,21 +593,8 @@ def parse_args(
         help="frame rate used to bound optional Frame T帧 events (default: 24)",
     )
     parser.add_argument(
-        "--project-rules",
-        metavar="PATH",
-        help="PROJECT_RULES.md audit packet; requires --candidate",
-    )
-    parser.add_argument(
-        "--candidate",
-        metavar="PATH",
-        help=(
-            "exact candidate file for audit comparison; also used as the prompt "
-            "input when positional input is omitted"
-        ),
-    )
-    parser.add_argument(
         "--reference-handle-policy",
-        choices=("any-section", "lock-only"),
+        choices=REFERENCE_HANDLE_POLICIES,
         default="any-section",
         help=(
             "project-specific @handle policy; lock-only requires every handle "
@@ -514,11 +611,30 @@ def parse_args(
         choices=tuple(SPEECH_RATES),
         help="opt-in rough dialogue capacity check per CUT (zh 5.5 chars/s, ja about 8 morae/s); warnings only",
     )
-    parser.add_argument("--max-chars", type=int, default=10000)
+    parser.add_argument("--max-chars", type=positive_int, default=10000)
+
+
+def parse_args(
+    argv: list[str] | None = None, *, default_profile: str = "general"
+) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", nargs="?", help="UTF-8 prompt file; omit to read stdin")
+    add_policy_arguments(parser, default_profile=default_profile)
+    parser.add_argument(
+        "--project-rules",
+        metavar="PATH",
+        help="PROJECT_RULES.md audit packet; requires --candidate",
+    )
+    parser.add_argument(
+        "--candidate",
+        metavar="PATH",
+        help=(
+            "exact candidate file for audit comparison; also used as the prompt "
+            "input when positional input is omitted"
+        ),
+    )
     parser.add_argument("--json", action="store_true", help="emit a machine-readable result including unverified checks")
     args = parser.parse_args(argv)
-    if args.max_chars <= 0:
-        parser.error("--max-chars must be greater than 0")
     if bool(args.project_rules) != bool(args.candidate):
         parser.error("--project-rules and --candidate must be supplied together")
     return args
@@ -742,7 +858,7 @@ def check_audit_package(
         project_rules[:candidate_start]
         + project_rules[candidate_start + len(candidate) :]
     )
-    if re.search(r"(?m)^###\s*第\s*\d+\s*段", outside_candidate):
+    if SEGMENT_HEADING_RE.search(outside_candidate):
         errors.append(
             "PROJECT_RULES contains a stale candidate-like segment heading outside "
             "the unique embedded candidate"
@@ -845,6 +961,10 @@ def validate_prompt(
     Untimed text cannot prove internal 0..T coverage; this remains explicitly
     unverified even when all visible mechanical checks pass.
     """
+    if not duration.is_finite() or duration <= 0:
+        # Every later check compares against the duration; NaN would raise there (the CLI rejects it earlier).
+        return {"verdict": "FAIL", "errors": ["duration must be finite and positive"], "warnings": [],
+                "checked": [], "not_verified": ["all_checks"]}
     text = raw_text.strip()
     errors: list[str] = []
     warnings: list[str] = []
@@ -862,8 +982,6 @@ def validate_prompt(
             f"duration {format_decimal(duration)} exceeds Seedance "
             f"{version} limit of {format_decimal(duration_limit)} seconds"
         )
-    if not duration.is_finite() or duration <= 0:
-        errors.append("duration must be finite and positive")
     if not text:
         errors.append("prompt is empty")
     # Count the actual submitted text, including whitespace; the UTF-8 BOM is
@@ -967,27 +1085,33 @@ def validate_prompt(
     }
 
 
-def main(argv: list[str] | None = None, *, default_profile: str = "general") -> int:
-    args = parse_args(argv, default_profile=default_profile)
-    for stream in (sys.stdout, sys.stderr):
-        if hasattr(stream, "reconfigure"):
-            stream.reconfigure(encoding="utf-8")
+def validate_paths(
+    options: argparse.Namespace, *, input_path: str | Path | None = None,
+    candidate_path: str | Path | None = None, project_rules_path: str | Path | None = None,
+) -> dict[str, object]:
+    """Read the named files exactly and validate them with the policy options from add_policy_arguments.
+
+    Shared by main() and seal_review_packet.py. With project_rules_path the candidate must be embedded
+    verbatim in that audit packet. Unreadable input becomes a FAIL result instead of an exception.
+    """
     try:
-        audit_candidate = read_exact_text(args.candidate) if args.candidate else None
-        raw_text = read_exact_text(args.input) if args.input else (
+        audit_candidate = read_exact_text(candidate_path) if candidate_path else None
+        raw_text = read_exact_text(input_path) if input_path else (
             audit_candidate if audit_candidate is not None else read_text(None)
         )
         result = validate_prompt(
-            raw_text, duration=args.duration, version=args.version, profile=args.profile,
-            timeline=args.timeline, mode=args.mode, timestamp_policy=args.timestamp_policy,
-            fps=args.fps, max_chars=args.max_chars, reference_handle_policy=args.reference_handle_policy,
-            project_lint=load_project_lint(args.project_lint) if args.project_lint else None,
-            speech_lang=args.speech_lang,
+            raw_text, duration=options.duration, version=options.version, profile=options.profile,
+            timeline=options.timeline, mode=options.mode, timestamp_policy=options.timestamp_policy,
+            fps=options.fps, max_chars=options.max_chars,
+            reference_handle_policy=options.reference_handle_policy,
+            project_lint=load_project_lint(options.project_lint) if options.project_lint else None,
+            speech_lang=options.speech_lang,
         )
-        if args.project_rules:
-            assert audit_candidate is not None
-            check_audit_package(read_exact_text(args.project_rules), audit_candidate, result["errors"])
-            if args.input and raw_text != audit_candidate:
+        if project_rules_path:
+            if audit_candidate is None:
+                raise ValueError("an audit packet requires the exact candidate file")
+            check_audit_package(read_exact_text(project_rules_path), audit_candidate, result["errors"])
+            if input_path and raw_text != audit_candidate:
                 result["errors"].append(
                     "positional input differs from --candidate; audit and validation must use the same exact prompt"
                 )
@@ -996,6 +1120,16 @@ def main(argv: list[str] | None = None, *, default_profile: str = "general") -> 
     except (OSError, UnicodeError, ValueError, re.error) as exc:
         result = {"verdict": "FAIL", "errors": [str(exc)], "warnings": [],
                   "checked": [], "not_verified": ["input_unreadable"]}
+    return result
+
+
+def main(argv: list[str] | None = None, *, default_profile: str = "general") -> int:
+    args = parse_args(argv, default_profile=default_profile)
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+    result = validate_paths(args, input_path=args.input, candidate_path=args.candidate,
+                            project_rules_path=args.project_rules)
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

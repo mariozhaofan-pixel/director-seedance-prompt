@@ -7,8 +7,11 @@ from unittest import mock
 from types import SimpleNamespace
 
 from audio_segments import plan_segments, segment_lyrics
+from cover_common import sha256_file as digest
+from fit_reference_audio import allocate_budget
 import prepare_song
-from prepare_song import digest, reuse_audio, stages, write_json
+from prepare_song import reuse_audio, stages, write_json
+import setup_audio_runtime
 
 
 class SegmentationTests(unittest.TestCase):
@@ -137,7 +140,8 @@ class StageTests(unittest.TestCase):
             source = base / "input.wav"
             source.write_bytes(b"test input")
             args = SimpleNamespace(audio=source, output=base / "out", max_seconds=30, threads=1,
-                separator_model="fixture", asr_model="small", language="en")
+                separator_model="fixture", asr_model="small", language="en", reference_audio_budget=30,
+                voice_reserve_seconds=4, voice_reference=[], other_reference_audio=[], reuse_prepared=None)
             with mock.patch.object(prepare_song, "ensure_runtime"), mock.patch.object(prepare_song.importlib.metadata, "version", return_value="test"), mock.patch.object(prepare_song, "normalize", side_effect=RuntimeError("expected fixture failure")):
                 with self.assertRaises(RuntimeError):
                     prepare_song.run(args)
@@ -172,6 +176,112 @@ class StageTests(unittest.TestCase):
             write_json(target, {"歌词": "风经过窗前"})
             self.assertEqual(json.loads(target.read_text(encoding="utf-8")), {"歌词": "风经过窗前"})
             self.assertFalse(target.with_suffix(".json.tmp").exists())
+
+    def test_separation_is_keyed_only_by_source_and_separator(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            source = base / "input.wav"
+            source.write_bytes(b"test input")
+            calls = {"normalize": 0, "separate": 0, "transcribe": 0}
+
+            def normalize(src, root):
+                calls["normalize"] += 1
+                for name in ("source.wav", "audio-info.json"):
+                    (root / name).write_text(name, encoding="utf-8")
+                return [root / "source.wav", root / "audio-info.json"]
+
+            def separate(root, args):
+                calls["separate"] += 1
+                names = ("vocals.wav", "instrumental.wav", "separation.json")
+                for name in names:
+                    (root / name).write_text(f"{name}{calls['separate']}", encoding="utf-8")
+                return [root / name for name in names]
+
+            def transcribe(stems, work, args):
+                calls["transcribe"] += 1
+                (work / "lyrics.json").write_text(args.asr_model, encoding="utf-8")
+                return [work / "lyrics.json"]
+
+            def analyze(stems, work):
+                (work / "rhythm.json").write_text("{}", encoding="utf-8")
+                return [work / "rhythm.json"]
+
+            def export_segments(stems, work, budget):
+                (work / "compiler-input.json").write_text(json.dumps(budget), encoding="utf-8")
+                return [work / "compiler-input.json"]
+
+            def probe_budget(total, reserve, voices, others, max_song):
+                result = allocate_budget(total, reserve, [], [], max_song)
+                result["attachments"] = [str(path) for path in voices]
+                return result
+
+            def args(**changes):
+                values = dict(audio=source, output=base / "out", max_seconds=30, threads=1,
+                              separator_model="fixture", asr_model="small", language="auto",
+                              reference_audio_budget=30, voice_reserve_seconds=4, voice_reference=[],
+                              other_reference_audio=[], reuse_prepared=None)
+                return SimpleNamespace(**{**values, **changes})
+
+            with mock.patch.multiple(prepare_song, ensure_runtime=mock.DEFAULT, event=mock.DEFAULT,
+                                     normalize=normalize, separate=separate, transcribe=transcribe,
+                                     analyze=analyze, export_segments=export_segments, probe_budget=probe_budget), \
+                 mock.patch.object(prepare_song.importlib.metadata, "version", return_value="test"):
+                runs = [prepare_song.run(args()), prepare_song.run(args(asr_model="large-v3-turbo")),
+                        prepare_song.run(args(language="ko")), prepare_song.run(args(max_seconds=15)),
+                        prepare_song.run(args(voice_reference=[base / "voice.wav"]))]
+                self.assertEqual(prepare_song.run(args()), runs[0])
+                self.assertEqual((calls["normalize"], calls["separate"], calls["transcribe"]), (1, 1, 5))
+                self.assertEqual(len({run.parent for run in runs}), 1)
+                self.assertEqual(len(set(runs)), 5)
+                self.assertEqual((runs[0] / "lyrics.json").read_text(encoding="utf-8"), "small")
+                # Rebuilt stems make the downstream results of a run stale.
+                (runs[0].parent / "vocals.wav").write_bytes(b"corrupt")
+                prepare_song.run(args())
+                self.assertEqual((calls["normalize"], calls["separate"], calls["transcribe"]), (1, 2, 6))
+                prepare_song.run(args(separator_model="other-model"))
+                self.assertEqual(len([p for p in (base / "out").iterdir() if p.is_dir()]), 2)
+
+    def test_raised_segment_cap_fails_before_runtime_setup(self):
+        with tempfile.TemporaryDirectory() as temp:
+            source = Path(temp) / "input.wav"
+            source.write_bytes(b"test input")
+            args = SimpleNamespace(audio=source, output=Path(temp) / "out", max_seconds=31, threads=1)
+            with mock.patch.object(prepare_song, "ensure_runtime") as ensure:
+                with self.assertRaises(ValueError):
+                    prepare_song.run(args)
+            ensure.assert_not_called()
+
+
+class RuntimeTests(unittest.TestCase):
+    def ensure(self, ready, no_install):
+        with mock.patch.object(prepare_song.importlib.util, "find_spec", return_value=None), \
+             mock.patch.object(setup_audio_runtime, "check", return_value=ready), \
+             mock.patch.object(setup_audio_runtime, "install") as install, \
+             mock.patch.object(setup_audio_runtime, "runtime_python", return_value=Path("isolated/python")), \
+             mock.patch.object(prepare_song.subprocess, "call", return_value=0) as call, \
+             mock.patch.object(prepare_song, "event"):
+            with self.assertRaises(SystemExit) as exit_:
+                prepare_song.ensure_runtime(SimpleNamespace(no_install=no_install))
+        return install, call, exit_.exception.code
+
+    def test_no_install_uses_a_ready_runtime(self):
+        install, call, code = self.ensure(ready=True, no_install=True)
+        install.assert_not_called()
+        self.assertEqual(code, 0)
+        self.assertEqual(call.call_args.args[0][0], str(Path("isolated/python").resolve()))
+
+    def test_no_install_fails_only_when_runtime_is_missing(self):
+        with mock.patch.object(prepare_song.importlib.util, "find_spec", return_value=None), \
+             mock.patch.object(setup_audio_runtime, "check", return_value=False), \
+             mock.patch.object(setup_audio_runtime, "install") as install:
+            with self.assertRaisesRegex(RuntimeError, "--no-install"):
+                prepare_song.ensure_runtime(SimpleNamespace(no_install=True))
+        install.assert_not_called()
+
+    def test_missing_runtime_is_installed_without_the_flag(self):
+        install, call, code = self.ensure(ready=False, no_install=False)
+        install.assert_called_once_with()
+        self.assertEqual((call.call_count, code), (1, 0))
 
 
 if __name__ == "__main__":

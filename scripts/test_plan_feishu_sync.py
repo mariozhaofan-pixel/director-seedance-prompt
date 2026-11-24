@@ -145,6 +145,57 @@ class SyncPlannerTests(unittest.TestCase):
         del self.request["baseline"]["fields"]["状态"]
         self.assertEqual(self.operations()[0]["reason"], "no_common_baseline")
 
+    def test_first_fill_of_cell_omitted_from_snapshot_updates(self):
+        for empty, value in ((None, "已交付"), ("", "已交付"), ([], ["已交付"])):
+            with self.subTest(empty=empty):
+                self.setUp()
+                remote = self.existing()
+                del remote["fields"]["状态"]
+                self.request["baseline"]["fields"]["状态"] = empty
+                self.request["desired_fields"]["状态"] = value
+                operations = self.operations()
+                self.assertEqual(len(operations), 1)
+                self.assertEqual(operations[0]["op"], "update")
+                self.assertEqual(operations[0]["fields"], {"状态": value})
+
+    def test_empty_desired_value_matches_omitted_remote_cell(self):
+        for baseline in (False, True):
+            with self.subTest(baseline=baseline):
+                self.setUp()
+                self.request["owned_fields"].append("任务ID")
+                self.existing(baseline=baseline)
+                if baseline:
+                    self.request["baseline"]["fields"]["任务ID"] = "old-task"
+                self.request["desired_fields"]["任务ID"] = ""
+                self.assertEqual(self.operations()[0]["op"], "noop")
+
+    def test_omitted_cell_without_baseline_entry_still_pulls(self):
+        self.request["owned_fields"].append("任务ID")
+        self.existing()
+        self.request["desired_fields"]["任务ID"] = "task-7"
+        operation = self.operations()[0]
+        self.assertEqual(operation["op"], "pull")
+        self.assertEqual(operation["reason"], "no_common_baseline")
+        self.assertEqual(operation["missing_fields"], ["任务ID"])
+
+    def test_zero_is_a_value_not_an_omitted_cell(self):
+        self.request["owned_fields"].append("段号")
+        self.existing()
+        self.request["baseline"]["fields"]["段号"] = 0
+        self.request["desired_fields"]["段号"] = 2
+        operations = self.operations()
+        self.assertEqual(operations[0]["reason"], "both_changed_field")
+        self.assertNoWrites(operations)
+
+    def test_identity_link_first_fill_from_empty_still_requires_revision(self):
+        self.existing()
+        self.request["baseline"]["fields"]["关联资产"] = []
+        self.request["desired_fields"]["关联资产"] = ["asset-revision-1"]
+        operations = self.operations()
+        self.assertEqual(operations[0]["op"], "revision_required")
+        self.assertEqual(operations[0]["field"], "关联资产")
+        self.assertNoWrites(operations)
+
     def test_segment_changed_md_requires_new_revision_and_preserves_video(self):
         remote = self.existing()
         remote["fields"]["备注"] = "user note"

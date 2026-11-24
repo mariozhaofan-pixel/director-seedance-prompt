@@ -12,7 +12,7 @@
 - [02D_AUDIO_REFERENCES](02D_AUDIO_REFERENCES.md)：音频参考：最终配乐、节拍参考、音效、环境底、声线锚的分工
 - [02E_MEDIA_EVIDENCE](02E_MEDIA_EVIDENCE.md)：媒体取证：用户给的视频、图片作为剧情、身份或尾态证据时的处理
 - [02F_HIGGSFIELD_ASSET_PREPRODUCTION](02F_HIGGSFIELD_ASSET_PREPRODUCTION.md)：静态资产预制入口，路由到内置资产预制功能
-- [02G_IMAGE_CAPABILITY_FALLBACK](02G_IMAGE_CAPABILITY_FALLBACK.md)：Image 2.5接口建议与已确认无生图模式的资产提示词、文生交付
+- [02G_IMAGE_CAPABILITY_FALLBACK](02G_IMAGE_CAPABILITY_FALLBACK.md)：生图能力检查（默认宿主或用户提供的最高规格图像模型）与已确认无生图模式的资产提示词、文生交付
 - [02H_FEISHU_ASSET_WORKSPACE](02H_FEISHU_ASSET_WORKSPACE.md)：可选飞书协作入口、资产查重复用、本地制作与云端增量同步；仅选择飞书时加载
 - [02J_SHOT_CARD](02J_SHOT_CARD.md)：每段编译卡：取证结尾、衔接、世界拓扑与逐CUT画面投影、出场资产、动作状态
 - [02K_PROJECT_SLOT](02K_PROJECT_SLOT.md)：项目层插槽：项目规则、lint补充、事故日志、编译卡
@@ -50,4 +50,4 @@
 
 ## 演唱翻唱
 
-- [02I翻唱接口](02I_COVER_PERFORMANCE.md)：纯演唱与剧情内唱词的条件路由；共用核心随包内置，背景配乐不触发。核心规则只在独立翻唱源码维护并同步，独立版与导演路由默认采用统一五栏。
+- [02I翻唱接口](02I_COVER_PERFORMANCE.md)：纯演唱与剧情内唱词的条件路由；翻唱能力随包内置并只在本仓库维护，背景配乐不触发；默认采用导演统一五栏。

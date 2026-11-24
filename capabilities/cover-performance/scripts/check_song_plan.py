@@ -7,6 +7,8 @@ import math
 from collections import Counter
 from pathlib import Path
 
+from cover_common import utf8_console
+
 EPS = 1e-6
 
 
@@ -137,6 +139,7 @@ def check_plan(plan: dict) -> dict:
 
 
 def main():
+    utf8_console()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("plan", type=Path)
     args = parser.parse_args()
