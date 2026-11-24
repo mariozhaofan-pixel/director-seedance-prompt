@@ -119,7 +119,7 @@ class V21CoordinationTests(unittest.TestCase):
         section = camera.split("### 自然呼吸感（默认开启）", 1)[1].split("\n## ", 1)[0]
         self.assertIn("`content_purpose=product` 的产品细节镜", section)
         self.assertIn("产品细节镜", read("knowledge/00_CORE_CARD.md").split("画幅默认带克制的自然呼吸感", 1)[1].split("\n", 1)[0])
-        self.assertIn("站位记录镜、产品细节镜或项目层已关闭", read("knowledge/08_FAST_PREFLIGHT.md"))
+        self.assertIn("站位记录镜、产品细节镜、二维手绘动画或项目层已关闭", read("knowledge/08_FAST_PREFLIGHT.md"))
 
     def test_module_facts(self) -> None:
         module = read("knowledge/05G_VEHICLE_CINEMA.md")

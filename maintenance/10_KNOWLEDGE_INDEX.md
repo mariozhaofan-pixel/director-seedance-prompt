@@ -4,41 +4,41 @@
 
 | 模块 | 字符数 |
 | --- | ---: |
-| [00_CORE_CARD](../knowledge/00_CORE_CARD.md) | 3486 |
+| [00_CORE_CARD](../knowledge/00_CORE_CARD.md) | 3496 |
 | [02J_SHOT_CARD](../knowledge/02J_SHOT_CARD.md) | 1773 |
-| [02K_PROJECT_SLOT](../knowledge/02K_PROJECT_SLOT.md) | 1523 |
+| [02K_PROJECT_SLOT](../knowledge/02K_PROJECT_SLOT.md) | 1575 |
 | [02L_PLATFORM_PROFILES](../knowledge/02L_PLATFORM_PROFILES.md) | 566 |
 | [01_CORE_EXECUTION_CONTRACT](../knowledge/01_CORE_EXECUTION_CONTRACT.md) | 14997 |
-| [01A_SCREENWRITER_HANDOFF](../knowledge/01A_SCREENWRITER_HANDOFF.md) | 2182 |
+| [01A_SCREENWRITER_HANDOFF](../knowledge/01A_SCREENWRITER_HANDOFF.md) | 2232 |
 | [02_REFERENCE_ROUTER_AND_LOCKS](../knowledge/02_REFERENCE_ROUTER_AND_LOCKS.md) | 7785 |
 | [02A_PROJECT_WORKFLOW](../knowledge/02A_PROJECT_WORKFLOW.md) | 6774 |
 | [02B_CHARACTER_BOARD](../knowledge/02B_CHARACTER_BOARD.md) | 1820 |
-| [02C_CONTINUATION_REFERENCES](../knowledge/02C_CONTINUATION_REFERENCES.md) | 4603 |
+| [02C_CONTINUATION_REFERENCES](../knowledge/02C_CONTINUATION_REFERENCES.md) | 4628 |
 | [02D_AUDIO_REFERENCES](../knowledge/02D_AUDIO_REFERENCES.md) | 1319 |
 | [02E_MEDIA_EVIDENCE](../knowledge/02E_MEDIA_EVIDENCE.md) | 2827 |
 | [02F_HIGGSFIELD_ASSET_PREPRODUCTION](../knowledge/02F_HIGGSFIELD_ASSET_PREPRODUCTION.md) | 1668 |
 | [02G_IMAGE_CAPABILITY_FALLBACK](../knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md) | 1993 |
-| [02H_FEISHU_ASSET_WORKSPACE](../knowledge/02H_FEISHU_ASSET_WORKSPACE.md) | 5548 |
+| [02H_FEISHU_ASSET_WORKSPACE](../knowledge/02H_FEISHU_ASSET_WORKSPACE.md) | 5640 |
 | [03_VISUAL_GRAMMAR_AND_SCENE_ROUTER](../knowledge/03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md) | 14379 |
-| [04_CAMERA_LIGHT_COLOR_STYLE](../knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md) | 22830 |
+| [04_CAMERA_LIGHT_COLOR_STYLE](../knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md) | 22865 |
 | [04A_LIVE_ACTION_TEXTURE](../knowledge/04A_LIVE_ACTION_TEXTURE.md) | 2100 |
-| [05_ACTION_PERFORMANCE_BODY_MECHANICS](../knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md) | 14626 |
-| [05A_COMBAT_EXCHANGE_VARIANTS](../knowledge/05A_COMBAT_EXCHANGE_VARIANTS.md) | 8512 |
+| [05_ACTION_PERFORMANCE_BODY_MECHANICS](../knowledge/05_ACTION_PERFORMANCE_BODY_MECHANICS.md) | 14632 |
+| [05A_COMBAT_EXCHANGE_VARIANTS](../knowledge/05A_COMBAT_EXCHANGE_VARIANTS.md) | 8513 |
 | [05B_COMBAT_BRIEF](../knowledge/05B_COMBAT_BRIEF.md) | 1546 |
 | [05C_COMBAT_CHOREOGRAPHY](../knowledge/05C_COMBAT_CHOREOGRAPHY.md) | 18211 |
 | [05D_ACTION_SCENE_PHYSICS](../knowledge/05D_ACTION_SCENE_PHYSICS.md) | 6529 |
 | [05E_EXPRESSION_CUES](../knowledge/05E_EXPRESSION_CUES.md) | 2936 |
-| [05F_MARTIAL_STYLES](../knowledge/05F_MARTIAL_STYLES.md) | 11895 |
+| [05F_MARTIAL_STYLES](../knowledge/05F_MARTIAL_STYLES.md) | 11892 |
 | [05G_VEHICLE_CINEMA](../knowledge/05G_VEHICLE_CINEMA.md) | 7467 |
 | [05H_CHILD_PET_PERFORMANCE](../knowledge/05H_CHILD_PET_PERFORMANCE.md) | 2366 |
-| [06_TIMELINE_EDITING_SOUND](../knowledge/06_TIMELINE_EDITING_SOUND.md) | 30917 |
-| [06A_COMBAT_TIMING](../knowledge/06A_COMBAT_TIMING.md) | 4857 |
-| [06B_TRANSITIONS_SOUND](../knowledge/06B_TRANSITIONS_SOUND.md) | 4532 |
+| [06_TIMELINE_EDITING_SOUND](../knowledge/06_TIMELINE_EDITING_SOUND.md) | 31069 |
+| [06A_COMBAT_TIMING](../knowledge/06A_COMBAT_TIMING.md) | 4878 |
+| [06B_TRANSITIONS_SOUND](../knowledge/06B_TRANSITIONS_SOUND.md) | 4579 |
 | [07_STYLE_GENRE_FAMOUS_SCENE_COMPILER](../knowledge/07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md) | 8538 |
 | [07A_PAINTING_HOMAGE_ROUTER](../knowledge/07A_PAINTING_HOMAGE_ROUTER.md) | 5271 |
-| [08_FAST_PREFLIGHT](../knowledge/08_FAST_PREFLIGHT.md) | 6187 |
-| [08_MODEL_QC_REPAIR](../knowledge/08_MODEL_QC_REPAIR.md) | 39735 |
-| [STYLE_ROUTER](../knowledge/styles/STYLE_ROUTER.md) | 3214 |
+| [08_FAST_PREFLIGHT](../knowledge/08_FAST_PREFLIGHT.md) | 6326 |
+| [08_MODEL_QC_REPAIR](../knowledge/08_MODEL_QC_REPAIR.md) | 39874 |
+| [STYLE_ROUTER](../knowledge/styles/STYLE_ROUTER.md) | 3213 |
 | [bright-ensemble](../knowledge/styles/bright-ensemble/bright-ensemble.md) | 9890 |
 | [campus-relationship](../knowledge/styles/campus-relationship/campus-relationship.md) | 8567 |
 | [commercial-reversal](../knowledge/styles/commercial-reversal/commercial-reversal.md) | 9562 |
@@ -48,7 +48,7 @@
 
 ## 内置功能资源
 
-按02F或STYLE_ROUTER触发加载；协议与脚本随Skill提供，角色板细则只有一份。
+按02F、STYLE_ROUTER或02I触发加载；协议与脚本随Skill提供，角色板细则只有一份。
 
 | 功能 | 文件 |
 | --- | --- |
@@ -56,6 +56,7 @@
 | 光影运镜表演规则反推 | [REFERENCE_RULE_EXTRACTION](../capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md) |
 | 完整视频与音频取证 | [VIDEO_EVIDENCE_PROTOCOL](../capabilities/reference-rule-extraction/VIDEO_EVIDENCE_PROTOCOL.md) |
 | 媒体脚本运行环境 | [RUNTIME](../capabilities/reference-rule-extraction/RUNTIME.md) |
+| 演唱翻唱（共用核心） | [COVER_PERFORMANCE](../capabilities/cover-performance/COVER_PERFORMANCE.md) |
 
 ## 可选飞书工作区资源
 
@@ -67,7 +68,7 @@
 | [FEISHU_BASE_LAYOUT](../references/FEISHU_BASE_LAYOUT.md) | 6301 | 建表映射、修订、关联、视图及专用附件上传下载 |
 | [FEISHU_SCREENPLAY_SYNC](../references/FEISHU_SCREENPLAY_SYNC.md) | 2824 | 编剧定稿与采用改稿、当前多批版本、共同工作区恢复及导演交接 |
 | [feishu-base-blueprint](../assets/feishu-base-blueprint.json) | 8750 | 创建或增补四表结构时转换为实际请求 |
-| [plan_feishu_sync](../scripts/plan_feishu_sync.py) | 15964 | 本地同步计划；计划本身不证明云端已执行 |
+| [plan_feishu_sync](../scripts/plan_feishu_sync.py) | 15987 | 本地同步计划；计划本身不证明云端已执行 |
 
 ## 演唱翻唱
 

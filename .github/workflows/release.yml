@@ -23,6 +23,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Pillow for the character-board tests
+        run: python -m pip install --disable-pip-version-check pillow
+
       - name: Test director skill
         run: python -B -m unittest discover -s scripts -p "test_*.py"
 

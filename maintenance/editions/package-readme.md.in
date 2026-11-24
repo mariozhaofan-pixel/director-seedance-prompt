@@ -10,7 +10,7 @@
 
 三项内置功能保持完整：[翻唱演唱](knowledge/02I_COVER_PERFORMANCE.md)与独立翻唱skill共用歌曲时间轴、歌词与表演规则，支持清唱/伴奏/弹唱及剧情内唱词；[静态资产预制](capabilities/asset-preproduction/ASSET_PREPRODUCTION.md)包含角色板、场景、道具、状态和局部修改；[规则反推](capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)包含视频证据、全帧与音轨处理协议及配套脚本。均按需加载，无需另外安装同名技能。
 
-人物表演、[表情管理](knowledge/05E_EXPRESSION_CUES.md)、武戏、[车辆影像](knowledge/05G_VEHICLE_CINEMA.md)、[萌宝萌宠表演](knowledge/05H_CHILD_PET_PERFORMANCE.md)（车辆身份与左右舵、车身左右投影、车拍机位与运镜、车漆反射、汽车产品展示段）、空间与连续性、摄影光色、剪辑声音、六类风格库、素材参考、无生图降级、有界修复及验证器保留。缺失可辨配角优先单人角色板，可辨群演可合做多人半身资产；不可辨背景群像优先文生。人物资产采用内置 Higgsfield 统一标准，成员绑定经[02B](knowledge/02B_CHARACTER_BOARD.md)；场景图是否需要、反向图何时补充按 [02A 工程流程](knowledge/02A_PROJECT_WORKFLOW.md)及内置场景功能判断。视频始终按动态空间编译。
+人物表演、[表情管理](knowledge/05E_EXPRESSION_CUES.md)、武戏、[车辆影像](knowledge/05G_VEHICLE_CINEMA.md)（车辆身份与左右舵、车身左右投影、车拍机位与运镜、车漆反射、汽车产品展示段）、[萌宝萌宠表演](knowledge/05H_CHILD_PET_PERFORMANCE.md)、空间与连续性、摄影光色、剪辑声音、六类风格库、素材参考、无生图降级、有界修复及验证器保留。缺失可辨配角优先单人角色板，可辨群演可合做多人半身资产；不可辨背景群像优先文生。人物资产采用内置 Higgsfield 统一标准，成员绑定经[02B](knowledge/02B_CHARACTER_BOARD.md)；场景图是否需要、反向图何时补充按 [02A 工程流程](knowledge/02A_PROJECT_WORKFLOW.md)及内置场景功能判断。视频始终按动态空间编译。
 
 整曲翻唱支持agent自动分离人声/备用伴奏、识别歌词、分析节奏和≤30秒切段，再以人声文件和角色资产完成授权范围编译。首次预处理自动建立隔离音频环境并下载模型；实际新音色重唱与视频生成仍需可用生成工具。用法与产物见[音频预处理](capabilities/cover-performance/references/audio-preparation.md)。
 

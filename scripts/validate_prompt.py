@@ -532,6 +532,8 @@ def read_exact_text(path: str) -> str:
 def read_text(path: str | None) -> str:
     if path:
         return read_exact_text(path)
+    if hasattr(sys.stdin, "buffer"):
+        return sys.stdin.buffer.read().decode("utf-8-sig")
     return sys.stdin.read()
 
 
@@ -740,7 +742,7 @@ def check_audit_package(
         project_rules[:candidate_start]
         + project_rules[candidate_start + len(candidate) :]
     )
-    if re.search(r"(?m)^###\s*第\d+段", outside_candidate):
+    if re.search(r"(?m)^###\s*第\s*\d+\s*段", outside_candidate):
         errors.append(
             "PROJECT_RULES contains a stale candidate-like segment heading outside "
             "the unique embedded candidate"
@@ -967,6 +969,9 @@ def validate_prompt(
 
 def main(argv: list[str] | None = None, *, default_profile: str = "general") -> int:
     args = parse_args(argv, default_profile=default_profile)
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     try:
         audit_candidate = read_exact_text(args.candidate) if args.candidate else None
         raw_text = read_exact_text(args.input) if args.input else (

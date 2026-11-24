@@ -17,7 +17,7 @@ class V18PhoneVlogTests(unittest.TestCase):
     def test_router_lists_the_phone_vlog_pack(self) -> None:
         router = read("knowledge/styles/STYLE_ROUTER.md")
         self.assertIn("[Phone Vlog](phone-vlog/phone-vlog.md)", router)
-        self.assertIn("不为比较而先读五个全文", router)
+        self.assertIn("不为比较预读各包全文", router)
         self.assertIn("正剧里只有个别镜头是手机屏幕或手机视角时不换包", router)
 
     def test_pack_covers_the_four_shooting_relations(self) -> None:

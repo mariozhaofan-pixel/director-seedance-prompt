@@ -9,7 +9,7 @@
 
 @@EDITION_DETAIL@@
 
-角色、场景和道具资产方法及视频规则反推功能已经内置。实际生图仍使用宿主工具或用户授权接口；缺少工具时按 [能力降级](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)执行。用户确认无生图后交付所需资产的生图提示词并继续文生，不虚构已生成图片。
+角色、场景和道具资产方法、视频规则反推和翻唱演唱三项功能已经内置。实际生图仍使用宿主工具或用户授权接口；缺少工具时按 [能力降级](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)执行。用户确认无生图后交付所需资产的生图提示词并继续文生，不虚构已生成图片。
 
 通用提示词检查需要 Python 3.10+，只使用标准库；角色板盖头脚本 `scripts/mask_front_head.py` 另需 Pillow，没有时按资产预制规则手动用背景色盖掉正面全身的头部；媒体取证需要实际可访问的视频、音轨和相应环境，具体见 [媒体运行说明](capabilities/reference-rule-extraction/RUNTIME.md)。安装包不带外部程序、模型或私密凭据。
 

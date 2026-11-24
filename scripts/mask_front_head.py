@@ -228,6 +228,8 @@ def mask_front_head(img: "Image.Image", front: tuple[int, int] | None = None,
         cut, method = find_neck(width, top, fig)
     if cut <= top:
         raise BoardError("cut row lies above the front view; nothing changed")
+    if cut >= top + 0.6 * fig:
+        raise BoardError("cut row would cover most of the front body; nothing changed. Pass a --cut-y between chin and collarbone")
 
     head = figure.crop((0, top, bx1 - bx0, cut)).getbbox()
     if head is None:
@@ -273,16 +275,21 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"ok": False, "error": "Pillow is not installed (pip install pillow)"}, ensure_ascii=False))
         return 3
     src = Path(args.board)
-    img = Image.open(src)
     try:
+        img = Image.open(src)
+        img.load()
         front = parse_span(args.front, img.width) if args.front else None
         cut = parse_pos(args.cut_y, img.height) if args.cut_y else None
         out, report = mask_front_head(img, front, cut)
-    except (BoardError, ValueError) as exc:
+    except (BoardError, ValueError, OSError) as exc:
         print(json.dumps({"ok": False, "board": str(src), "error": str(exc)}, ensure_ascii=False))
         return 2
     dest = Path(args.output) if args.output else src.with_name(f"{src.stem}-front-masked.png")
-    out.save(dest)
+    try:
+        out.save(dest)
+    except OSError as exc:
+        print(json.dumps({"ok": False, "board": str(src), "error": f"could not write {dest}: {exc}"}, ensure_ascii=False))
+        return 2
     print(json.dumps({"ok": True, "board": str(src), "output": str(dest), **report}, ensure_ascii=False))
     return 0
 

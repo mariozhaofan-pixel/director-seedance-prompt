@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -29,9 +30,11 @@ LAYER_PATTERNS = (
     (re.compile(r"^模型"), "模型能力限制"),
     (re.compile(r"项目偏好"), "项目偏好"),
 )
-PENDING_RE = re.compile(r"^待|未验证")
-VALID_RE = re.compile(r"^有效|已验证|验收")
-INVALID_RE = re.compile(r"^无效|仍不|未通过|失败")
+# The leading word decides; later notes ("有效（v2；v1无效）") do not override it.
+STATUS_PREFIXES = (("有效", "有效"), ("无效", "无效"), ("待", "待验证"))
+PENDING_RE = re.compile(r"未验|还没|没验|尚未|下次|待")
+INVALID_RE = re.compile(r"无效|仍不|未通过|不通过|失败")
+VALID_RE = re.compile(r"有效|已验证|已验收|验收")
 
 
 def layer_of(raw: str | None) -> str:
@@ -40,21 +43,28 @@ def layer_of(raw: str | None) -> str:
         return "待定"
     if text in DESTINATION:
         return text
-    for pattern, layer in LAYER_PATTERNS:
-        if pattern.search(text):
-            return layer
+    # Match the layer name before any bracketed note: "模型能力限制（剧本没写清）" is a model layer.
+    head = re.split(r"[（(]", text, maxsplit=1)[0]
+    for candidate in (head, text):
+        for pattern, layer in LAYER_PATTERNS:
+            if pattern.search(candidate):
+                return layer
     # Unknown layers keep their own name so similar rows still group together.
     return re.split(r"[（(：:＋+，,]", text, maxsplit=1)[0] or "待定"
 
 
 def status_of(raw: str | None) -> str:
-    text = (raw or "").strip()
+    text = re.sub(r"\s+", "", raw or "")
+    for prefix, status in STATUS_PREFIXES:
+        if text.startswith(prefix):
+            return status
+    # Without a leading verdict, pending words ("还没验收", "下次出片验收") win, then failures, then passes.
     if PENDING_RE.search(text):
         return "待验证"
-    if VALID_RE.search(text):
-        return "有效"
     if INVALID_RE.search(text):
         return "无效"
+    if VALID_RE.search(text):
+        return "有效"
     return "待验证"
 
 
@@ -136,6 +146,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--log", type=Path, required=True)
     parser.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     text = report(parse(args.log.read_text(encoding="utf-8-sig")))
     if args.out:
         args.out.write_text(text, encoding="utf-8")

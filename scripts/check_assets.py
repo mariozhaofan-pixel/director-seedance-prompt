@@ -22,6 +22,7 @@ PLATFORMS = {
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
 VIDEO_SUFFIXES = {".mp4", ".mov", ".webm", ".m4v"}
+AUDIO_SUFFIXES = {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg"}
 
 
 def image_size(data: bytes) -> tuple[int, int] | None:
@@ -85,13 +86,15 @@ def check_file(path: Path, limits: dict) -> dict:
     size = None
     if suffix in IMAGE_SUFFIXES:
         with path.open("rb") as handle:
-            size = image_size(handle.read(65536))
+            size = image_size(handle.read())
         if size is None:
             item["problems"].append("unreadable image header")
     elif suffix in VIDEO_SUFFIXES:
         size = video_size(path)
         if size is None:
             item["note"] = "video dimensions not checked (ffprobe unavailable or unreadable)"
+    elif suffix in AUDIO_SUFFIXES:
+        item["note"] = "audio not checked: count and length limits are in knowledge/02L_PLATFORM_PROFILES.md"
     else:
         item["problems"].append(f"unsupported file type {suffix or '(none)'}")
     if size:
@@ -118,11 +121,13 @@ def main(argv: list[str] | None = None) -> int:
                           "verdict": "FAIL" if failed else "PASS"}, ensure_ascii=False, indent=2))
     else:
         for item in report:
-            status = "FAIL" if item["problems"] else "OK"
+            status = "FAIL" if item["problems"] else ("UNCHECKED" if "note" in item and "width" not in item else "OK")
             dims = f" {item['width']}x{item['height']} ({item['aspect']})" if "width" in item else ""
             print(f"{status} {item['path']}{dims}")
             for problem in item["problems"]:
                 print(f"  - {problem}", file=sys.stderr)
+            if status == "UNCHECKED":
+                print(f"  - {item['note']}", file=sys.stderr)
     return 1 if failed else 0
 
 

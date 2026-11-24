@@ -112,6 +112,15 @@ class MaskFrontHeadTests(unittest.TestCase):
             self.assertFalse(json.loads(buf.getvalue())["ok"])
             self.assertFalse((Path(tmp) / "plain-front-masked.png").exists())
 
+    def test_bad_input_and_deep_cut_are_reported(self) -> None:
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = mfh.main(["no-such-board.png"])
+        self.assertEqual(code, 2)
+        self.assertFalse(json.loads(buf.getvalue())["ok"])
+        with self.assertRaises(mfh.BoardError):
+            mfh.mask_front_head(board(), cut_y=600)
+
     def test_manual_overrides(self) -> None:
         out, report = mfh.mask_front_head(board(), front=(700, 1030), cut_y=170)
         self.assertEqual(report["method"], "manual")

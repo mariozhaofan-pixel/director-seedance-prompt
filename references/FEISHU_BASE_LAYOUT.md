@@ -73,7 +73,7 @@ lark-cli base +field-create --base-token '<base_token>' --table-id '<table_id>' 
 ```powershell
 lark-cli base +view-create --base-token '<base_token>' --table-id '<assets_table_id>' --json '{"name":"资产画廊","type":"gallery"}' --as user
 lark-cli base +view-set-card --base-token '<base_token>' --table-id '<assets_table_id>' --view-id '<view_id>' --json '{"cover_field":"图片资产"}' --as user
-lark-cli base +view-set-visible-fields --base-token '<base_token>' --table-id '<segments_table_id>' --view-id '<view_id>' --json '{"visible_fields":["名称","段号","对应段落提示词md文件","对应提示词的视频上传","关联资产","来源剧本","所属项目","状态","生产负责人","任务ID","备注"]}' --as user
+lark-cli base +view-set-visible-fields --base-token '<base_token>' --table-id '<segments_table_id>' --view-id '<view_id>' --json '{"visible_fields":["名称","段号","对应段落提示词md文件","对应提示词的视频上传","来源剧本","关联资产","所属项目","状态","生产负责人","任务ID","备注"]}' --as user
 ```
 
 `+view-create` 使用 `--json`，不猜测 `--name/--view-type` 参数。画廊封面是实际 `图片资产`附件字段；文字锁定和待生图记录允许无封面。主工作台都是 grid，资产另有 gallery，技术键和当前文件清单默认隐藏，不删除字段。

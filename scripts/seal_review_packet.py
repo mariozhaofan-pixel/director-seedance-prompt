@@ -87,7 +87,7 @@ CANDIDATE_FIELD_RE = re.compile(
 CANDIDATE_BOUNDARY_RE = re.compile(
     r"(?im)^\s*(?:BEGIN|END|START|STOP)[ _-]*(?:CANDIDATE|候选)\b"
 )
-STALE_SEGMENT_RE = re.compile(r"(?m)^\s*###\s*第\d+段")
+STALE_SEGMENT_RE = re.compile(r"(?m)^\s*###\s*第\s*\d+\s*段")
 SEGMENT_ENVELOPE_RE = re.compile(r"(?m)^\s*###\s*第\s*\d+\s*段[^\r\n]*")
 CODE_FENCE_RE = re.compile(r"(?m)^\s*(?:```|~~~)")
 RESERVED_PACKET_LINE_RE = re.compile(
@@ -96,6 +96,13 @@ RESERVED_PACKET_LINE_RE = re.compile(
 )
 PRIOR_REVIEW_LEAK_RE = re.compile(
     r"(?:首轮|上轮|上一轮|旧审阅|旧报告|previous[ \t]+review|round[ \t]+1)"
+    r"[^\r\n]{0,24}(?:结论|发现|问题|指出|建议|报告|verdict|finding|repair|pass)"
+    r"|(?:疑似问题|期待修复|预期修复|根据首轮审阅|按照首轮审阅)",
+    re.IGNORECASE,
+)
+# Candidates are story text: "上一轮攻势，发现…" is a line of action, so only review-specific wording counts there.
+CANDIDATE_REVIEW_LEAK_RE = re.compile(
+    r"(?:首轮审阅|上轮审阅|上一轮审阅|旧审阅|旧报告|previous[ \t]+review)"
     r"[^\r\n]{0,24}(?:结论|发现|问题|指出|建议|报告|verdict|finding|repair|pass)"
     r"|(?:疑似问题|期待修复|预期修复|根据首轮审阅|按照首轮审阅)",
     re.IGNORECASE,
@@ -312,7 +319,7 @@ def check_candidate_hygiene(candidate: str) -> None:
         )
     if CODE_FENCE_RE.search(candidate):
         raise GateError("candidate contains a code fence; packet embedding is plain text only")
-    if PRIOR_REVIEW_LEAK_RE.search(candidate):
+    if CANDIDATE_REVIEW_LEAK_RE.search(candidate):
         raise GateError("candidate contains prior-review conclusions or expected-fix language")
 
 

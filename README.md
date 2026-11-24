@@ -26,7 +26,7 @@
 - [人物资产接口](knowledge/02B_CHARACTER_BOARD.md)让缺失的可辨配角优先生成独立角色板，左侧正面大头特写、右侧正面全身与背面全身，出图后用脚本盖掉正面全身的头部；可辨多人群演可一次生成多人半身资产并逐个绑定身份。面部不可辨且无需个体身份的街道/背景群像优先文生。既有身份按人复用，用户文字锁定例外保留；完整标准仍只有内置资产功能一份。
 - 缺少生图能力时走[接口建议与无生图模式](knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md)：建议配置OpenAI GPT Image 2.5；用户确认无生图后交付资产生图提示词与文生视频提示词，状态分别登记，不被缺图等待卡住。
 - [编剧协作](knowledge/01A_SCREENWRITER_HANDOFF.md)可将格式整理、修改意见或已授权修稿交给独立viral-screenwriter；该技能也能把视频提示词任务交回导演，按范围接回且不循环推荐。
-- [风格路由](knowledge/styles/STYLE_ROUTER.md)先读类型目录，再读取唯一选中的英文类型规则。库内六类为campus-relationship、restrained-realism、bright-ensemble、commercial-reversal、phone-vlog（手机Vlog：自拍、同伴手持拍、镜面自拍）、folk-fantasy-realism（写实民俗奇幻：暖色自然光、超现实动作与克制喜剧）。
+- [风格路由](knowledge/styles/STYLE_ROUTER.md)先读类型目录，再读取唯一选中的风格包。库内六类为campus-relationship、restrained-realism、bright-ensemble、commercial-reversal、phone-vlog（手机Vlog：自拍、同伴手持拍、镜面自拍）、folk-fantasy-realism（写实民俗奇幻：暖色自然光、超现实动作与克制喜剧）。
 - 用户提供光影/运镜/表演对标视频时，进入内置[规则反推功能](capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)，执行完整规则书写、全帧视频取证和真实听音流程；所需协议与配套脚本随包提供。规则文件生成后返回原编译范围。仅剧情/身份/尾态证据走素材路线。
 - [翻唱演唱接口](knowledge/02I_COVER_PERFORMANCE.md)调用内置同源翻唱规则及音频工具：自动分离整曲人声/备用伴奏、识别歌词、分析节奏和≤30秒切段，再结合角色资产编译全部授权段。支持清唱、伴奏、弹唱及剧情内唱词；纯素材/通用演唱草稿不启动模型与工程问答，具体模型仍保留真实硬上限。
 - 三项完整功能封装在 `capabilities/`，只在触发时加载。功能入口采用用途文件名，整个目录只有根入口一个 `SKILL.md`。原始资产与规则反推技能不再是安装依赖。
@@ -43,7 +43,7 @@
 
 本项目仅维护原生 Skill。安装包解压得到 `director-seedance-prompt/`，将整个目录放入宿主的技能目录（Claude Code 为 `~/.claude/skills/`）。更新时先将旧目录备份到技能目录之外，再放入完整新目录，避免覆盖安装留下废弃文件。刷新技能或重新打开会话后，用 `$director-seedance-prompt` 调用。
 
-包内仅有一个 `SKILL.md`；`knowledge/` 和 `capabilities/` 按路由加载，`agents/openai.yaml` 提供原生 Skill 的界面元数据。提示词运行校验脚本需要 Python 3.10+，只使用标准库；媒体取证脚本所需Python库、FFmpeg、ASR/OCR及可听媒体工具按其运行环境说明检查。安装包保留知识模块、三项完整内置功能、五类风格、示例、脚本、测试和来源资料，排除缓存、媒体原件、模型权重、历史安装包和备份。
+包内仅有一个 `SKILL.md`；`knowledge/` 和 `capabilities/` 按路由加载，`agents/openai.yaml` 提供原生 Skill 的界面元数据。提示词运行校验脚本需要 Python 3.10+，只使用标准库；媒体取证脚本所需Python库、FFmpeg、ASR/OCR及可听媒体工具按其运行环境说明检查。安装包保留知识模块、三项完整内置功能、六类风格、示例、脚本、测试和来源资料，排除缓存、媒体原件、模型权重、历史安装包和备份。
 
 编剧 `viral-screenwriter` 仍按用户要求与导演互相协作，独立安装；真实生图使用宿主工具或用户授权接口。资产预制及规则反推的功能知识、协议和配套脚本已在本包内，媒体访问和模型服务仍以实际可用工具为准。普通编译可继续完成不依赖缺失工具的部分。
 

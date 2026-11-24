@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 import datetime as _dt
 from pathlib import Path
 
@@ -30,6 +31,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--verified", default="待验证")
     parser.add_argument("--date", default=_dt.date.today().isoformat())
     args = parser.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     if not args.log.exists():
         args.log.parent.mkdir(parents=True, exist_ok=True)
         args.log.write_text("# 事故日志\n", encoding="utf-8")

@@ -44,7 +44,7 @@
 - [restrained-realism](styles/restrained-realism/restrained-realism.md)：克制写实、人与环境尺度、信息触点
 - [STYLE_ROUTER](styles/STYLE_ROUTER.md)：风格路由：规则来源、选包、新反推入口
 
-普通快速检查用08_FAST；08_MODEL只用于已触发的扩展诊断/冷审。风格目录选一个包。02F路由到内置[静态资产预制](../capabilities/asset-preproduction/ASSET_PREPRODUCTION.md)；STYLE_ROUTER路由到内置[光影运镜表演规则反推](../capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)。两项完整功能在capabilities中按需加载，细则不在本目录重复维护。
+普通快速检查用08_FAST；08_MODEL只用于已触发的扩展诊断/冷审。风格目录选一个包。02F路由到内置[静态资产预制](../capabilities/asset-preproduction/ASSET_PREPRODUCTION.md)；STYLE_ROUTER路由到内置[光影运镜表演规则反推](../capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)。02I路由到内置[翻唱演唱](../capabilities/cover-performance/COVER_PERFORMANCE.md)。三项完整功能在capabilities中按需加载，细则不在本目录重复维护。
 
 飞书模式经02H按需读取[部署与授权](../references/FEISHU_WORKSPACE_SETUP.md)、[四表布局与附件协议](../references/FEISHU_BASE_LAYOUT.md)、[剧本同步合同](../references/FEISHU_SCREENPLAY_SYNC.md)及[建表蓝图](../assets/feishu-base-blueprint.json)；准备本地同步计划时使用[plan_feishu_sync.py](../scripts/plan_feishu_sync.py)。本地模式不加载这些文件、不检查飞书环境。首轮工作模式、视频版本和规则来源的合并询问只由根入口定义，索引不另设启动门槛。
 

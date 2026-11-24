@@ -72,15 +72,15 @@ repair_scope=local：需要新证据，或改变CUT/BEAT、时间、对白分配
 | 选择飞书协作、连接/创建多维表、剧本联动或云端资产查重与增量同步 | `knowledge/02H_FEISHU_ASSET_WORKSPACE.md` |
 | 真实附件、素材控制、实体唯一主行 | `knowledge/02_REFERENCE_ROUTER_AND_LOCKS.md` |
 | 新增/修订角色、场景、道具、状态或反向机位资产（Higgsfield能力标准） | `knowledge/02F_HIGGSFIELD_ASSET_PREPRODUCTION.md` |
-| 生图能力缺失、配置Image 2.5接口或已确认无生图模式 | `knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md` |
+| 生图能力缺失、配置生图接口或已确认无生图模式 | `knowledge/02G_IMAGE_CAPABILITY_FALLBACK.md` |
 | 缺少可辨配角/群演资产、角色板或多人半身资产及其视频绑定 | `knowledge/02B_CHARACTER_BOARD.md` |
-| 已接受视频/尾帧、实际成片续写 | `knowledge/02C_CONTINUATION_REFERENCES.md` |
+| 已接受视频/尾帧、实际成片续写；站位记录镜与两段一批的衔接决策 | `knowledge/02C_CONTINUATION_REFERENCES.md` |
 | 每段编译卡（衔接、拓扑与画面投影、出场资产） | `knowledge/02J_SHOT_CARD.md` |
 | 项目层规则、lint补充、事故日志 | `knowledge/02K_PROJECT_SLOT.md` |
 | 平台硬限制（段长、素材数、宽高比） | `knowledge/02L_PLATFORM_PROFILES.md` |
-| 声线、母带、音频节奏参考 | `knowledge/02D_AUDIO_REFERENCES.md` |
+| 声线、音频节奏参考或配音绑定 | `knowledge/02D_AUDIO_REFERENCES.md` |
 | 角色翻唱、对歌声口型、剧情内唱词、演唱稿局部修订 | `knowledge/02I_COVER_PERFORMANCE.md` → 内置共用翻唱规则 |
-| 参考片/链接、证据提取或事实核实 | `knowledge/02E_MEDIA_EVIDENCE.md` |
+| 参考片/链接仅作剧情事实、身份或尾态证据；素材证据审计或事实核实（未限定用途的对标视频走STYLE_ROUTER） | `knowledge/02E_MEDIA_EVIDENCE.md` |
 | 空间、轴线、构图、群众、进出场 | `knowledge/03_VISUAL_GRAMMAR_AND_SCENE_ROUTER.md` |
 | 摄影机、光学、光色与基础风格（真人/写实质感与写实人物肤质另读04A；二维手绘动画按04的二维分支） | `knowledge/04_CAMERA_LIGHT_COLOR_STYLE.md` |
 | 新编风格选择；用户更换光影运镜规则或提供对标视频 | `knowledge/styles/STYLE_ROUTER.md` |
@@ -94,7 +94,7 @@ repair_scope=local：需要新证据，或改变CUT/BEAT、时间、对白分配
 | 动作交换接续空白或需变化；由05路由后选1–2条 | `knowledge/05A_COMBAT_EXCHANGE_VARIANTS.md` |
 | 容量、时间轴、对白、CUT接力和段落边界 | `knowledge/06_TIMELINE_EDITING_SOUND.md` |
 | 特定转场、主观状态转换、扩展声音或音频卡点 | `knowledge/06B_TRANSITIONS_SOUND.md` |
-| 类型/名场面机制、蒙太奇、反转、揭示、灾难、喜剧、转化 | `knowledge/07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md` |
+| 用户指定对标作品/片名/导演（对标行）；类型/名场面机制、蒙太奇、反转、揭示、灾难、喜剧、转化 | `knowledge/07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md` |
 | 明确要求世界名画分镜或绘画致敬 | `knowledge/07A_PAINTING_HOMAGE_ROUTER.md` |
 | 新稿一次预检；local受影响项 | `knowledge/08_FAST_PREFLIGHT.md` |
 | 已触发冷审、失败诊断、retake或指定完整审查 | `knowledge/08_MODEL_QC_REPAIR.md` |
@@ -154,7 +154,7 @@ CUT 1：[当前开场事实与camera投影→主体/camera各自路径与焦点�
 
 ## 检查与冷审路由
 
-在已有预检中调用 scripts/validate_prompt.py 验证一般候选；实际交锋用兼容入口 scripts/validate_combat_prompt.py。传入已解析版本、准确计划时长、timed/untimed和粒度策略，逐段验证。处理脚本警告，工程模式附`--project-lint`，参考素材用scripts/check_assets.py核平台限制。脚本只证明报告列出的机械项，表演、空间、因果和载荷仍由对应预检核对；没有脚本工具时按08_FAST执行同等检查并如实标记。micro仅在改动涉及机械格式或用户要求时执行相关脚本，不另开整稿审查。
+在已有预检中调用 scripts/validate_prompt.py 验证一般候选；实际交锋用兼容入口 scripts/validate_combat_prompt.py。传入已解析版本、准确计划时长、timed/untimed和粒度策略，逐段验证。处理脚本警告，工程模式附`--project-lint`，参考素材用scripts/check_assets.py核宽高比（素材数量和音频时长按02L人工核对）。脚本只证明报告列出的机械项，表演、空间、因果和载荷仍由对应预检核对；没有脚本工具时按08_FAST执行同等检查并如实标记。micro仅在改动涉及机械格式或用户要求时执行相关脚本，不另开整稿审查。
 
 review_mode=critical-only默认：普通新稿一次08_FAST，local受影响项加硬门，micro仅差分预检。以下才触发扩展冷审：用户明确要求定稿/最终版/提交生成；首个后续批量复用样板基线；后续依赖的不可逆跨段交接。复杂、CUT多或武戏本身不触发。full只在明确要求每段审查时启用；off关闭语义冷审，保留本路线适用检查。窄修改仅在明确要求审查时启动冷审。
 

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -211,14 +212,23 @@ def main(argv: list[str] | None = None) -> int:
     columns, _, rows = args.grid.partition("x")
     args.out.mkdir(parents=True, exist_ok=True)
     info = probe(args.video)
+    if not info["width"] or info["duration"] <= 0:
+        print(f"ERROR: no readable video stream in {args.video}", file=sys.stderr)
+        return 2
     cuts = detect_cuts(args.video, args.scene_threshold)
-    contact_sheet(args.video, args.out, int(columns), int(rows or columns))
+    columns_n = int(columns)
+    # One cell per second: add rows so the sheet reaches the last second of the take.
+    rows_n = max(int(rows or columns), math.ceil(info["duration"] / columns_n))
+    if not contact_sheet(args.video, args.out, columns_n, rows_n).is_file():
+        print("ERROR: ffmpeg did not write contact_sheet.png", file=sys.stderr)
+        return 2
     transcript = transcribe(args.video) if args.transcribe else None
     record = record_range(info, cuts, args.record_seconds) if args.record_seconds else None
     plan = record_clip_plan(record, args.min_frames) if record else None
     tail = tail_range(info, args.tail_frames, record_start=record["start_frame"] if record else None)
-    if record:
-        record_clip(args.video, args.out, record, plan, total_frames(info)[0])
+    if record and not record_clip(args.video, args.out, record, plan, total_frames(info)[0]).is_file():
+        print("ERROR: ffmpeg did not write staging_record.mp4", file=sys.stderr)
+        return 2
     (args.out / "evidence.json").write_text(json.dumps(
         {"video": str(args.video), "info": info, "cuts": cuts, "tail": tail, "record": record,
          "record_clip": plan, "transcript": transcript},

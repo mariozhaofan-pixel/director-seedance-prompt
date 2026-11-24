@@ -23,7 +23,7 @@ class V14DocumentTests(unittest.TestCase):
     def test_crowd_binding_and_capability(self) -> None:
         self.assertIn("五官随机生成不同的陌生人", read("knowledge/02B_CHARACTER_BOARD.md"))
         capability = read("capabilities/asset-preproduction/ASSET_PREPRODUCTION.md")
-        for heading in ("### 匿名类型群像（补充）", "### 场景补充", "### 道具补充", "### 审片表（补充）",
+        for heading in ("### 匿名类型群像（补充）", "### 场景补充", "### 道具补充", "## 审片表（补充）",
                         "### 多人群演半身资产", "### 中性身份板"):
             self.assertIn(heading, capability)
         self.assertIn("左右翻转原图不是反打", capability)
