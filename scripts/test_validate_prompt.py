@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import os
 import subprocess
@@ -12,7 +14,8 @@ from decimal import Decimal
 from pathlib import Path
 
 from test_validate_combat_prompt import make_prompt
-from validate_prompt import dialogue_lines, lint_warnings, parse_sections, speech_need, validate_prompt
+from validate_prompt import (dialogue_lines, lint_warnings, parse_args, parse_sections, speech_need,
+                             validate_prompt)
 
 
 GENERAL = Path(__file__).with_name("validate_prompt.py")
@@ -85,16 +88,19 @@ class SharedValidatorTests(unittest.TestCase):
         candidate = self.timed_prompt().replace("自动化回归｜15秒", "自动化回归｜14-15秒")
         self.assert_fail(self.check(candidate, timeline="timed"), "exact title duration")
 
-    def test_general_single_cut_without_beats_in_both_versions(self):
-        for version in ("2.0", "2.5"):
-            with self.subTest(version=version):
-                candidate = make_prompt("15", "CUT 1\n人物走到窗边并停下。")
-                result = self.check(candidate, version=version)
-                self.assert_pass(result)
-                self.assertEqual(result["mode"], "onetake")
-                self.assertEqual(result["timeline"], "untimed")
-                self.assertIn("timeline_coverage_0_to_T", result["not_verified"])
-                self.assertNotIn("timeline_coverage_0_to_T", result["checked"])
+    def test_general_single_cut_without_beats(self):
+        candidate = make_prompt("15", "CUT 1\n人物走到窗边并停下。")
+        result = self.check(candidate)
+        self.assert_pass(result)
+        self.assertEqual(result["mode"], "onetake")
+        self.assertEqual(result["timeline"], "untimed")
+        self.assertIn("timeline_coverage_0_to_T", result["not_verified"])
+        self.assertNotIn("timeline_coverage_0_to_T", result["checked"])
+
+    def test_only_seedance_25_is_accepted(self):
+        self.assertEqual(parse_args(["--duration", "20"]).version, "2.5")
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            parse_args(["--version", "2.0", "--duration", "15"])
 
     def test_timed_general_single_cut_does_not_require_beats(self):
         candidate = make_prompt("15", "CUT 1（0-15秒）人物自然地走到窗边并停下。")
@@ -111,7 +117,6 @@ class SharedValidatorTests(unittest.TestCase):
     def test_display_policy_is_not_inferred_from_generated_text(self):
         self.assert_fail(self.check(self.timed_prompt()), "untimed CUT/BEAT")
         self.assert_pass(self.check(self.timed_prompt(), timeline="timed"))
-        self.assert_fail(self.check(self.timed_prompt(), version="2.0", timeline="timed"), "does not support")
 
     def test_decimal_and_sparse_frame_events_keep_existing_semantics(self):
         candidate = make_prompt("7.5", "CUT 1（0-7.5秒）保持完整动作。\nFrame 0：开始。\nFrame 180帧：结尾。")

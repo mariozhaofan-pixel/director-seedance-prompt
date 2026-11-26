@@ -145,57 +145,38 @@ class ValidatorCliTests(unittest.TestCase):
         self.assertNotIn("WARNING:", result.stderr)
 
     def test_version_duration_limits_accept_upper_bound_and_decimals(self) -> None:
-        for version, duration in (
-            ("2.0", "15"),
-            ("2.0", "14.999"),
-            ("2.5", "30"),
-            ("2.5", "29.999"),
-        ):
-            with self.subTest(version=version, duration=duration):
-                timeline = (
-                    "CUT 1\n测试。\nCUT 2\n测试。"
-                    if version == "2.0"
-                    else f"CUT 1（0-5秒）测试。\nCUT 2（5-{duration}秒）测试。"
-                )
+        for duration in ("30", "29.999"):
+            with self.subTest(duration=duration):
+                timeline = f"CUT 1（0-5秒）测试。\nCUT 2（5-{duration}秒）测试。"
                 result = self.run_validator(
                     make_prompt(duration, timeline),
                     duration=duration,
-                    version=version,
                     extra_args=("--timestamp-policy", "decimal-allowed"),
                 )
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertEqual(result.stdout.strip(), "PASS")
 
     def test_version_duration_limits_reject_excess(self) -> None:
-        for version, duration, limit in (
-            ("2.0", "16", "15"),
-            ("2.0", "15.001", "15"),
-            ("2.5", "31", "30"),
-            ("2.5", "30.001", "30"),
-        ):
-            with self.subTest(version=version, duration=duration):
-                timeline = (
-                    "CUT 1\n测试。\nCUT 2\n测试。"
-                    if version == "2.0"
-                    else f"CUT 1（0-5秒）测试。\nCUT 2（5-{duration}秒）测试。"
-                )
+        for duration in ("31", "30.001"):
+            with self.subTest(duration=duration):
+                timeline = f"CUT 1（0-5秒）测试。\nCUT 2（5-{duration}秒）测试。"
                 result = self.run_validator(
                     make_prompt(duration, timeline),
                     duration=duration,
-                    version=version,
                     extra_args=("--timestamp-policy", "decimal-allowed"),
                 )
                 self.assertEqual(result.returncode, 1, result.stderr)
-                self.assertIn(f"exceeds Seedance {version} limit of {limit} seconds", result.stderr)
+                self.assertIn("exceeds Seedance 2.5 limit of 30 seconds", result.stderr)
                 self.assertNotIn("PASS", result.stdout)
 
-    def test_seedance_20_title_tolerance_cannot_bypass_duration_limit(self) -> None:
-        candidate = make_prompt("15.001", "CUT 1\n测试。\nCUT 2\n测试。")
+    def test_title_duration_must_match_the_planned_duration(self) -> None:
+        candidate = make_prompt("15.001", "CUT 1（0-5秒）测试。\nCUT 2（5-15秒）测试。")
 
-        result = self.run_validator(candidate, duration="15", version="2.0")
+        result = self.run_validator(candidate, duration="15")
 
         self.assertEqual(result.returncode, 1, result.stderr)
-        self.assertIn("title duration 15.001 exceeds Seedance 2.0 limit of 15 seconds", result.stderr)
+        self.assertIn("title duration is 15.001, expected 15", result.stderr)
+        self.assertNotIn("PASS", result.stdout)
 
     def test_seedance_25_every_cut_requires_a_valid_time_range(self) -> None:
         for mode in ("cut", "auto"):
@@ -582,55 +563,25 @@ class ValidatorCliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn("unexpected visible section", result.stderr)
 
-    def test_seedance_20_untimed_behavior_remains(self) -> None:
-        untimed = make_prompt(
-            "8",
-            "CUT 1\n起势与接触。\nCUT 2\n受力与恢复。",
-            segment_contract=None,
-        )
-        valid = self.run_validator(
-            untimed,
-            duration="8",
-            version="2.0",
-        )
+    def test_explicit_untimed_combat_behavior_remains(self) -> None:
+        untimed_args = ("--timeline", "untimed")
+        untimed = make_prompt("8", "CUT 1\n起势与接触。\nCUT 2\n受力与恢复。")
+        valid = self.run_validator(untimed, duration="8", extra_args=untimed_args)
         self.assertEqual(valid.returncode, 0, valid.stderr)
 
         for mode in ("onetake", "auto"):
             with self.subTest(mode=mode):
-                onetake = make_prompt(
-                    "8",
-                    "CUT 1\nBEAT A\n起势与接触。\nBEAT B\n受力与恢复。",
-                    segment_contract=None,
-                )
-                valid_onetake = self.run_validator(
-                    onetake,
-                    duration="8",
-                    version="2.0",
-                    mode=mode,
-                )
+                onetake = make_prompt("8", "CUT 1\nBEAT A\n起势与接触。\nBEAT B\n受力与恢复。")
+                valid_onetake = self.run_validator(onetake, duration="8", mode=mode, extra_args=untimed_args)
                 self.assertEqual(valid_onetake.returncode, 0, valid_onetake.stderr)
 
-        timed = make_prompt(
-            "8",
-            "CUT 1（0-4秒）测试。\nCUT 2（4-8秒）测试。",
-        )
-        invalid = self.run_validator(
-            timed,
-            duration="8",
-            version="2.0",
-        )
+        timed = make_prompt("8", "CUT 1（0-4秒）测试。\nCUT 2（4-8秒）测试。")
+        invalid = self.run_validator(timed, duration="8", extra_args=untimed_args)
         self.assertNotEqual(invalid.returncode, 0)
         self.assertIn("untimed CUT/BEAT", invalid.stderr)
 
-        frame_timed = make_prompt(
-            "8",
-            "CUT 1\n起势。\nFrame 24：接触。\nCUT 2\n受力与恢复。",
-        )
-        frame_invalid = self.run_validator(
-            frame_timed,
-            duration="8",
-            version="2.0",
-        )
+        frame_timed = make_prompt("8", "CUT 1\n起势。\nFrame 24：接触。\nCUT 2\n受力与恢复。")
+        frame_invalid = self.run_validator(frame_timed, duration="8", extra_args=untimed_args)
         self.assertNotEqual(frame_invalid.returncode, 0)
         self.assertIn("untimed CUT/BEAT", frame_invalid.stderr)
 

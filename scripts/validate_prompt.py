@@ -64,7 +64,7 @@ H2_SECTION_RE = re.compile(r"(?m)^##[ \t]+[^#\r\n][^\r\n]*(?=\r?$)")
 LINE_BREAK_RE = re.compile(r"\r\n|\n|\r")
 AUDIT_SEPARATOR_RE = re.compile(r"(?:(?:\r\n)|\n|\r){2}")
 
-VERSIONS = ("2.0", "2.5")
+VERSIONS = ("2.5",)
 PROFILES = ("general", "combat")
 TIMELINES = ("auto", "timed", "untimed")
 MODES = ("auto", "cut", "onetake")
@@ -921,7 +921,7 @@ def check_title(
         elif not low <= duration <= high:
             errors.append(f"expected duration {format_decimal(duration)} is outside title duration range")
     else:
-        mismatch = low != duration if version == "2.5" else abs(low - duration) > Decimal("0.011")
+        mismatch = low != duration
         if mismatch:
             errors.append(f"title duration is {format_decimal(low)}, expected {format_decimal(duration)}")
 
@@ -974,9 +974,7 @@ def validate_prompt(
     resolved_timeline = timeline
     if timeline == "auto":
         resolved_timeline = "timed" if version == "2.5" and profile == "combat" else "untimed"
-    if version == "2.0" and resolved_timeline == "timed":
-        errors.append("Seedance 2.0 does not support a timed timeline; use untimed CUT/BEAT")
-    duration_limit = Decimal("15" if version == "2.0" else "30")
+    duration_limit = Decimal("30")
     if duration > duration_limit:
         errors.append(
             f"duration {format_decimal(duration)} exceeds Seedance "

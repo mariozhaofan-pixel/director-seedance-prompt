@@ -30,7 +30,7 @@
 - [05G_VEHICLE_CINEMA](05G_VEHICLE_CINEMA.md)：车辆身份锁、车身左右与驾驶侧、车辆机位方位、车拍运镜、日常驾驶物理、车漆反射、产品展示段与车辆专项修复；追逐碰撞仍由05D负责
 - [05H_CHILD_PET_PERFORMANCE](05H_CHILD_PET_PERFORMANCE.md)：萌宝萌宠表演：幼童、婴儿、宠物和灵宠的能力边界、可选表演机制、多角色同框与镜头可读性；由05按需路由
 - [06_TIMELINE_EDITING_SOUND](06_TIMELINE_EDITING_SOUND.md)：时间轴：CUT/BEAT、时长与口播容量、台词绑定、分段拼接、切镜理由、2.5 五行合同
-- [06A_COMBAT_TIMING](06A_COMBAT_TIMING.md)：打戏时码：版本化时码、动作耗时账本、慢动作原子窗
+- [06A_COMBAT_TIMING](06A_COMBAT_TIMING.md)：打戏时码：时码覆盖、动作耗时账本、慢动作原子窗
 - [06B_TRANSITIONS_SOUND](06B_TRANSITIONS_SOUND.md)：转场与声音库：具体转场、主观时空匹配、声音层、音频卡点
 - [07_STYLE_GENRE_FAMOUS_SCENE_COMPILER](07_STYLE_GENRE_FAMOUS_SCENE_COMPILER.md)：对标与类型：对标行、名场面机制、视觉反转、分镜结构、类型语法包
 - [07A_PAINTING_HOMAGE_ROUTER](07A_PAINTING_HOMAGE_ROUTER.md)：名画致敬：原画资料门、六类辨识关系、配色转译
@@ -46,7 +46,7 @@
 
 普通快速检查用08_FAST；08_MODEL只用于已触发的扩展诊断/冷审。风格目录选一个包。02F路由到内置[静态资产预制](../capabilities/asset-preproduction/ASSET_PREPRODUCTION.md)；STYLE_ROUTER路由到内置[光影运镜表演规则反推](../capabilities/reference-rule-extraction/REFERENCE_RULE_EXTRACTION.md)。02I路由到内置[翻唱演唱](../capabilities/cover-performance/COVER_PERFORMANCE.md)。三项完整功能在capabilities中按需加载，细则不在本目录重复维护。
 
-飞书模式经02H按需读取[部署与授权](../references/FEISHU_WORKSPACE_SETUP.md)、[四表布局与附件协议](../references/FEISHU_BASE_LAYOUT.md)、[剧本同步合同](../references/FEISHU_SCREENPLAY_SYNC.md)及[建表蓝图](../assets/feishu-base-blueprint.json)；准备本地同步计划时使用[plan_feishu_sync.py](../scripts/plan_feishu_sync.py)。本地模式不加载这些文件、不检查飞书环境。首轮工作模式、视频版本和规则来源的合并询问只由根入口定义，索引不另设启动门槛。
+飞书模式经02H按需读取[部署与授权](../references/FEISHU_WORKSPACE_SETUP.md)、[四表布局与附件协议](../references/FEISHU_BASE_LAYOUT.md)、[剧本同步合同](../references/FEISHU_SCREENPLAY_SYNC.md)及[建表蓝图](../assets/feishu-base-blueprint.json)；准备本地同步计划时使用[plan_feishu_sync.py](../scripts/plan_feishu_sync.py)。本地模式不加载这些文件、不检查飞书环境。首轮工作模式和规则来源的合并询问只由根入口定义，索引不另设启动门槛。
 
 ## 演唱翻唱
 

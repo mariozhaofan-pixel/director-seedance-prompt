@@ -17,7 +17,6 @@ import sys
 from pathlib import Path
 
 PLATFORMS = {
-    "seedance-2.0": {"max_aspect": 2.5},
     "seedance-2.5": {"max_aspect": 2.5},
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
