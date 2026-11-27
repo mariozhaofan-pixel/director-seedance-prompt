@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "director-seedance-prompt",
-  "edition": "2026-11-26-v34",
+  "edition": "2026-11-27-v35",
   "path_base": "package-root",
   "embedded_capabilities": [
     {
@@ -66,8 +66,8 @@
     },
     {
       "path": "capabilities/asset-preproduction/ASSET_PREPRODUCTION.md",
-      "bytes": 24252,
-      "sha256": "72b1a31f939d0049465d5a9896a87555873edb55c92b7d28b679a58edca82872"
+      "bytes": 26516,
+      "sha256": "8f02fb5edf6fcd0b21298510594cb23c498053fa7cd090b657b16723a0addb4c"
     },
     {
       "path": "capabilities/asset-preproduction/references/HIGGSFIELD_ASSET_ROUTING.md",
@@ -451,8 +451,8 @@
     },
     {
       "path": "maintenance/CHANGELOG.md",
-      "bytes": 39276,
-      "sha256": "76a752736e8eb9ec73d865c2fb443e325d92e68f53882dc07c1b76cf122505e6"
+      "bytes": 41182,
+      "sha256": "4739281a6bcf116f4d16725b700682c62ffc0653544e80c3401b582183de81b9"
     },
     {
       "path": "maintenance/README.md",
